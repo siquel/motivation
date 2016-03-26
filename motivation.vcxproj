@@ -130,7 +130,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\debug.h" />
+    <ClInclude Include="include\moti\debug.h" />
     <ClInclude Include="include\moti\macros.h" />
     <ClInclude Include="include\moti\memory\block.h" />
     <ClInclude Include="include\moti\memory\stack_allocator.h" />
