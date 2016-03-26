@@ -15,9 +15,11 @@ namespace moti {
 #if _DEBUG
 #define _MOTI_TRACE(fmt, ...) for (;;) { moti::trace(__FILE__, uint16_t(__LINE__), fmt "\n", ##__VA_ARGS__); break;}
 #define MOTI_TRACE _MOTI_TRACE
+
+
 #define MOTI_ASSERT(cond, fmt, ...)                                   \
         for(;;) {                                                     \
-            if (!(cond)) {                                              \
+            if (!(cond)) {                                            \
                 MOTI_TRACE(fmt, ##__VA_ARGS__);                       \
                 moti::fatal(fmt, ##__VA_ARGS__);                      \
             }                                                         \

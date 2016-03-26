@@ -5,18 +5,21 @@ namespace moti {
     namespace memory {
         // Allocator that provides mem from stack
         // MaxSize max number of bytes to be allocated
-        template <size_t MaxSize>
+        template <size_t MaxSize, size_t Align = 16u>
         class StackAllocator {
             char m_data[MaxSize];
             char* m_pointer;
+
+            bool isLastUsedBlock(const Block& _b) noexcept;
+
         public:
             static const size_t max_size = MaxSize;
-            static const size_t alignment = Alignment;
+            static const size_t alignment = Align;
             StackAllocator() noexcept;
 
             Block allocate(size_t _bytes) noexcept;
 
-            Block deallocate(Block& _block) noexcept;
+            void deallocate(Block& _block) noexcept;
 
             bool reallocate(Block& _block, size_t _bytes) noexcept;
 

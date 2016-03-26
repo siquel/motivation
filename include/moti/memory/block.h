@@ -29,4 +29,8 @@ namespace moti {
             size_t m_length;
         };
     }
+
+    inline constexpr size_t roundToAlignment(size_t basis, size_t n) noexcept {
+        return n + ((n % basis == 0) ? 0 : (basis - n % basis));
+    }
 }
