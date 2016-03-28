@@ -48,7 +48,7 @@
     <ClInclude Include="include\moti\renderer\renderer_gl.h">
       <Filter>Header Files\renderer</Filter>
     </ClInclude>
-    <ClInclude Include="include\moti\renderer\wgl_context.h">
+    <ClInclude Include="include\moti\renderer\gl_context.h">
       <Filter>Header Files\renderer</Filter>
     </ClInclude>
   </ItemGroup>

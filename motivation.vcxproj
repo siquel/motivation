@@ -157,7 +157,7 @@
     <ClInclude Include="include\moti\moti.h" />
     <ClInclude Include="include\moti\platform.h" />
     <ClInclude Include="include\moti\renderer\renderer_gl.h" />
-    <ClInclude Include="include\moti\renderer\wgl_context.h" />
+    <ClInclude Include="include\moti\renderer\gl_context.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\memory\block.cpp" />
