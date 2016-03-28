@@ -23,10 +23,12 @@
 #define MOTI_FORWARD_DECLARE_3(n1, n2, c) namespace n1 { MOTI_FORWARD_DECLARE_2(n2, c) }
 #define MOTI_FORWARD_DECLARE_4(n1, n2, n3, c) namespace n1 { MOTI_FORWARD_DECLARE_3(n2, n3, c) }
 #define MOTI_FORWARD_DECLARE_5(n1, n2, n3, n4, c) namespace n1 { MOTI_FORWARD_DECLARE_4(n2, n3, n4, c) }
-#define MOTI_FORWARD_DECLARE_6(n1, n2, n3, n4, n5, c) namespace n1 { MOTI_FORWARD_DECLARE_5(n2, n3, n4, n5, c) }
-#define MOTI_FORWARD_DECLARE_7(n1, n2, n3, n4, n5, n6, c) namespace n1 { MOTI_FORWARD_DECLARE_6(n2, n3, n4, n5, n6, c) }
-#define MOTI_FORWARD_DECLARE_8(n1, n2, n3, n4, n5, n6, n7, c) namespace n1 { MOTI_FORWARD_DECLARE_7(n2, n3, n4, n5, n6, n7, c) }
-#define MOTI_FORWARD_DECLARE_9(n1, n2, n3, n4, n5, n6, n7, n8, c) namespace n1 { MOTI_FORWARD_DECLARE_8(n2, n3, n4, n5, n6, n7, n8, c) }
-#define MOTI_FORWARD_DECLARE_10(n1, n2, n3, n4, n5, n6, n7, n8, n9, c) namespace n1 { MOTI_FORWARD_DECLARE_9(n2, n3, n4, n5, n6, n7, n8, n9, c) }
+
+#define MOTI_FORWARD_DECLARE_STRUCT_1(c) struct c;
+#define MOTI_FORWARD_DECLARE_STRUCT_2(n1, c) namespace n1 { MOTI_FORWARD_DECLARE_STRUCT_1(c) }
+#define MOTI_FORWARD_DECLARE_STRUCT_3(n1, n2, c) namespace n1 { MOTI_FORWARD_DECLARE_STRUCT_2(n2, c) }
+#define MOTI_FORWARD_DECLARE_STRUCT_4(n1, n2, n3, c) namespace n1 { MOTI_FORWARD_DECLARE_STRUCT_3(n2, n3, c) }
+#define MOTI_FORWARD_DECLARE_STRUCT_5(n1, n2, n3, n4, c) namespace n1 { MOTI_FORWARD_DECLARE_STRUCT_4(n2, n3, n4, c) }
 
 #define MOTI_FORWARD_DECLARE(...) MOTI_MACRO_DISPATCHER(MOTI_FORWARD_DECLARE_, __VA_ARGS__) MOTI_VA_ARGS_PASS(__VA_ARGS__)
+#define MOTI_FORWARD_DECLARE_STRUCT(...) MOTI_MACRO_DISPATCHER(MOTI_FORWARD_DECLARE_STRUCT_, __VA_ARGS__) MOTI_VA_ARGS_PASS(__VA_ARGS__)

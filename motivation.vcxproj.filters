@@ -25,6 +25,9 @@
     <Filter Include="Header Files\renderer">
       <UniqueIdentifier>{60e07b9a-6940-461c-932d-f6519d80d029}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\renderer">
+      <UniqueIdentifier>{48e39e4c-bc7e-471b-adbc-b2bdeb59e600}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\moti\macros.h">
@@ -58,6 +61,9 @@
     </ClCompile>
     <ClCompile Include="src\moti.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer\gl_context.cpp">
+      <Filter>Source Files\renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

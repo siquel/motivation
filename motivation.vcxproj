@@ -162,6 +162,7 @@
   <ItemGroup>
     <ClCompile Include="src\memory\block.cpp" />
     <ClCompile Include="src\moti.cpp" />
+    <ClCompile Include="src\renderer\gl_context.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\moti\memory\inl\stack_allocator.inl" />
