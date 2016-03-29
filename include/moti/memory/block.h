@@ -4,20 +4,20 @@ namespace moti {
     namespace memory {
         struct Block {
 
-            Block() noexcept;
+            Block();
 
-            Block(void* _ptr, size_t _length) noexcept;
+            Block(void* _ptr, size_t _length);
 
-            Block(Block&& b) noexcept;
+            Block(Block&& b);
 
-            Block& operator=(Block&& b) noexcept;
+            Block& operator=(Block&& b);
 
-            Block(const Block&) noexcept = default;
-            Block& operator=(const Block&) noexcept = default;
+            Block(const Block&) = default;
+            Block& operator=(const Block&) = default;
             
             ~Block();
 
-            void reset() noexcept;
+            void reset();
 
             operator bool() const;
 
@@ -30,7 +30,7 @@ namespace moti {
         };
     }
 
-    inline constexpr size_t roundToAlignment(size_t basis, size_t n) noexcept {
+    inline size_t roundToAlignment(size_t basis, size_t n) {
         return n + ((n % basis == 0) ? 0 : (basis - n % basis));
     }
 }

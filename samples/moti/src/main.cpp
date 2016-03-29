@@ -8,7 +8,7 @@
 int main(int argc, char** argv) {
     MOTI_TRACE("sdffsdsdf %d", 44);
     namespace mem = moti::memory;
-    constexpr size_t size = 32u;
+    const size_t size = 32u;
     mem::StackAllocator<size> alloc;
     mem::Block block = alloc.allocate(size/2);
     assert(alloc.reallocate(block, size));

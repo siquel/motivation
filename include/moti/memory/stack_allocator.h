@@ -10,20 +10,20 @@ namespace moti {
             char m_data[MaxSize];
             char* m_pointer;
 
-            bool isLastUsedBlock(const Block& _b) noexcept;
+            bool isLastUsedBlock(const Block& _b);
 
         public:
             static const size_t max_size = MaxSize;
             static const size_t alignment = Align;
-            StackAllocator() noexcept;
+            StackAllocator();
 
-            Block allocate(size_t _bytes) noexcept;
+            Block allocate(size_t _bytes);
 
-            void deallocate(Block& _block) noexcept;
+            void deallocate(Block& _block);
 
-            bool reallocate(Block& _block, size_t _bytes) noexcept;
+            bool reallocate(Block& _block, size_t _bytes) ;
 
-            bool owns(const Block& _block) const noexcept;
+            bool owns(const Block& _block) const;
 
             StackAllocator(const StackAllocator&) = delete;
             StackAllocator& operator=(const StackAllocator&) = delete;

@@ -6,23 +6,23 @@
 namespace moti {
     namespace memory {
 
-        Block::Block() noexcept 
+        Block::Block() 
             : m_ptr(nullptr), m_length(0u) {
         }
 
         
-        Block::Block(void* _ptr, size_t _length) noexcept 
+        Block::Block(void* _ptr, size_t _length) 
             : m_ptr(_ptr), m_length(_length) {
 
         }
 
-        Block::Block(Block&& b) noexcept {
+        Block::Block(Block&& b) {
             *this = std::move(b);
         }
 
         Block::~Block() {}
 
-        void Block::reset() noexcept {
+        void Block::reset() {
             m_ptr = nullptr;
             m_length = 0u;
         }
@@ -35,7 +35,7 @@ namespace moti {
             return m_ptr == rhs.m_ptr && m_length == rhs.m_length;
         }
 
-        Block & Block::operator=(Block&& b) noexcept {
+        Block & Block::operator=(Block&& b) {
             m_ptr = b.m_ptr;
             m_length = b.m_length;
             b.reset();

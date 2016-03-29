@@ -4,13 +4,13 @@ namespace moti {
     namespace memory {
 
         template <size_t MaxSize, size_t Align>
-        StackAllocator<MaxSize, Align>::StackAllocator() noexcept
+        StackAllocator<MaxSize, Align>::StackAllocator()
             : m_pointer(m_data) {
 
         }
 
         template <size_t MaxSize, size_t Align>
-        Block StackAllocator<MaxSize, Align>::allocate(size_t _bytes) noexcept {
+        Block StackAllocator<MaxSize, Align>::allocate(size_t _bytes) {
             Block result;
             if (_bytes == 0) return result;
 
@@ -28,7 +28,7 @@ namespace moti {
 
 
         template <size_t MaxSize, size_t Align>
-        void StackAllocator<MaxSize, Align>::deallocate(Block& _block) noexcept {
+        void StackAllocator<MaxSize, Align>::deallocate(Block& _block) {
             // nullptr
             if (!_block) return;
 
@@ -45,7 +45,7 @@ namespace moti {
         }
 
         template <size_t MaxSize, size_t Align>
-        bool StackAllocator<MaxSize, Align>::reallocate(Block& _block, size_t _bytes) noexcept {
+        bool StackAllocator<MaxSize, Align>::reallocate(Block& _block, size_t _bytes) {
             if (_block.m_length == _bytes) return true;
 
             if (_bytes == 0u) return true;
@@ -76,13 +76,13 @@ namespace moti {
         }
 
         template <size_t MaxSize, size_t Align>
-        bool StackAllocator<MaxSize, Align>::owns(const Block& _block) const noexcept {
+        bool StackAllocator<MaxSize, Align>::owns(const Block& _block) const {
             return _block && (_block.m_ptr >= m_data && _block.m_ptr < m_data + MaxSize);
         }
 
 
         template <size_t MaxSize, size_t Align>
-        bool StackAllocator<MaxSize, Align>::isLastUsedBlock(const Block& _b) noexcept {
+        bool StackAllocator<MaxSize, Align>::isLastUsedBlock(const Block& _b) {
             return (static_cast<char *>(_b.m_ptr) + _b.m_length == m_pointer);
         }
 
