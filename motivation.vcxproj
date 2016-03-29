@@ -156,6 +156,8 @@
     <ClInclude Include="include\moti\memory\stack_allocator.h" />
     <ClInclude Include="include\moti\moti.h" />
     <ClInclude Include="include\moti\platform.h" />
+    <ClInclude Include="include\moti\renderer\graphics_device.h" />
+    <ClInclude Include="include\moti\renderer\renderer_context.h" />
     <ClInclude Include="include\moti\renderer\renderer_gl.h" />
     <ClInclude Include="include\moti\renderer\gl_context.h" />
   </ItemGroup>
@@ -163,6 +165,8 @@
     <ClCompile Include="src\memory\block.cpp" />
     <ClCompile Include="src\moti.cpp" />
     <ClCompile Include="src\renderer\gl_context.cpp" />
+    <ClCompile Include="src\renderer\graphics_device.cpp" />
+    <ClCompile Include="src\renderer\renderer_gl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\moti\memory\inl\stack_allocator.inl" />

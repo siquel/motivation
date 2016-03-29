@@ -54,6 +54,12 @@
     <ClInclude Include="include\moti\renderer\gl_context.h">
       <Filter>Header Files\renderer</Filter>
     </ClInclude>
+    <ClInclude Include="include\moti\renderer\graphics_device.h">
+      <Filter>Header Files\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\moti\renderer\renderer_context.h">
+      <Filter>Header Files\renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\memory\block.cpp">
@@ -63,6 +69,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\renderer\gl_context.cpp">
+      <Filter>Source Files\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer\graphics_device.cpp">
+      <Filter>Source Files\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer\renderer_gl.cpp">
       <Filter>Source Files\renderer</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,4 +1,5 @@
 #pragma once
+#include <stdint.h>
 
 namespace moti {
     namespace memory {
@@ -6,7 +7,7 @@ namespace moti {
 
             Block();
 
-            Block(void* _ptr, size_t _length);
+			Block(void* _ptr, uint32_t _length);
 
             Block(Block&& b);
 
@@ -26,11 +27,11 @@ namespace moti {
             // pointer to start address of the block
             void* m_ptr;
             // length of the reserved bytes
-            size_t m_length;
+			uint32_t m_length;
         };
     }
 
-    inline size_t roundToAlignment(size_t basis, size_t n) {
+	inline uint32_t roundToAlignment(uint32_t basis, uint32_t n) {
         return n + ((n % basis == 0) ? 0 : (basis - n % basis));
     }
 }

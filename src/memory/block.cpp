@@ -10,8 +10,7 @@ namespace moti {
             : m_ptr(nullptr), m_length(0u) {
         }
 
-        
-        Block::Block(void* _ptr, size_t _length) 
+		Block::Block(void* _ptr, uint32_t _length)
             : m_ptr(_ptr), m_length(_length) {
 
         }
