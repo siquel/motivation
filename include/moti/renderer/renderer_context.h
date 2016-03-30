@@ -11,10 +11,6 @@ namespace moti {
 			enum Enum {
 				Position,
 				Color,
-				TexCoord0,
-				Normal,
-				Tangent,
-				Bitangent,
 				Count
 			};
 		};
@@ -22,7 +18,6 @@ namespace moti {
 		struct AttributeType {
 			enum Enum {
 				Uint8,
-				Int16,
 				Float,
 				Count
 			};
@@ -30,6 +25,11 @@ namespace moti {
 
 		struct VertexDecl {
 			uint16_t m_stride;
+            uint16_t m_attributes[Attribute::Count];
+
+            inline bool has(Attribute::Enum _attr) { return m_attributes[_attr] != UINT16_MAX; }
+
+            void add(Attribute::Enum _attribute, uint8_t count, AttributeType::Enum _type, bool _normalized);
 		};
 
 		struct VertexBufferHandle {
