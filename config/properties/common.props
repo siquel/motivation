@@ -7,6 +7,8 @@
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\glew\include;$(SolutionDir)3rdparty\sdl2\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLEW_STATIC;SDL_MAIN_HANDLED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)3rdparty\glew\lib\$(PlatformTarget);$(SolutionDir)3rdparty\sdl2\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
