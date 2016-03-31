@@ -75,7 +75,7 @@ namespace moti {
 		struct RendererContext {
 			virtual ~RendererContext() = 0;
 			virtual void createVertexBuffer(VertexBufferHandle _handle, mem::Block* _mem, VertexDeclHandle _decl) = 0;
-            virtual void setVertexBuffer(VertexDeclHandle _handle) = 0;
+            virtual void setVertexBuffer(VertexBufferHandle _handle) = 0;
 		};
 		inline RendererContext::~RendererContext() {}
 	}

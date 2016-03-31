@@ -26,7 +26,7 @@ namespace moti {
         }
 
         void GraphicsDevice::setVertexBuffer(VertexBufferHandle _handle) {
-            
+            m_ctx->setVertexBuffer(_handle);
         }
 
     }
