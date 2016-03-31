@@ -10,8 +10,7 @@ App::App() {
 }
 
 App::~App() {
-    SDL_DestroyWindow(m_wnd);
-    SDL_Quit();
+
 }
 
 void App::frame() {

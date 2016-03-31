@@ -4,6 +4,8 @@
 namespace moti {
     namespace graphics {
 
+        static uint16_t VertexBufferCounter = 0;
+
         GraphicsDevice::GraphicsDevice()
             : m_ctx(new gl::RendererContextGL) {
 
@@ -12,7 +14,19 @@ namespace moti {
             delete m_ctx;
         }
         VertexBufferHandle GraphicsDevice::createVertexBuffer(mem::Block* _mem, const VertexDecl& _decl) {
-            return VertexBufferHandle{};
+            VertexBufferHandle handle{ VertexBufferCounter++ };
+            VertexDeclHandle declhandle;
+            if (m_declLookup.find(_decl.id) == std::end(m_declLookup)) {
+                declhandle = { _decl.id };
+                m_declLookup[_decl.id] = _decl;
+            }
+            m_ctx->createVertexBuffer(handle, _mem, declhandle);
+            return handle;
         }
+
+        void GraphicsDevice::setVertexBuffer(VertexBufferHandle _handle) {
+
+        }
+
     }
 }

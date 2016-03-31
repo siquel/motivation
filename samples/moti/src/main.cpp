@@ -23,9 +23,7 @@ static PosColorVertex s_vertices[3] = {
     { 1.0, 1.0f, 0.0f, 0x00FF00FF }
 };
 
-mg::VertexDecl s_decl{
-    sizeof(PosColorVertex)
-};
+mg::VertexDecl s_decl;
 
 int main(int argc, char** argv) {
     MOTI_TRACE("sdffsdsdf %d", 44);
@@ -35,9 +33,32 @@ int main(int argc, char** argv) {
     mem::Block memory = alloc.allocate(size);
     std::memcpy(memory.m_ptr, s_vertices, size);
 
-    App app;
+    s_decl.begin()
+        .add(mg::Attribute::Position, 3, mg::AttributeType::Float, true)
+        .add(mg::Attribute::Color, 4, mg::AttributeType::Uint8, false);
+
+    SDL_Init(SDL_INIT_VIDEO);
+    moti::gl::GLContext context;
+    SDL_Window* wnd = SDL_CreateWindow("moti", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL);
+    context.create(wnd);
+    glClearColor(1.f, 0.f, 0.f, 1.f);
+
     mg::GraphicsDevice device;
     
-    device.createVertexBuffer(&memory, s_decl);
-    return app.exec();
+    mg::VertexBufferHandle vbo = device.createVertexBuffer(&memory, s_decl);
+
+    SDL_Event e;
+    while (SDL_WaitEvent(&e)) {
+        if (e.type == SDL_QUIT) break;
+        
+        device.setVertexBuffer(vbo);
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        SDL_GL_SwapWindow(wnd);
+    }
+
+    SDL_DestroyWindow(wnd);
+    SDL_Quit();
+
+    return 0;
 }
