@@ -39,6 +39,8 @@ namespace moti {
 				~RendererContextGL() override;
 				virtual void createVertexBuffer(VertexBufferHandle _handle, mem::Block* _mem, VertexDeclHandle _decl) override;
                 virtual void setVertexBuffer(VertexBufferHandle _handle) override;
+                virtual void createShader(ShaderHandle _handle, mem::Block* _mem) override;
+                virtual void createProgram(ProgramHandle _handle, ShaderHandle _vertex, ShaderHandle _fragment) override;
 			};
 
 		}

@@ -28,6 +28,15 @@
     <Filter Include="Source Files\renderer">
       <UniqueIdentifier>{48e39e4c-bc7e-471b-adbc-b2bdeb59e600}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\res">
+      <UniqueIdentifier>{5b03c9d3-5cb2-46e0-a3d9-63e419ad9766}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\core">
+      <UniqueIdentifier>{397d79de-d5e0-4fdf-9918-f51f11a1acc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\core\string">
+      <UniqueIdentifier>{80b50965-b9f7-4217-9ddf-19eff465eac5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\moti\macros.h">
@@ -59,6 +68,15 @@
     </ClInclude>
     <ClInclude Include="include\moti\renderer\renderer_context.h">
       <Filter>Header Files\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\moti\res\resource_manager.h">
+      <Filter>Header Files\res</Filter>
+    </ClInclude>
+    <ClInclude Include="include\moti\core\string\fixed_string.h">
+      <Filter>Header Files\core\string</Filter>
+    </ClInclude>
+    <ClInclude Include="include\moti\core\string\string_util.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

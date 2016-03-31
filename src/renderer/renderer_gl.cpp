@@ -22,6 +22,14 @@ namespace moti {
                 GL_CHECK(glBindBuffer(buffer.m_target, buffer.m_id));
             }
 
+            void RendererContextGL::createShader(ShaderHandle _handle, mem::Block* _mem) {
+
+            }
+
+            void RendererContextGL::createProgram(ProgramHandle _handle, ShaderHandle _vertex, ShaderHandle _fragment) {
+
+            }
+
 			void GLVertexBuffer::create(uint32_t _size, void* _data, VertexDeclHandle _handle) {
 				m_size = _size;
 				m_decl = _handle;
