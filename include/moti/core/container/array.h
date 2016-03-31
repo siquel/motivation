@@ -22,6 +22,18 @@ namespace moti {
         void resize(uint32_t _size);
         void reserve(uint32_t _capacity);
         uint32_t push_back(const T& _item);
+
+        T* begin();
+        const T* begin() const;
+
+        T* end();
+        const T* end() const;
+
+        T& front();
+        const T& front() const;
+
+        T& back();
+        const T& back() const;
     };
 }
 
@@ -103,4 +115,59 @@ namespace moti {
     }
 
 
+    template <typename T>
+    inline T* Array<T>::begin() {
+        return reinterpret_cast<T*>(
+            m_data.m_ptr
+        );
+    }
+
+    template <typename T>
+    inline const T* Array<T>::begin() const {
+        return reinterpret_cast<const T*>(
+            m_data.m_ptr
+        );
+    }
+
+    template <typename T>
+    inline T* Array<T>::end() {
+        return reinterpret_cast<T*>(
+            static_cast<char*>(m_data.m_ptr) + (m_size - 1) * sizeof(T)
+        );
+    }
+
+    template <typename T>
+    inline const T* Array<T>::end() const {
+        return reinterpret_cast<const T*>(
+            static_cast<char*>(m_data.m_ptr) + (m_size - 1) * sizeof(T)
+        );
+    }
+
+    template <typename T>
+    inline T& Array<T>::front() {
+        return *reinterpret_cast<T*>(
+            m_data.m_ptr
+        );
+    }
+
+    template <typename T>
+    inline const T& Array<T>::front() const {
+        return *reinterpret_cast<const T*>(
+            m_data.m_ptr
+        );
+    }
+
+    template <typename T>
+    inline T& Array<T>::back() {
+        return *reinterpret_cast<T*>(
+            static_cast<char*>(m_data.m_ptr) + (m_size - 1) * sizeof(T)
+        );
+    }
+
+    template <typename T>
+    inline const T& Array<T>::back() const {
+        return *reinterpret_cast<const T*>(
+            static_cast<char*>(m_data.m_ptr) + (m_size - 1) * sizeof(T)
+        );
+    }
 }

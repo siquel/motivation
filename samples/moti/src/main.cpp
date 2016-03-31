@@ -31,6 +31,13 @@ struct POD {
     uint32_t kek;
 };
 
+void f(const moti::Array<POD>& a) {
+    auto b = a.front();
+    auto c = a.end();
+    auto d = a.begin();
+    auto h = a.back();
+}
+
 int main(int argc, char** argv) {
     MOTI_TRACE("sdffsdsdf %d", 44);
     const size_t size = sizeof(s_vertices);
@@ -40,7 +47,7 @@ int main(int argc, char** argv) {
     moti::Array<POD> arr(array_alloc, 2);
     arr.push_back({ 1337, 715517 });
     arr.push_back({ 80085, 5555 });
-    auto& kek = arr[1];
+    f(arr);
     mem::StackAllocator<size> alloc;
     mem::Block memory = alloc.allocate(size);
     std::memcpy(memory.m_ptr, s_vertices, size);
