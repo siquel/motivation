@@ -5,6 +5,7 @@
 #include "moti/renderer/gl_context.h"
 #include "app.h"
 #include "moti/renderer/graphics_device.h"
+#include "moti/core/container/array.h"
 
 namespace mem = moti::memory;
 namespace mg = moti::graphics;
@@ -25,10 +26,21 @@ static PosColorVertex s_vertices[3] = {
 
 mg::VertexDecl s_decl;
 
+struct POD {
+    uint32_t top;
+    uint32_t kek;
+};
+
 int main(int argc, char** argv) {
     MOTI_TRACE("sdffsdsdf %d", 44);
     const size_t size = sizeof(s_vertices);
     
+    mem::StackAllocator<size> array_alloc;
+
+    moti::Array<POD> arr(array_alloc, 2);
+    arr.push_back({ 1337, 715517 });
+    arr.push_back({ 80085, 5555 });
+    auto& kek = arr[1];
     mem::StackAllocator<size> alloc;
     mem::Block memory = alloc.allocate(size);
     std::memcpy(memory.m_ptr, s_vertices, size);

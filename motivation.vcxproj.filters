@@ -37,6 +37,9 @@
     <Filter Include="Header Files\core\string">
       <UniqueIdentifier>{80b50965-b9f7-4217-9ddf-19eff465eac5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\container">
+      <UniqueIdentifier>{c739b734-51cd-4245-bff6-b985e1a6fb1c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\moti\macros.h">
@@ -77,6 +80,12 @@
     </ClInclude>
     <ClInclude Include="include\moti\core\string\string_util.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\moti\core\container\array.h">
+      <Filter>Header Files\container</Filter>
+    </ClInclude>
+    <ClInclude Include="include\moti\memory\allocator.h">
+      <Filter>Header Files\memory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

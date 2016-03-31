@@ -150,10 +150,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\moti\core\container\array.h" />
     <ClInclude Include="include\moti\core\string\fixed_string.h" />
     <ClInclude Include="include\moti\core\string\string_util.h" />
     <ClInclude Include="include\moti\debug.h" />
     <ClInclude Include="include\moti\macros.h" />
+    <ClInclude Include="include\moti\memory\allocator.h" />
     <ClInclude Include="include\moti\memory\block.h" />
     <ClInclude Include="include\moti\memory\stack_allocator.h" />
     <ClInclude Include="include\moti\moti.h" />
