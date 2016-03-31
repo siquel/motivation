@@ -17,6 +17,11 @@ namespace moti {
 				m_vertexBuffers[_handle.m_id].create(_mem->m_length, _mem->m_ptr, _decl);
 			}
 
+            void RendererContextGL::setVertexBuffer(VertexDeclHandle _handle) {
+                auto& buffer = m_vertexBuffers[_handle.m_id];
+                GL_CHECK(glBindBuffer(buffer.m_target, buffer.m_id));
+            }
+
 			void GLVertexBuffer::create(uint32_t _size, void* _data, VertexDeclHandle _handle) {
 				m_size = _size;
 				m_decl = _handle;

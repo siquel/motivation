@@ -13,6 +13,7 @@ namespace moti {
         GraphicsDevice::~GraphicsDevice() {
             delete m_ctx;
         }
+
         VertexBufferHandle GraphicsDevice::createVertexBuffer(mem::Block* _mem, const VertexDecl& _decl) {
             VertexBufferHandle handle{ VertexBufferCounter++ };
             VertexDeclHandle declhandle;
@@ -25,7 +26,7 @@ namespace moti {
         }
 
         void GraphicsDevice::setVertexBuffer(VertexBufferHandle _handle) {
-
+            
         }
 
     }
