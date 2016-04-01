@@ -23,7 +23,7 @@ namespace moti {
 
 			bool reallocate(Block& _block, uint32_t _bytes) override;
 
-            bool owns(const Block& _block) const override;
+            bool owns(const Block& _block) const;
 
             StackAllocator(const StackAllocator&) = delete;
             StackAllocator& operator=(const StackAllocator&) = delete;

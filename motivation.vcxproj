@@ -158,6 +158,8 @@
     <ClInclude Include="include\moti\macros.h" />
     <ClInclude Include="include\moti\memory\allocator.h" />
     <ClInclude Include="include\moti\memory\block.h" />
+    <ClInclude Include="include\moti\memory\mallocator.h" />
+    <ClInclude Include="include\moti\memory\scratch_allocator.h" />
     <ClInclude Include="include\moti\memory\stack_allocator.h" />
     <ClInclude Include="include\moti\moti.h" />
     <ClInclude Include="include\moti\platform.h" />

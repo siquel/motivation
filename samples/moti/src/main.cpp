@@ -6,7 +6,7 @@
 #include "app.h"
 #include "moti/renderer/graphics_device.h"
 #include "moti/core/string/dynamic_string.h"
-
+#include "moti/memory/scratch_allocator.h"
 namespace mem = moti::memory;
 namespace mg = moti::graphics;
 
@@ -33,14 +33,17 @@ struct POD {
 
 int main(int argc, char** argv) {
     const size_t size = sizeof(s_vertices);
+    const size_t gg = sizeof(POD) * 2;
+    mem::StackAllocator<gg> test_alloc;
+    mem::ScratchAllocator allocator(test_alloc, gg);
+    mem::Block block = allocator.allocate(sizeof(POD));
+    mem::Block block2 = allocator.allocate(sizeof(POD));
+    POD* pod1 = new (block.m_ptr)POD;
+    POD* pod2 = new (block2.m_ptr)POD;
+    pod1->top = 1337; pod1->kek = 80085;
+    pod2->top = 7331; pod2->kek = 58008;
     
-    mem::StackAllocator<size> string_alloc;
-    moti::DynamicString str("top", string_alloc);
-    moti::DynamicString str2("topkek", string_alloc);
-    str = "topkek";
-    
-    MOTI_ASSERT(!strncmp("topkek", str.c_str(), 7u), "topkek != topkek");
-    MOTI_ASSERT(str == str2, "strings arent the same");
+    allocator.deallocate(block2);
 
     mem::StackAllocator<size> alloc;
     mem::Block memory = alloc.allocate(size);

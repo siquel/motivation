@@ -1,6 +1,7 @@
 #pragma once
 
 #include "moti/memory/allocator.h"
+#include <type_traits>
 
 namespace moti {
     template <typename T>
@@ -47,11 +48,14 @@ namespace moti {
 namespace moti {
     template <typename T>
     inline Array<T>::Array(memory::Allocator& _alloc) 
-        : m_allocator(&_alloc), m_capacity(0u), m_size(0u) {}
+        : m_allocator(&_alloc), m_capacity(0u), m_size(0u) {
+        static_assert(std::is_pod<T>::value, "T must be POD type");
+    }
 
     template <typename T>
     inline Array<T>::Array(memory::Allocator& _alloc, uint32_t _capacity)
         : m_allocator(&_alloc), m_capacity(0u), m_size(0u) {
+        static_assert(std::is_pod<T>::value, "T must be POD type");
         resize(_capacity);
     }
 
