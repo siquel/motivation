@@ -35,9 +35,12 @@ int main(int argc, char** argv) {
     const size_t size = sizeof(s_vertices);
     
     mem::StackAllocator<size> string_alloc;
-    moti::DynamicString str("topkek", string_alloc);
-
-    MOTI_ASSERT(strncmp(str.c_str(), "topkek", 7u) == 0, "topkek != topkek");
+    moti::DynamicString str("top", string_alloc);
+    moti::DynamicString str2("topkek", string_alloc);
+    str = "topkek";
+    
+    MOTI_ASSERT(!strncmp("topkek", str.c_str(), 7u), "topkek != topkek");
+    MOTI_ASSERT(str == str2, "strings arent the same");
 
     mem::StackAllocator<size> alloc;
     mem::Block memory = alloc.allocate(size);

@@ -78,9 +78,6 @@
     <ClInclude Include="include\moti\core\string\fixed_string.h">
       <Filter>Header Files\core\string</Filter>
     </ClInclude>
-    <ClInclude Include="include\moti\core\string\string_util.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\moti\core\container\array.h">
       <Filter>Header Files\container</Filter>
     </ClInclude>
@@ -88,7 +85,10 @@
       <Filter>Header Files\memory</Filter>
     </ClInclude>
     <ClInclude Include="include\moti\core\string\dynamic_string.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\core\string</Filter>
+    </ClInclude>
+    <ClInclude Include="include\moti\core\string\string_util.h">
+      <Filter>Header Files\core\string</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -24,6 +24,8 @@ namespace moti {
         uint32_t push_back(const T& _item);
         uint32_t pop_back();
 
+        void clear();
+
         uint32_t push(const T* _items, uint32_t count);
 
         T* begin();
@@ -83,6 +85,11 @@ namespace moti {
         return *reinterpret_cast<T*>(
             static_cast<char*>(m_data.m_ptr) + _index * sizeof(T)
         );
+    }
+
+    template <typename T>
+    void Array<T>::clear() {
+        m_size = 0;
     }
 
     template <typename T>
