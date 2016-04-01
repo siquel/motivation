@@ -39,7 +39,6 @@ void f(const moti::Array<POD>& a) {
 }
 
 int main(int argc, char** argv) {
-    MOTI_TRACE("sdffsdsdf %d", 44);
     const size_t size = sizeof(s_vertices);
     
     mem::StackAllocator<size> array_alloc;
@@ -47,6 +46,7 @@ int main(int argc, char** argv) {
     moti::Array<POD> arr(array_alloc, 2);
     arr.push_back({ 1337, 715517 });
     arr.push_back({ 80085, 5555 });
+    arr.push_back({ 80085, 2225555 });
     f(arr);
     mem::StackAllocator<size> alloc;
     mem::Block memory = alloc.allocate(size);

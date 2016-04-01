@@ -22,6 +22,7 @@ namespace moti {
         void resize(uint32_t _size);
         void reserve(uint32_t _capacity);
         uint32_t push_back(const T& _item);
+        uint32_t pop_back();
 
         T* begin();
         const T* begin() const;
@@ -34,6 +35,8 @@ namespace moti {
 
         T& back();
         const T& back() const;
+
+        
     };
 }
 
@@ -60,6 +63,7 @@ namespace moti {
 
     template <typename T>
     inline const T& Array<T>::operator[](uint32_t _index) const {
+        MOTI_ASSERT(_index < m_size, "Index out of bounds");
         return *reinterpret_cast<T*>(
             static_cast<char*>(m_data.m_ptr) + _index * sizeof(T)
         );
@@ -114,6 +118,11 @@ namespace moti {
         return m_size++;
     }
 
+    template <typename T>
+    inline uint32_t Array<T>::pop_back() {
+        MOTI_ASSERT(m_size > 0, "Array is empty");
+        --m_size;
+    }
 
     template <typename T>
     inline T* Array<T>::begin() {
@@ -145,6 +154,7 @@ namespace moti {
 
     template <typename T>
     inline T& Array<T>::front() {
+        MOTI_ASSERT(m_size > 0, "The array is empty");
         return *reinterpret_cast<T*>(
             m_data.m_ptr
         );
@@ -152,6 +162,7 @@ namespace moti {
 
     template <typename T>
     inline const T& Array<T>::front() const {
+        MOTI_ASSERT(m_size > 0, "The array is empty");
         return *reinterpret_cast<const T*>(
             m_data.m_ptr
         );
@@ -159,6 +170,7 @@ namespace moti {
 
     template <typename T>
     inline T& Array<T>::back() {
+        MOTI_ASSERT(m_size > 0, "The array is empty");
         return *reinterpret_cast<T*>(
             static_cast<char*>(m_data.m_ptr) + (m_size - 1) * sizeof(T)
         );
@@ -166,6 +178,7 @@ namespace moti {
 
     template <typename T>
     inline const T& Array<T>::back() const {
+        MOTI_ASSERT(m_size > 0, "The array is empty");
         return *reinterpret_cast<const T*>(
             static_cast<char*>(m_data.m_ptr) + (m_size - 1) * sizeof(T)
         );

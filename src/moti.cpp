@@ -22,6 +22,14 @@ namespace moti {
         debugOutput(out);
     }
 
+    void abort(const char* path, uint16_t line, const char* fmt, ...) {
+        va_list args;
+        va_start(args, fmt);
+        vprintf(fmt, args);
+        va_end(args);
+       
+    }
+
     void fatal(const char* format, ...) {
         moti::debugBreak();
     }

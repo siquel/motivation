@@ -10,6 +10,7 @@ namespace moti {
 
     int32_t vsnprintf(char* _str, size_t _count, const char* _format, va_list _argList);
     void trace(const char* path, uint16_t line, const char* fmt, ...);
+    void abort(const char* path, uint16_t line, const char* fmt, ...);
     void fatal(const char* format, ...);
 
 #if _DEBUG
@@ -17,13 +18,14 @@ namespace moti {
 #define MOTI_TRACE _MOTI_TRACE
 
 
-#define MOTI_ASSERT(cond, fmt, ...)                                   \
-        for(;;) {                                                     \
-            if (!(cond)) {                                            \
-                MOTI_TRACE(fmt, ##__VA_ARGS__);                       \
-                moti::fatal(fmt, ##__VA_ARGS__);                      \
-            }                                                         \
-        break;}                                                       
+#define MOTI_ASSERT(cond, msg, ...)                                                                                       \
+        do {                                                                                                              \
+            if (!(cond)) {                                                                                                \
+                MOTI_TRACE(msg, ##__VA_ARGS__);                                                                           \
+                moti::abort(__FILE__, uint16_t(__LINE__), "\nAssertion failed: %s\n\t  " msg "\n", #cond, ##__VA_ARGS__);  \
+                assert(0 && #cond);                                                                                                \
+            }                                                                                                             \
+        } while(0)
 
 }
 #endif

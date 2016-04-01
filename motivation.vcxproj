@@ -151,6 +151,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\moti\core\container\array.h" />
+    <ClInclude Include="include\moti\core\string\dynamic_string.h" />
     <ClInclude Include="include\moti\core\string\fixed_string.h" />
     <ClInclude Include="include\moti\core\string\string_util.h" />
     <ClInclude Include="include\moti\debug.h" />
