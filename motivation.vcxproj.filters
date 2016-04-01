@@ -87,6 +87,9 @@
     <ClInclude Include="include\moti\memory\allocator.h">
       <Filter>Header Files\memory</Filter>
     </ClInclude>
+    <ClInclude Include="include\moti\core\string\dynamic_string.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\memory\block.cpp">
