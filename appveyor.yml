@@ -6,8 +6,8 @@ platform:
   - x64
 
 configuration:
-  - debug
-  - release
+  - Debug
+  - Release
 
 build:
   project: motivation.sln
