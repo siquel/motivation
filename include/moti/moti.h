@@ -12,6 +12,7 @@ namespace moti {
     void trace(const char* path, uint16_t line, const char* fmt, ...);
     void abort(const char* path, uint16_t line, const char* fmt, ...);
     void fatal(const char* format, ...);
+}
 
 #if _DEBUG
 #define _MOTI_TRACE(fmt, ...) for (;;) { moti::trace(__FILE__, uint16_t(__LINE__), fmt "\n", ##__VA_ARGS__); break;}
@@ -22,12 +23,10 @@ namespace moti {
         do {                                                                                                              \
             if (!(cond)) {                                                                                                \
                 MOTI_TRACE(msg, ##__VA_ARGS__);                                                                           \
-                moti::abort(__FILE__, uint16_t(__LINE__), "\nAssertion failed: %s\n\t  " msg "\n", #cond, ##__VA_ARGS__);  \
-                assert(0 && #cond);                                                                                                \
+                moti::abort(__FILE__, uint16_t(__LINE__), "\nAssertion failed: %s\n\t  " msg "\n", #cond, ##__VA_ARGS__); \
+                assert(0 && #cond);                                                                                       \
             }                                                                                                             \
         } while(0)
-
-}
 #endif
 
 #define MOTI_NOOP(...) for(;;) { break; }
