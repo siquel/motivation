@@ -5,7 +5,7 @@
 #include "moti/renderer/gl_context.h"
 #include "app.h"
 #include "moti/renderer/graphics_device.h"
-#include "moti/core/container/array.h"
+#include "moti/core/string/dynamic_string.h"
 
 namespace mem = moti::memory;
 namespace mg = moti::graphics;
@@ -31,23 +31,14 @@ struct POD {
     uint32_t kek;
 };
 
-void f(const moti::Array<POD>& a) {
-    auto b = a.front();
-    auto c = a.end();
-    auto d = a.begin();
-    auto h = a.back();
-}
-
 int main(int argc, char** argv) {
     const size_t size = sizeof(s_vertices);
     
-    mem::StackAllocator<size> array_alloc;
+    mem::StackAllocator<size> string_alloc;
+    moti::DynamicString str("topkek", string_alloc);
 
-    moti::Array<POD> arr(array_alloc, 2);
-    arr.push_back({ 1337, 715517 });
-    arr.push_back({ 80085, 5555 });
-    arr.push_back({ 80085, 2225555 });
-    f(arr);
+    MOTI_ASSERT(strncmp(str.c_str(), "topkek", 7u) == 0, "topkek != topkek");
+
     mem::StackAllocator<size> alloc;
     mem::Block memory = alloc.allocate(size);
     std::memcpy(memory.m_ptr, s_vertices, size);

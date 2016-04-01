@@ -16,13 +16,15 @@ namespace moti {
         T& operator[](uint32_t _index);
         const T& operator[](uint32_t index) const;
 
-        Array<T>(const Array<T>& _other) = delete;
-        Array<T>& operator=(const Array<T>& _other) = delete;
+        Array<T>(const Array<T>& _other);
+        Array<T>& operator=(const Array<T>& _other);
 
         void resize(uint32_t _size);
         void reserve(uint32_t _capacity);
         uint32_t push_back(const T& _item);
         uint32_t pop_back();
+
+        uint32_t push(const T* _items, uint32_t count);
 
         T* begin();
         const T* begin() const;
@@ -48,7 +50,21 @@ namespace moti {
     template <typename T>
     inline Array<T>::Array(memory::Allocator& _alloc, uint32_t _capacity)
         : m_allocator(&_alloc), m_capacity(0u), m_size(0u) {
-        reserve(_capacity);
+        resize(_capacity);
+    }
+
+    template <typename T>
+    inline Array<T>::Array(const Array<T>& _other)
+        : m_allocator(_other.m_allocator), m_capacity(0u), m_size(0u) {
+        resize(_other.m_size);
+        memcpy(m_data.m_ptr, _other.m_data.m_ptr, sizeof(T) * _other.m_size);
+    }
+
+    template <typename T>
+    inline Array<T>& Array<T>::operator=(const Array<T>& _other) {
+        resize(_other.m_size);
+        memcpy(m_data.m_ptr, _other.m_data.m_ptr, sizeof(T) * _other.m_size);
+        return *this;
     }
 
     template <typename T>
@@ -119,9 +135,19 @@ namespace moti {
     }
 
     template <typename T>
+    inline uint32_t Array<T>::push(const T* _items, uint32_t _count) {
+        if (m_capacity <= m_size + _count) {
+            grow(*this, _count + m_size);
+        }
+        memcpy(begin() + m_size, _items, sizeof(T) * _count);
+        m_size += _count;
+        return m_size;
+    }
+
+    template <typename T>
     inline uint32_t Array<T>::pop_back() {
         MOTI_ASSERT(m_size > 0, "Array is empty");
-        --m_size;
+        return --m_size;
     }
 
     template <typename T>
