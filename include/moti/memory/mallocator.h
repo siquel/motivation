@@ -19,7 +19,7 @@ namespace moti {
     namespace memory {
         Block Mallocator::allocate(uint32_t _bytes) {
             Block result;
-            if (_bytes == 0) return;
+            if (_bytes == 0) return result;
 
             void* p = ::malloc(_bytes);
             if (p != nullptr) {
