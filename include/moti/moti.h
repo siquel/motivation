@@ -2,6 +2,7 @@
 
 #include "macros.h"
 #include "platform.h"
+#include <assert.h>
 #include <stdint.h>
 namespace moti {
     // http://cnicholson.net/2011/01/stupid-c-tricks-a-better-sizeof_array/

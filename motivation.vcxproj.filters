@@ -90,11 +90,14 @@
     <ClInclude Include="include\moti\core\string\string_util.h">
       <Filter>Header Files\core\string</Filter>
     </ClInclude>
-    <ClInclude Include="include\moti\memory\mallocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\moti\memory\linear_allocator.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\moti\memory\memory.h">
+      <Filter>Header Files\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\moti\memory\mallocator.h">
+      <Filter>Header Files\memory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -112,6 +115,15 @@
     </ClCompile>
     <ClCompile Include="src\renderer\renderer_gl.cpp">
       <Filter>Source Files\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\memory\memory.cpp">
+      <Filter>Source Files\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\memory\linear_allocator.cpp">
+      <Filter>Source Files\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\memory\mallocator.cpp">
+      <Filter>Source Files\memory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

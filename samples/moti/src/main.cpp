@@ -8,6 +8,7 @@
 #include "moti/core/string/dynamic_string.h"
 #include "moti/memory/mallocator.h"
 #include "moti/memory/linear_allocator.h"
+#include "moti/memory/memory.h"
 namespace mem = moti::memory;
 namespace mg = moti::graphics;
 
@@ -33,19 +34,9 @@ struct POD {
 };
 
 int main(int argc, char** argv) {
-    const size_t size = sizeof(s_vertices);
-    const size_t gg = sizeof(POD) * 2;
-    mem::StackAllocator<gg> test_alloc;
-    mem::Mallocator mallocator;
-    mem::LinearAllocator linear(mallocator, 1024*1024);
-    mem::Block block1(linear.allocate(sizeof(POD)));
-    mem::Block block2(linear.allocate(sizeof(POD)));
-    POD* pod1 = new (block1.m_ptr)POD;
-    POD* pod2 = new (block2.m_ptr)POD;
-    pod1->top = 1337; pod1->kek = 80085;
-    pod2->top = 7331; pod2->kek = 58008;
-    
-    
+    moti::memory_globals::init();
+
+    const size_t size = sizeof(s_vertices);  
 
     mem::StackAllocator<size> alloc;
     mem::Block memory = alloc.allocate(size);
@@ -77,6 +68,8 @@ int main(int argc, char** argv) {
 
     SDL_DestroyWindow(wnd);
     SDL_Quit();
+
+    moti::memory_globals::shutdown();
 
     return 0;
 }
