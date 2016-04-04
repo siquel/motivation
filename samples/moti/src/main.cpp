@@ -3,12 +3,13 @@
 #include <assert.h>
 #include <SDL/SDL.h>
 #include "moti/renderer/gl_context.h"
-#include "app.h"
 #include "moti/renderer/graphics_device.h"
 #include "moti/core/string/dynamic_string.h"
 #include "moti/memory/mallocator.h"
 #include "moti/memory/linear_allocator.h"
 #include "moti/memory/memory.h"
+#include "moti/io/io.h"
+
 namespace mem = moti::memory;
 namespace mg = moti::graphics;
 

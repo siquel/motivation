@@ -40,6 +40,9 @@
     <Filter Include="Header Files\container">
       <UniqueIdentifier>{c739b734-51cd-4245-bff6-b985e1a6fb1c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\io">
+      <UniqueIdentifier>{35e0d585-7876-49b6-9691-d1e000d844b0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\moti\macros.h">
@@ -98,6 +101,9 @@
     </ClInclude>
     <ClInclude Include="include\moti\memory\mallocator.h">
       <Filter>Header Files\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\moti\io\io.h">
+      <Filter>Header Files\io</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
