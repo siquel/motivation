@@ -28,9 +28,38 @@ namespace moti {
 
     inline Seeker::~Seeker() {}
 
+    struct __declspec(novtable) Closer {
+        virtual ~Closer() = 0;
+        virtual void close() = 0;
+    };
+
+    inline Closer::~Closer() {}
+
+    struct __declspec(novtable) ReaderOpener {
+        virtual ~ReaderOpener() = 0;
+        virtual bool open(const char* _filePath) = 0;
+    };
+
+    inline ReaderOpener::~ReaderOpener() {}
+
+    struct __declspec(novtable) WriterOpener {
+        virtual ~WriterOpener() = 0;
+        virtual bool open(const char* _filePath, bool append) = 0;
+    };
+
+    inline WriterOpener::~WriterOpener() {}
+
     inline int32_t read(Reader* _reader, void* _data, int32_t _size) {
         return _reader->read(_data, _size);
     }
+
+    struct __declspec(novtable) FileReader : public Seeker, public ReaderOpener, public Closer {
+
+    };
+
+    struct __declspec(novtable) FileReader : public Seeker, public WriterOpener, public Closer {
+
+    };
 
     template <typename T>
     inline int32_t read(Reader* _reader, T& _value, int32_t _size) {
@@ -58,4 +87,8 @@ namespace moti {
         _seeker->seek(current, Whence::Begin);
         return size;
     }
+
+
+
+
 }
