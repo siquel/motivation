@@ -49,10 +49,6 @@ namespace moti {
 
     inline WriterOpener::~WriterOpener() {}
 
-    inline int32_t read(Reader* _reader, void* _data, int32_t _size) {
-        return _reader->read(_data, _size);
-    }
-
     struct __declspec(novtable) ReaderSeeker : public Reader, public Seeker{
 
     };
@@ -68,6 +64,10 @@ namespace moti {
     struct __declspec(novtable) FileWriter : public WriterSeeker, public WriterOpener, public Closer {
 
     };
+
+    inline int32_t read(Reader* _reader, void* _data, int32_t _size) {
+        return _reader->read(_data, _size);
+    }
 
     template <typename T>
     inline int32_t read(Reader* _reader, T& _value, int32_t _size) {
@@ -96,7 +96,48 @@ namespace moti {
         return size;
     }
 
+    class MemoryReader : public ReaderSeeker {
+    private:
+        const uint8_t* m_data;
+        int64_t m_pos;
+        int64_t m_size;
+    public:
+        MemoryReader(const void* _data, uint32_t _size)
+            : m_data(static_cast<const uint8_t*>(_data)), m_pos(0), m_size(0) {}
+        virtual ~MemoryReader() {}
 
+        virtual int64_t seek(int64_t _offset, Whence::Enum _whence) override {
+            switch (_whence) {
+            case Whence::Begin:
+            case Whence::Current:
+            case Whence::End: break;
+            }
+            return 0;
+        }
 
+        virtual int32_t read(void* _data, int32_t _size) override {
+            return 0;
+        }
 
+        const uint8_t* getPointer() const { return &m_data[m_pos]; }
+        int64_t position() const { return m_pos; }
+        int64_t remaining() const { return m_size - m_pos; }
+    };
+    
+    class MemoryWriter : public WriterSeeker {
+    public:
+        virtual ~MemoryWriter() {}
+        virtual int64_t seek(int64_t _offset = 0, Whence::Enum _whence = Whence::Current) override {
+            switch (_whence) {
+            case Whence::Begin:
+            case Whence::Current:
+            case Whence::End: break;
+            }
+            return 0;
+        }
+
+        virtual int32_t write(const void* _data, int32_t _size) override {
+            return 0;
+        }
+    };
 }
