@@ -32,6 +32,7 @@ namespace moti {
 
 		struct VertexDecl {
 			uint16_t m_stride;
+            uint16_t m_offset[Attribute::Count];
             uint8_t m_count[Attribute::Count];
             AttributeType::Enum m_type[Attribute::Count];
             bool m_attributes[Attribute::Count];
@@ -48,10 +49,12 @@ namespace moti {
                 memset(&m_count, 0, sizeof(m_count));
                 memset(&m_normalized, 0, sizeof(m_normalized));
                 memset(&m_type, 0, sizeof(m_type));
+                memset(&m_offset, 0, sizeof(m_offset));
                 return *this;
             }
 
             VertexDecl& add(Attribute::Enum _attribute, uint8_t _count, AttributeType::Enum _type, bool _normalized) {
+                m_offset[_attribute] = m_stride;
                 m_stride += AttributeSizeGL[_type][_count - 1];
                 m_attributes[_attribute] = true;
                 m_count[_attribute] = _count;
