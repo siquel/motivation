@@ -53,11 +53,19 @@ namespace moti {
         return _reader->read(_data, _size);
     }
 
-    struct __declspec(novtable) FileReader : public Seeker, public ReaderOpener, public Closer {
+    struct __declspec(novtable) ReaderSeeker : public Reader, public Seeker{
 
     };
 
-    struct __declspec(novtable) FileReader : public Seeker, public WriterOpener, public Closer {
+    struct __declspec(novtable) WriterSeeker : public Writer, public Seeker {
+
+    };
+
+    struct __declspec(novtable) FileReader : public ReaderSeeker, public ReaderOpener, public Closer {
+
+    };
+
+    struct __declspec(novtable) FileWriter : public WriterSeeker, public WriterOpener, public Closer {
 
     };
 
