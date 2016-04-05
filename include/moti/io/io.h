@@ -1,5 +1,7 @@
 #pragma once
 #include <stdint.h>
+#include <algorithm>
+#include "moti/memory/allocator.h"
 
 namespace moti {
     struct Whence {
@@ -103,7 +105,7 @@ namespace moti {
         int64_t m_size;
     public:
         MemoryReader(const void* _data, uint32_t _size)
-            : m_data(static_cast<const uint8_t*>(_data)), m_pos(0), m_size(0) {}
+            : m_data(static_cast<const uint8_t*>(_data)), m_pos(0), m_size(_size) {}
         virtual ~MemoryReader() {}
 
         virtual int64_t seek(int64_t _offset, Whence::Enum _whence) override {
@@ -112,11 +114,18 @@ namespace moti {
             case Whence::Current: m_pos = (m_pos + _offset) > m_size ? m_size : m_pos + _offset; break;
             case Whence::End: m_pos = (m_size - _offset) < 0 ? 0 : m_pos - _offset; break;
             }
-            return 0;
+            return m_pos;
         }
 
         virtual int32_t read(void* _data, int32_t _size) override {
-            return 0;
+            int64_t remainder = m_size - m_pos;
+            int32_t size = std::min(_size, int32_t(remainder > INT32_MAX ? INT32_MAX : remainder));
+            memcpy(_data, &m_data[m_pos], size);
+            m_pos += size;
+            if (size != _size) {
+                MOTI_ASSERT(0, "read truncated");
+            }
+            return size;
         }
 
         const uint8_t* getPointer() const { return &m_data[m_pos]; }
@@ -142,7 +151,7 @@ namespace moti {
             case Whence::Current: m_pos = (m_pos + _offset) > m_size ? m_size : m_pos + _offset; break;
             case Whence::End: m_pos = (m_size - _offset) < 0 ? 0 : m_pos - _offset; break;
             }
-            return 0;
+            return m_pos;
         }
 
         virtual int32_t write(const void* _data, int32_t _size) override {

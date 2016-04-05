@@ -1,5 +1,6 @@
 #include "moti/renderer/renderer_gl.h"
 #include "moti/memory/block.h"
+#include "moti/io/io.h"
 
 namespace moti {
 	namespace graphics {
@@ -23,7 +24,40 @@ namespace moti {
             }
 
             void RendererContextGL::createShader(ShaderHandle _handle, mem::Block* _mem) {
+                moti::MemoryReader reader(_mem->m_ptr, _mem->m_length);
+                uint32_t magic(0);
+                moti::read(&reader, magic);
 
+                GLenum type;
+                switch (magic) {
+                case MOTI_VERTEX_SHADER_MAGIC: type = GL_VERTEX_SHADER; break;
+                case MOTI_FRAGMENT_SHADER_MAGIC: type = GL_FRAGMENT_SHADER; break;
+                default:
+                    MOTI_ASSERT(0, "unkown shader format %x", magic);
+                    break;
+                }
+
+                int32_t shaderSize;
+                moti::read(&reader, shaderSize);
+
+                GLuint id = glCreateShader(type);
+                const char* src = reinterpret_cast<const char*>(reader.getPointer());
+
+                GL_CHECK(glShaderSource(id, 1, (const GLchar**)&src, NULL));
+                GL_CHECK(glCompileShader(id));
+
+                GLint compiled(0);
+                GL_CHECK(glGetShaderiv(id, GL_COMPILE_STATUS, &compiled));
+
+                if (compiled == 0) {
+                    GLsizei len;
+                    char log[1024];
+                    GL_CHECK(glGetShaderInfoLog(id, sizeof(log), &len, log));
+                    MOTI_TRACE("Failed to compile shader %d: %s", compiled, log);
+
+                    GL_CHECK(glDeleteShader(id));
+
+                }
             }
 
             void RendererContextGL::createProgram(ProgramHandle _handle, ShaderHandle _vertex, ShaderHandle _fragment) {

@@ -47,7 +47,7 @@ static const char* s_VertexShader = VERT_HEAD MOTI_TO_STRING(
         color = inColor;
         gl_Position = vec4(inPosition, 1.0);
     }
-);
+) "\0";
 
 static const char* s_FragmentShader = FRAG_HEAD MOTI_TO_STRING(
     in vec4 color;
@@ -55,7 +55,7 @@ static const char* s_FragmentShader = FRAG_HEAD MOTI_TO_STRING(
     void main() {
         outColor = color;
     }
-);
+)"\0";
 
 int main(int argc, char** argv) {
     
@@ -93,6 +93,7 @@ int main(int argc, char** argv) {
 
     magic = MOTI_FRAGMENT_SHADER_MAGIC;
     moti::MemoryWriter fshwriter(&fragmentShaderMem, &shaderAlloc);
+    moti::write<uint32_t>(&fshwriter, magic);
     len = static_cast<int32_t>(strlen(s_FragmentShader));
     moti::write(&fshwriter, len);
     moti::write(&fshwriter, (void*)s_FragmentShader, len);

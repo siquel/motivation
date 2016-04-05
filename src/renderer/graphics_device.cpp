@@ -30,7 +30,9 @@ namespace moti {
         }
 
         ShaderHandle GraphicsDevice::createShader(mem::Block* _mem) {
-            return ShaderHandle{ UINT16_MAX };
+            ShaderHandle handle{ UINT16_MAX };
+            m_ctx->createShader(handle, _mem);
+            return handle;
         }
 
         ProgramHandle GraphicsDevice::createProgram(ShaderHandle _vertex, ShaderHandle _fragment) {
