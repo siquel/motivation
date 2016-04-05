@@ -73,15 +73,17 @@ namespace moti {
 		};
 
         struct ShaderHandle {
-            uint16_t id;
+            uint16_t m_id;
         };
 
         struct ProgramHandle {
-            uint16_t id;
+            uint16_t m_id;
         };
 
 		inline bool isValid(VertexBufferHandle _h) { return _h.m_id != UINT16_MAX; }
 		inline bool isValid(VertexDeclHandle _h) { return _h.m_id != UINT16_MAX; }
+        inline bool isValid(ShaderHandle _h) { return _h.m_id != UINT16_MAX; }
+        inline bool isValid(ProgramHandle _h) { return _h.m_id != UINT16_MAX; }
 
 		struct RendererContext {
 			virtual ~RendererContext() = 0;

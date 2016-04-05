@@ -47,7 +47,7 @@ static const char* s_VertexShader = VERT_HEAD MOTI_TO_STRING(
         color = inColor;
         gl_Position = vec4(inPosition, 1.0);
     }
-) "\0";
+);
 
 static const char* s_FragmentShader = FRAG_HEAD MOTI_TO_STRING(
     in vec4 color;
@@ -55,7 +55,7 @@ static const char* s_FragmentShader = FRAG_HEAD MOTI_TO_STRING(
     void main() {
         outColor = color;
     }
-)"\0";
+);
 
 int main(int argc, char** argv) {
     
@@ -103,22 +103,6 @@ int main(int argc, char** argv) {
     mg::ShaderHandle fsh = device.createShader(&fragmentShaderMem);
     mg::ProgramHandle p = device.createProgram(vsh, fsh);
 
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &s_VertexShader, NULL);
-    glCompileShader(vertexShader);
-
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &s_FragmentShader, NULL);
-    glCompileShader(fragmentShader);
-
-    GLuint program = glCreateProgram();
-    glAttachShader(program, vertexShader);
-    glAttachShader(program, fragmentShader);
-    glLinkProgram(program);
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
     GLuint VAO;
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -147,14 +131,16 @@ int main(int argc, char** argv) {
         if (e.type == SDL_QUIT) break;
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        glUseProgram(program);
+        glUseProgram(3);
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glUseProgram(0);
         glBindVertexArray(0);
         SDL_GL_SwapWindow(wnd);
     }
+
+    //device.destroyShader(vsh);
+    //device.destroyShader(fsh);
 
     SDL_DestroyWindow(wnd);
     SDL_Quit();

@@ -16,6 +16,8 @@
 #endif
 
 #define MAX_VERTEX_BUFFERS 4 << 10
+#define MAX_SHADERS        512
+#define MAX_PROGRAMS       128
 
 namespace moti {
 	namespace graphics {
@@ -32,8 +34,22 @@ namespace moti {
 				void create(uint32_t _size, void* _data, VertexDeclHandle _handle);
 			};
 
+            struct GLShader {
+                GLuint m_id;
+                GLenum m_type;
+
+                void create(mem::Block* _mem);
+            };
+
+            struct GLProgram {
+                GLuint m_id;
+                void create(const GLShader& _vsh, const GLShader& _fsh);
+            };
+
 			struct RendererContextGL : public graphics::RendererContext {
 				GLVertexBuffer m_vertexBuffers[MAX_VERTEX_BUFFERS];
+                GLShader m_shaders[MAX_SHADERS];
+                GLProgram m_programs[MAX_PROGRAMS];
 
 				RendererContextGL();
 				~RendererContextGL() override;

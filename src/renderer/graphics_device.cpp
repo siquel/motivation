@@ -1,11 +1,13 @@
 #include "moti/renderer/graphics_device.h"
 #include "moti/renderer/renderer_gl.h"
+#include "moti/io/io.h"
 
 namespace moti {
     namespace graphics {
 
         static uint16_t VertexBufferCounter = 0;
-
+        static uint16_t ShaderCounter = 0;
+        static uint16_t ProgramCounter = 0;
         GraphicsDevice::GraphicsDevice()
             : m_ctx(new gl::RendererContextGL) {
 
@@ -30,13 +32,26 @@ namespace moti {
         }
 
         ShaderHandle GraphicsDevice::createShader(mem::Block* _mem) {
-            ShaderHandle handle{ UINT16_MAX };
+            uint32_t magic = 0;
+            moti::MemoryReader reader(_mem->m_ptr, _mem->m_length);
+            moti::read(&reader, magic);
+
+            if (magic != MOTI_FRAGMENT_SHADER_MAGIC && magic != MOTI_VERTEX_SHADER_MAGIC) {
+                return ShaderHandle{ UINT16_MAX };
+            }
+            ShaderHandle handle{ ShaderCounter++ };
             m_ctx->createShader(handle, _mem);
             return handle;
         }
 
         ProgramHandle GraphicsDevice::createProgram(ShaderHandle _vertex, ShaderHandle _fragment) {
-            return ProgramHandle{ UINT16_MAX };
+            if (!isValid(_vertex) || !isValid(_fragment)) {
+                MOTI_TRACE("Invalid vertex / fragment shaders: vsh: %d, fsh: %d", _vertex.m_id, _fragment.m_id);
+                return ProgramHandle{ UINT16_MAX };
+            }
+            ProgramHandle handle = ProgramHandle{ ProgramCounter++ };
+            m_ctx->createProgram(handle, _vertex, _fragment);
+            return handle;
         }
 
     }
