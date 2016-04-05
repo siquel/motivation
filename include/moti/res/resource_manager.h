@@ -4,7 +4,7 @@
 
 namespace moti {
     namespace res {
-        class ResourceManager {
+        struct ResourceManager {
             
         };
     }

@@ -57,8 +57,8 @@ static const char* s_FragmentShader = FRAG_HEAD MOTI_TO_STRING(
     }
 );
 
-
 int main(int argc, char** argv) {
+    
     moti::memory_globals::init();
 
     const size_t size = sizeof(s_vertices);  
@@ -79,6 +79,14 @@ int main(int argc, char** argv) {
 
     mg::GraphicsDevice device;
 
+    moti::memory::StackAllocator<4096 * 2> shaderAlloc;
+    mem::Block vertexShaderMem;
+    mem::Block fragmentShaderMem;
+
+    moti::MemoryWriter writer(&vertexShaderMem, &shaderAlloc);
+    uint32_t magic = MOTI_VERTEX_SHADER_MAGIC;
+    moti::write<uint32_t>(&writer, magic);
+    moti::write(&writer, (void*)s_VertexShader, static_cast<int32_t>(strlen(s_VertexShader)));
 
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &s_VertexShader, NULL);

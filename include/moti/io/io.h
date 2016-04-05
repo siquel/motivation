@@ -70,17 +70,17 @@ namespace moti {
     }
 
     template <typename T>
-    inline int32_t read(Reader* _reader, T& _value, int32_t _size) {
+    inline int32_t read(Reader* _reader, T& _value) {
         static_assert(std::is_pod<T>::value, "T must be POD type");
         return _reader->read(&_value, sizeof(T));
     }
 
-    inline int32_t write(Writer* _writer, void* _data, int32_t size) {
+    inline int32_t write(Writer* _writer, const void* _data, int32_t size) {
         return _writer->write(_data, size);
     }
 
     template <typename T>
-    inline int32_t write(Writer* _writer, T& _value, int32_t size) {
+    inline int32_t write(Writer* _writer, T& _value) {
         static_assert(std::is_pod<T>::value, "T must be POD type");
         return _writer->write(&_value, sizeof(T));
     }
@@ -108,9 +108,9 @@ namespace moti {
 
         virtual int64_t seek(int64_t _offset, Whence::Enum _whence) override {
             switch (_whence) {
-            case Whence::Begin:
-            case Whence::Current:
-            case Whence::End: break;
+            case Whence::Begin: m_pos = _offset; break;
+            case Whence::Current: m_pos = (m_pos + _offset) > m_size ? m_size : m_pos + _offset; break;
+            case Whence::End: m_pos = (m_size - _offset) < 0 ? 0 : m_pos - _offset; break;
             }
             return 0;
         }
@@ -125,19 +125,44 @@ namespace moti {
     };
     
     class MemoryWriter : public WriterSeeker {
+    private:
+        memory::Block* m_data;
+        memory::Allocator* m_allocator;
+        int64_t m_pos;
+        int64_t m_top;
+        int64_t m_size;
     public:
+        MemoryWriter(memory::Block* _block, memory::Allocator* _allocator)
+            : m_data(_block), m_allocator(_allocator), m_pos(0), m_top(0), m_size(0) {}
+
         virtual ~MemoryWriter() {}
         virtual int64_t seek(int64_t _offset = 0, Whence::Enum _whence = Whence::Current) override {
             switch (_whence) {
-            case Whence::Begin:
-            case Whence::Current:
-            case Whence::End: break;
+            case Whence::Begin: m_pos = _offset; break;
+            case Whence::Current: m_pos = (m_pos + _offset) > m_size ? m_size : m_pos + _offset; break;
+            case Whence::End: m_pos = (m_size - _offset) < 0 ? 0 : m_pos - _offset; break;
             }
             return 0;
         }
 
         virtual int32_t write(const void* _data, int32_t _size) override {
-            return 0;
+            int32_t more = int32_t(m_pos - m_size) + _size;
+             // we need more memory
+            if (0 < more) {
+                more = (((more)+(0xfff)) & ((~0)&(~(0xfff))));
+                m_allocator->reallocate(*m_data, more);
+                m_size = m_data->m_length;
+            }
+
+            int64_t remainder = m_size - m_pos;
+            int32_t size = std::min(_size, int32_t(remainder > INT32_MAX ? INT32_MAX : remainder));
+            memcpy(&((uint8_t*)m_data->m_ptr)[m_pos], _data, size);
+            m_pos += size;
+            m_top = std::max(m_top, m_pos);
+            if (size != _size) {
+                MOTI_ASSERT(0, "write truncated");
+            }
+            return size;
         }
     };
 }

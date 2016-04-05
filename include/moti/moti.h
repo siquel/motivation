@@ -15,6 +15,11 @@ namespace moti {
     void fatal(const char* format, ...);
 }
 
+#define FOURCC(_a, _b, _c, _d) ( ( (uint32_t)(_a) | ( (uint32_t)(_b) << 8) | ( (uint32_t)(_c) << 16) | ( (uint32_t)(_d) << 24) ) )
+
+#define MOTI_VERTEX_SHADER_MAGIC   FOURCC('V', 'S', 'H', 0x0)
+#define MOTI_FRAGMENT_SHADER_MAGIC FOURCC('F', 'S', 'H', 0x1)
+
 #if _DEBUG
 #define _MOTI_TRACE(fmt, ...) for (;;) { moti::trace(__FILE__, uint16_t(__LINE__), fmt "\n", ##__VA_ARGS__); break;}
 #define MOTI_TRACE _MOTI_TRACE
