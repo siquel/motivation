@@ -29,5 +29,13 @@ namespace moti {
             m_ctx->setVertexBuffer(_handle);
         }
 
+        ShaderHandle GraphicsDevice::createShader(mem::Block* _mem) {
+            return ShaderHandle{ UINT16_MAX };
+        }
+
+        ProgramHandle GraphicsDevice::createProgram(ShaderHandle _vertex, ShaderHandle _fragment) {
+            return ProgramHandle{ UINT16_MAX };
+        }
+
     }
 }

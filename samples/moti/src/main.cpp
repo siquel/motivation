@@ -83,10 +83,24 @@ int main(int argc, char** argv) {
     mem::Block vertexShaderMem;
     mem::Block fragmentShaderMem;
 
-    moti::MemoryWriter writer(&vertexShaderMem, &shaderAlloc);
+    moti::MemoryWriter vshwriter(&vertexShaderMem, &shaderAlloc);
+
     uint32_t magic = MOTI_VERTEX_SHADER_MAGIC;
-    moti::write<uint32_t>(&writer, magic);
-    moti::write(&writer, (void*)s_VertexShader, static_cast<int32_t>(strlen(s_VertexShader)));
+    moti::write<uint32_t>(&vshwriter, magic);
+    int32_t len = static_cast<int32_t>(strlen(s_VertexShader));
+    moti::write(&vshwriter, len);
+    moti::write(&vshwriter, (void*)s_VertexShader, len);
+
+    magic = MOTI_FRAGMENT_SHADER_MAGIC;
+    moti::MemoryWriter fshwriter(&fragmentShaderMem, &shaderAlloc);
+    len = static_cast<int32_t>(strlen(s_FragmentShader));
+    moti::write(&fshwriter, len);
+    moti::write(&fshwriter, (void*)s_FragmentShader, len);
+
+
+    mg::ShaderHandle vsh = device.createShader(&vertexShaderMem);
+    mg::ShaderHandle fsh = device.createShader(&fragmentShaderMem);
+    mg::ProgramHandle p = device.createProgram(vsh, fsh);
 
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &s_VertexShader, NULL);

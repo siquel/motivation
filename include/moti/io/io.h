@@ -150,7 +150,7 @@ namespace moti {
              // we need more memory
             if (0 < more) {
                 more = (((more)+(0xfff)) & ((~0)&(~(0xfff))));
-                m_allocator->reallocate(*m_data, more);
+                MOTI_ASSERT(m_allocator->reallocate(*m_data, more), "Couldn't reallocate");
                 m_size = m_data->m_length;
             }
 
