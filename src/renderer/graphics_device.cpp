@@ -1,13 +1,14 @@
 #include "moti/renderer/graphics_device.h"
 #include "moti/renderer/renderer_gl.h"
 #include "moti/io/io.h"
-
+#include "moti/handle.h"
 namespace moti {
     namespace graphics {
 
-        static uint16_t VertexBufferCounter = 0;
-        static uint16_t ShaderCounter = 0;
-        static uint16_t ProgramCounter = 0;
+        HandleManager<4096> m_vertexBufferHandles;
+        HandleManager<128> m_shaderHandles;
+        HandleManager<128> m_programHandles;
+
         GraphicsDevice::GraphicsDevice()
             : m_ctx(new gl::RendererContextGL) {
 
@@ -17,13 +18,15 @@ namespace moti {
         }
 
         VertexBufferHandle GraphicsDevice::createVertexBuffer(mem::Block* _mem, const VertexDecl& _decl) {
-            VertexBufferHandle handle{ VertexBufferCounter++ };
-            VertexDeclHandle declhandle;
-            if (m_declLookup.find(_decl.id) == std::end(m_declLookup)) {
-                declhandle = { _decl.id };
-                m_declLookup[_decl.id] = _decl;
+            VertexBufferHandle handle{ m_vertexBufferHandles.create() };
+            if (isValid(handle)) {
+                VertexDeclHandle declhandle;
+                if (m_declLookup.find(_decl.id) == std::end(m_declLookup)) {
+                    declhandle = { _decl.id };
+                    m_declLookup[_decl.id] = _decl;
+                }
+                m_ctx->createVertexBuffer(handle, _mem, declhandle);
             }
-            m_ctx->createVertexBuffer(handle, _mem, declhandle);
             return handle;
         }
 
@@ -39,8 +42,10 @@ namespace moti {
             if (magic != MOTI_FRAGMENT_SHADER_MAGIC && magic != MOTI_VERTEX_SHADER_MAGIC) {
                 return ShaderHandle{ UINT16_MAX };
             }
-            ShaderHandle handle{ ShaderCounter++ };
-            m_ctx->createShader(handle, _mem);
+            ShaderHandle handle{ m_shaderHandles.create() };
+            if (isValid(handle)) {
+                m_ctx->createShader(handle, _mem);
+            }
             return handle;
         }
 
@@ -49,8 +54,10 @@ namespace moti {
                 MOTI_TRACE("Invalid vertex / fragment shaders: vsh: %d, fsh: %d", _vertex.m_id, _fragment.m_id);
                 return ProgramHandle{ UINT16_MAX };
             }
-            ProgramHandle handle = ProgramHandle{ ProgramCounter++ };
-            m_ctx->createProgram(handle, _vertex, _fragment);
+            ProgramHandle handle = ProgramHandle{ m_programHandles.create() };
+            if (isValid(handle)) {
+                m_ctx->createProgram(handle, _vertex, _fragment);
+            }
             return handle;
         }
 

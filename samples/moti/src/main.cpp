@@ -13,7 +13,6 @@
 namespace mem = moti::memory;
 namespace mg = moti::graphics;
 
-
 struct PosColorVertex {
     float m_x;
     float m_y;
@@ -29,10 +28,6 @@ static PosColorVertex s_vertices[3] = {
 
 mg::VertexDecl s_decl;
 
-struct POD {
-    uint32_t top;
-    uint32_t kek;
-};
 #define VERT_HEAD \
 "#version 440\n"
 #define FRAG_HEAD \
@@ -56,20 +51,13 @@ static const char* s_FragmentShader = FRAG_HEAD MOTI_TO_STRING(
         outColor = color;
     }
 );
+#include "moti/handle.h"
 
 int main(int argc, char** argv) {
     
     moti::memory_globals::init();
-
-    const size_t size = sizeof(s_vertices);  
-
-    mem::StackAllocator<size> alloc;
-    mem::Block memory = alloc.allocate(size);
-    std::memcpy(memory.m_ptr, s_vertices, size);
-
-    s_decl.begin()
-        .add(mg::Attribute::Position, 3, mg::AttributeType::Float, true)
-        .add(mg::Attribute::Color, 4, mg::AttributeType::Uint8, false);
+   
+    mem::StackAllocator<sizeof(s_vertices)> alloc;
 
     SDL_Init(SDL_INIT_VIDEO);
     moti::gl::GLContext context;
@@ -107,22 +95,28 @@ int main(int argc, char** argv) {
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
+    mem::Block memory = alloc.allocate(sizeof(s_vertices));
+    memcpy(memory.m_ptr, s_vertices, sizeof(s_vertices));
+
+    s_decl.begin()
+        .add(mg::Attribute::Position, 3, mg::AttributeType::Float, true)
+        .add(mg::Attribute::Color, 4, mg::AttributeType::Uint8, false);
+
     mg::VertexBufferHandle vbo = device.createVertexBuffer(&memory, s_decl);
     device.setVertexBuffer(vbo);
     for (auto i = 0, index = 0; i < mg::Attribute::Count; ++i) {
         if (s_decl.m_attributes[i]) {
             glVertexAttribPointer(
-                index++,
+                index,
                 s_decl.m_count[i],
                 (s_decl.m_type[i] == mg::AttributeType::Float) ? GL_FLOAT : GL_UNSIGNED_BYTE,
                 !s_decl.m_normalized[i], 
                 s_decl.m_stride,
                 (void*)(uintptr_t)s_decl.m_offset[i]
                 );
+            glEnableVertexAttribArray(index++);
         }
     }
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
 
     glBindVertexArray(0);
 

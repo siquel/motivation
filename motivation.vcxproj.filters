@@ -105,6 +105,9 @@
     <ClInclude Include="include\moti\io\io.h">
       <Filter>Header Files\io</Filter>
     </ClInclude>
+    <ClInclude Include="include\moti\handle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\memory\block.cpp">
