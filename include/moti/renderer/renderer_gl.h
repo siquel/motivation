@@ -39,11 +39,13 @@ namespace moti {
                 GLenum m_type;
 
                 void create(mem::Block* _mem);
+                void destroy();
             };
 
             struct GLProgram {
                 GLuint m_id;
                 void create(const GLShader& _vsh, const GLShader& _fsh);
+                void destroy();
             };
 
 			struct RendererContextGL : public graphics::RendererContext {
@@ -57,6 +59,9 @@ namespace moti {
                 virtual void setVertexBuffer(VertexBufferHandle _handle) override;
                 virtual void createShader(ShaderHandle _handle, mem::Block* _mem) override;
                 virtual void createProgram(ProgramHandle _handle, ShaderHandle _vertex, ShaderHandle _fragment) override;
+                virtual void destroyShader(ShaderHandle _handle) override;
+                virtual void destroyProgram(ProgramHandle _handle) override;
+                virtual void submit(ProgramHandle _handle) override;
 			};
 
 		}

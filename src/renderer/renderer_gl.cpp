@@ -33,6 +33,16 @@ namespace moti {
                 m_programs[_handle.m_id].create(vsh, fsh);
             }
 
+            void RendererContextGL::destroyShader(ShaderHandle _handle) {
+                m_shaders[_handle.m_id].destroy();
+            }
+
+            void RendererContextGL::destroyProgram(ProgramHandle _handle) {
+            }
+
+            void RendererContextGL::submit(ProgramHandle _handle) {
+            }
+
 			void GLVertexBuffer::create(uint32_t _size, void* _data, VertexDeclHandle _handle) {
 				m_size = _size;
 				m_decl = _handle;
@@ -80,6 +90,13 @@ namespace moti {
                 }
             }
 
+            void GLShader::destroy() {
+                if (m_id != 0) {
+                    GL_CHECK(glDeleteShader(m_id));
+                    m_id = 0;
+                }
+            }
+
             void GLProgram::create(const GLShader& _vsh, const GLShader& _fsh) {
                 m_id = glCreateProgram();
 
@@ -109,6 +126,14 @@ namespace moti {
                 }
 
                 // TODO bind attributes
+            }
+
+            void GLProgram::destroy() {
+                if (m_id != 0) {
+                    GL_CHECK(glUseProgram(0));
+                    GL_CHECK(glDeleteProgram(m_id));
+                    m_id = 0;
+                }
             }
 
         }

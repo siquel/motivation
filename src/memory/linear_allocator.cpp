@@ -18,7 +18,7 @@ namespace moti {
             Block result;
 
             static const uint32_t Align = 4;
-            uint32_t alignedLength = roundToAlignment(4, _bytes);
+            uint32_t alignedLength = roundToAlignment(Align, _bytes);
             // out of memory
             if (m_offset + alignedLength > m_size) return result;
 

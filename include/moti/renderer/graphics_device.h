@@ -16,6 +16,9 @@ namespace moti {
             void setVertexBuffer(VertexBufferHandle _handle);
             ShaderHandle createShader(mem::Block* _mem);
             ProgramHandle createProgram(ShaderHandle _vertex, ShaderHandle _fragment);
+
+            void destroyShader(ShaderHandle _handle);
+            void destroyProgram(ProgramHandle _handle);
 		};
 	}
 }

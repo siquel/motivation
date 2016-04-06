@@ -91,6 +91,9 @@ namespace moti {
             virtual void setVertexBuffer(VertexBufferHandle _handle) = 0;
             virtual void createShader(ShaderHandle _handle, mem::Block* _mem) = 0; 
             virtual void createProgram(ProgramHandle _handle, ShaderHandle _vertex, ShaderHandle _fragment) = 0;
+            virtual void destroyShader(ShaderHandle _handle) = 0;
+            virtual void destroyProgram(ProgramHandle _handle) = 0;
+            virtual void submit(ProgramHandle _handle) = 0;
 		};
 		inline RendererContext::~RendererContext() {}
 	}

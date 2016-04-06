@@ -133,9 +133,9 @@ int main(int argc, char** argv) {
         SDL_GL_SwapWindow(wnd);
     }
 
-    //device.destroyShader(vsh);
-    //device.destroyShader(fsh);
-
+    device.destroyShader(vsh);
+    device.destroyShader(fsh);
+    device.destroyProgram(p);
     SDL_DestroyWindow(wnd);
     SDL_Quit();
 

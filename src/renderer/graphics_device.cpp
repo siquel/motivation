@@ -1,3 +1,5 @@
+#include "..\..\include\moti\renderer\graphics_device.h"
+#include "..\..\include\moti\renderer\graphics_device.h"
 #include "moti/renderer/graphics_device.h"
 #include "moti/renderer/renderer_gl.h"
 #include "moti/io/io.h"
@@ -20,7 +22,7 @@ namespace moti {
         VertexBufferHandle GraphicsDevice::createVertexBuffer(mem::Block* _mem, const VertexDecl& _decl) {
             VertexBufferHandle handle{ m_vertexBufferHandles.create() };
             if (isValid(handle)) {
-                VertexDeclHandle declhandle;
+                VertexDeclHandle declhandle{ UINT16_MAX };
                 if (m_declLookup.find(_decl.id) == std::end(m_declLookup)) {
                     declhandle = { _decl.id };
                     m_declLookup[_decl.id] = _decl;
@@ -59,6 +61,18 @@ namespace moti {
                 m_ctx->createProgram(handle, _vertex, _fragment);
             }
             return handle;
+        }
+
+        void GraphicsDevice::destroyShader(ShaderHandle _handle) {
+            if (isValid(_handle)) {
+                m_ctx->destroyShader(_handle);
+            }
+        }
+
+        void GraphicsDevice::destroyProgram(ProgramHandle _handle) {
+            if (isValid(_handle)) {
+                m_ctx->destroyProgram(_handle);
+            }
         }
 
     }
