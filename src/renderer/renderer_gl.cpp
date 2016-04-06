@@ -38,6 +38,7 @@ namespace moti {
             }
 
             void RendererContextGL::destroyProgram(ProgramHandle _handle) {
+                m_programs[_handle.m_id].destroy();
             }
 
             void RendererContextGL::submit(ProgramHandle _handle) {
@@ -47,7 +48,7 @@ namespace moti {
 				m_size = _size;
 				m_decl = _handle;
 				GL_CHECK(glGenBuffers(1, &m_id));
-				assert(m_id != 0);
+				MOTI_ASSERT(m_id != 0, "Failed to create vertex buffer");
 				m_target = GL_ARRAY_BUFFER;
 				GL_CHECK(glBindBuffer(m_target, m_id));
 				GL_CHECK(glBufferData(m_target, m_size, _data, (_data == nullptr) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW));
