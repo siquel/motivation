@@ -42,6 +42,7 @@ namespace moti {
             }
 
             void RendererContextGL::submit(ProgramHandle _handle) {
+
             }
 
 			void GLVertexBuffer::create(uint32_t _size, void* _data, VertexDeclHandle _handle) {
@@ -126,7 +127,47 @@ namespace moti {
                     return;
                 }
 
-                // TODO bind attributes
+                GLint numActiveAttribs{ 0 };
+                GLint numActiveUniforms{ 0 };
+                
+                GL_CHECK(glGetProgramInterfaceiv(m_id, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &numActiveAttribs));
+                GL_CHECK(glGetProgramInterfaceiv(m_id, GL_UNIFORM, GL_ACTIVE_RESOURCES, &numActiveUniforms));
+                
+                GLint max0, max1;
+                GL_CHECK(glGetProgramiv(m_id, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &max0));
+                GL_CHECK(glGetProgramiv(m_id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &max1));
+                uint32_t nameMaxLength = std::max(max0, max1);
+                char* name = static_cast<char*>(alloca(nameMaxLength + 1));
+
+                MOTI_TRACE("Program %d", m_id);
+                MOTI_TRACE("Attribute count %d", numActiveAttribs);
+
+                for (int32_t i = 0; i < numActiveAttribs; ++i) {
+                    GLint size;
+                    GLenum type;
+                    glGetActiveAttrib(m_id, i, nameMaxLength + 1, nullptr, &size, &type, name);
+                    MOTI_TRACE("%s is at location %d", name, glGetAttribLocation(m_id, name));
+                }
+
+                MOTI_TRACE("Uniform count %d", numActiveUniforms);
+                static const char* s_attribNames[] = {
+                    "a_position",
+                    "a_color"
+                };
+                static_assert(MOTI_COUNTOF(s_attribNames) == Attribute::Count, "Invalid amount of attribute names");
+
+                memset(m_attributes, 0xff, sizeof(m_attributes));
+                uint32_t used(0);
+                for (uint8_t i = 0; i < Attribute::Count; ++i) {
+                    GLint loc = glGetAttribLocation(m_id, s_attribNames[i]);
+                    if (loc != -1) {
+                        MOTI_TRACE("attribute %s: %d", s_attribNames[i], loc);
+                        m_attributes[i] = loc;
+                        m_used[used++] = i;
+                    }
+                }
+                MOTI_ASSERT(used < MOTI_COUNTOF(m_used), "Out of bounds %d > array size %d", used, MOTI_COUNTOF(m_used));
+                m_used[used] = Attribute::Count;
             }
 
             void GLProgram::destroy() {

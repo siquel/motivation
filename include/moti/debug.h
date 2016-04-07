@@ -1,7 +1,7 @@
 #pragma once
 
 #include "moti/moti.h"
-
+#include <stdio.h>
 namespace moti {
     inline void debugBreak() {
 #if MOTI_COMPILER_MSVC
@@ -12,6 +12,7 @@ namespace moti {
     }
 
     inline void debugOutput(const char* _out) {
+        printf(_out);
 #if MOTI_PLATFORM_WINDOWS
         OutputDebugStringA(_out);
 #endif

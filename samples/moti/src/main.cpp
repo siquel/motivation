@@ -34,13 +34,13 @@ mg::VertexDecl s_decl;
 "#version 440\n"
 
 static const char* s_VertexShader = VERT_HEAD MOTI_TO_STRING(
-    layout(location = 0) in vec3 inPosition;
-    layout(location = 1) in vec4 inColor;
+    layout(location = 0) in vec3 a_position;
+    layout(location = 1) in vec4 a_color;
 
     out vec4 color;
     void main() {
-        color = inColor;
-        gl_Position = vec4(inPosition, 1.0);
+        color = a_color;
+        gl_Position = vec4(a_position, 1.0);
     }
 );
 

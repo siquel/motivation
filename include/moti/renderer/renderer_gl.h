@@ -44,6 +44,8 @@ namespace moti {
 
             struct GLProgram {
                 GLuint m_id;
+                uint8_t m_used[Attribute::Count + 1];
+                GLint m_attributes[Attribute::Count];
                 void create(const GLShader& _vsh, const GLShader& _fsh);
                 void destroy();
             };
