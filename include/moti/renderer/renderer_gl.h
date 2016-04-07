@@ -47,6 +47,7 @@ namespace moti {
                 uint8_t m_used[Attribute::Count + 1];
                 GLint m_attributes[Attribute::Count];
                 void create(const GLShader& _vsh, const GLShader& _fsh);
+                void bindAttributes(const VertexDecl& _decl);
                 void destroy();
             };
 
@@ -54,6 +55,8 @@ namespace moti {
 				GLVertexBuffer m_vertexBuffers[MAX_VERTEX_BUFFERS];
                 GLShader m_shaders[MAX_SHADERS];
                 GLProgram m_programs[MAX_PROGRAMS];
+                GLuint m_vaos[MAX_PROGRAMS];
+                VertexDecl m_vertexDecls[MAX_VERTEX_BUFFERS];
 
 				RendererContextGL();
 				~RendererContextGL() override;
@@ -63,7 +66,8 @@ namespace moti {
                 virtual void createProgram(ProgramHandle _handle, ShaderHandle _vertex, ShaderHandle _fragment) override;
                 virtual void destroyShader(ShaderHandle _handle) override;
                 virtual void destroyProgram(ProgramHandle _handle) override;
-                virtual void submit(ProgramHandle _handle) override;
+                virtual void createVertexDecl(VertexDeclHandle _handle, const VertexDecl& _decl) override;
+                virtual void submit(ProgramHandle _handle, VertexBufferHandle _vbo) override;
 			};
 
 		}

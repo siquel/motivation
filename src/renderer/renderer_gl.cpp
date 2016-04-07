@@ -7,7 +7,7 @@ namespace moti {
 		namespace gl {
 
 			RendererContextGL::RendererContextGL() {
-
+                memset(m_vaos, 0, sizeof(m_vaos));
 			}
 
 			RendererContextGL::~RendererContextGL() {
@@ -41,8 +41,33 @@ namespace moti {
                 m_programs[_handle.m_id].destroy();
             }
 
-            void RendererContextGL::submit(ProgramHandle _handle) {
+            void RendererContextGL::submit(ProgramHandle _handle, VertexBufferHandle _vbo) {
+                GLProgram& program = m_programs[_handle.m_id];
+                GLuint vao = m_vaos[program.m_id];
+                if (vao == 0) {
+                    GL_CHECK(glGenVertexArrays(1, &vao));
+                    m_vaos[program.m_id] = vao;
+                    GL_CHECK(glBindVertexArray(vao));
+                    if (isValid(_vbo)) {
+                        GLVertexBuffer& vb = m_vertexBuffers[_vbo.m_id];
+                        GL_CHECK(glBindBuffer(vb.m_target, vb.m_id));
+                        VertexDecl& decl = m_vertexDecls[vb.m_decl.m_id];
+                        program.bindAttributes(decl);
+                    }
+                }
+                else {
+                    GL_CHECK(glBindVertexArray(vao));
+                }
+                GL_CHECK(glUseProgram(program.m_id));
 
+
+
+                GL_CHECK(glUseProgram(0));
+            }
+
+            void RendererContextGL::createVertexDecl(VertexDeclHandle _handle, const VertexDecl& _decl) {
+                VertexDecl* decl = &m_vertexDecls[_handle.m_id];
+                memcpy(decl, &_decl, sizeof(VertexDecl));
             }
 
 			void GLVertexBuffer::create(uint32_t _size, void* _data, VertexDeclHandle _handle) {
@@ -168,6 +193,33 @@ namespace moti {
                 }
                 MOTI_ASSERT(used < MOTI_COUNTOF(m_used), "Out of bounds %d > array size %d", used, MOTI_COUNTOF(m_used));
                 m_used[used] = Attribute::Count;
+            }
+
+            void GLProgram::bindAttributes(const VertexDecl& _decl) {
+
+                static const GLenum s_attribTypes[] = {
+                    GL_FLOAT, // pos
+                    GL_UNSIGNED_BYTE // color
+                };
+
+                for (uint32_t i = 0; i < Attribute::Count != m_used[i]; ++i) {
+                    Attribute::Enum attr = Attribute::Enum(m_used[i]);
+                    GLint loc = m_attributes[attr];
+
+                    if (loc != -1) {
+                        if (_decl.m_attributes[attr]) {
+                            AttributeType::Enum type = _decl.m_type[attr];
+
+                            GL_CHECK(glEnableVertexAttribArray(loc));
+                            GL_CHECK(glVertexAttribPointer(loc,
+                                _decl.m_count[attr],
+                                s_attribTypes[type],
+                                !_decl.m_normalized[attr],
+                                _decl.m_stride,
+                                (void*)(uintptr_t)_decl.m_offset[attr]));
+                        }
+                    }
+                }
             }
 
             void GLProgram::destroy() {
