@@ -26,6 +26,7 @@ namespace moti {
                 if (m_declLookup.find(_decl.id) == std::end(m_declLookup)) {
                     declhandle = { _decl.id };
                     m_declLookup[_decl.id] = _decl;
+                    m_ctx->createVertexDecl(declhandle, _decl);
                 }
                 m_ctx->createVertexBuffer(handle, _mem, declhandle);
             }
@@ -73,6 +74,10 @@ namespace moti {
             if (isValid(_handle)) {
                 m_ctx->destroyProgram(_handle);
             }
+        }
+
+        void GraphicsDevice::submit(ProgramHandle _program, VertexBufferHandle _vbo) {
+            m_ctx->submit(_program, _vbo);
         }
 
     }

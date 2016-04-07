@@ -60,7 +60,7 @@ namespace moti {
                 }
                 GL_CHECK(glUseProgram(program.m_id));
 
-
+                glDrawArrays(GL_TRIANGLES, 0, 3);
 
                 GL_CHECK(glUseProgram(0));
             }
@@ -202,7 +202,7 @@ namespace moti {
                     GL_UNSIGNED_BYTE // color
                 };
 
-                for (uint32_t i = 0; i < Attribute::Count != m_used[i]; ++i) {
+                for (uint32_t i = 0; Attribute::Count != m_used[i]; ++i) {
                     Attribute::Enum attr = Attribute::Enum(m_used[i]);
                     GLint loc = m_attributes[attr];
 
@@ -213,7 +213,7 @@ namespace moti {
                             GL_CHECK(glEnableVertexAttribArray(loc));
                             GL_CHECK(glVertexAttribPointer(loc,
                                 _decl.m_count[attr],
-                                s_attribTypes[type],
+                                type == AttributeType::Float ? GL_FLOAT : GL_UNSIGNED_BYTE,
                                 !_decl.m_normalized[attr],
                                 _decl.m_stride,
                                 (void*)(uintptr_t)_decl.m_offset[attr]));

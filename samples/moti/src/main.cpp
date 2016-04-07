@@ -103,33 +103,14 @@ int main(int argc, char** argv) {
         .add(mg::Attribute::Color, 4, mg::AttributeType::Uint8, false);
 
     mg::VertexBufferHandle vbo = device.createVertexBuffer(&memory, s_decl);
-    device.setVertexBuffer(vbo);
-    for (auto i = 0, index = 0; i < mg::Attribute::Count; ++i) {
-        if (s_decl.m_attributes[i]) {
-            glVertexAttribPointer(
-                index,
-                s_decl.m_count[i],
-                (s_decl.m_type[i] == mg::AttributeType::Float) ? GL_FLOAT : GL_UNSIGNED_BYTE,
-                !s_decl.m_normalized[i], 
-                s_decl.m_stride,
-                (void*)(uintptr_t)s_decl.m_offset[i]
-                );
-            glEnableVertexAttribArray(index++);
-        }
-    }
-
-    glBindVertexArray(0);
+    
 
     SDL_Event e;
     while (SDL_WaitEvent(&e)) {
         if (e.type == SDL_QUIT) break;
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glUseProgram(3);
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        glUseProgram(0);
-        glBindVertexArray(0);
+        device.submit(p, vbo);
         SDL_GL_SwapWindow(wnd);
     }
 
