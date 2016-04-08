@@ -41,15 +41,15 @@ namespace moti {
                 m_programs[_handle.m_id].destroy();
             }
 
-            void RendererContextGL::submit(ProgramHandle _handle, VertexBufferHandle _vbo) {
+            void RendererContextGL::submit(ProgramHandle _handle, const Render& _draw) {
                 GLProgram& program = m_programs[_handle.m_id];
                 GLuint vao = m_vaos[program.m_id];
                 if (vao == 0) {
                     GL_CHECK(glGenVertexArrays(1, &vao));
                     m_vaos[program.m_id] = vao;
                     GL_CHECK(glBindVertexArray(vao));
-                    if (isValid(_vbo)) {
-                        GLVertexBuffer& vb = m_vertexBuffers[_vbo.m_id];
+                    if (isValid(_draw.m_vertexBuffer)) {
+                        GLVertexBuffer& vb = m_vertexBuffers[_draw.m_vertexBuffer.m_id];
                         GL_CHECK(glBindBuffer(vb.m_target, vb.m_id));
                         VertexDecl& decl = m_vertexDecls[vb.m_decl.m_id];
                         program.bindAttributes(decl);
@@ -60,7 +60,7 @@ namespace moti {
                 }
                 GL_CHECK(glUseProgram(program.m_id));
 
-                glDrawArrays(GL_TRIANGLES, 0, 3);
+                glDrawArrays(GL_TRIANGLES, _draw.m_startVertex, _draw.m_endVertex);
 
                 GL_CHECK(glUseProgram(0));
             }

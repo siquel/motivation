@@ -110,7 +110,7 @@ int main(int argc, char** argv) {
         if (e.type == SDL_QUIT) break;
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        device.submit(p, vbo);
+        device.submit(p, vbo, 0, 3);
         SDL_GL_SwapWindow(wnd);
     }
 

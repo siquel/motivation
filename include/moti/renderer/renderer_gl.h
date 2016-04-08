@@ -67,7 +67,7 @@ namespace moti {
                 virtual void destroyShader(ShaderHandle _handle) override;
                 virtual void destroyProgram(ProgramHandle _handle) override;
                 virtual void createVertexDecl(VertexDeclHandle _handle, const VertexDecl& _decl) override;
-                virtual void submit(ProgramHandle _handle, VertexBufferHandle _vbo) override;
+                virtual void submit(ProgramHandle _handle, const Render& _draw) override;
 			};
 
 		}

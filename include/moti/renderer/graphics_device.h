@@ -19,7 +19,7 @@ namespace moti {
 
             void destroyShader(ShaderHandle _handle);
             void destroyProgram(ProgramHandle _handle);
-            void submit(ProgramHandle _program, VertexBufferHandle _vbo);
+            void submit(ProgramHandle _program, VertexBufferHandle _vbo, uint32_t start, uint32_t num);
 		};
 	}
 }

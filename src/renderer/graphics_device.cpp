@@ -76,8 +76,13 @@ namespace moti {
             }
         }
 
-        void GraphicsDevice::submit(ProgramHandle _program, VertexBufferHandle _vbo) {
-            m_ctx->submit(_program, _vbo);
+        void GraphicsDevice::submit(ProgramHandle _program, VertexBufferHandle _vbo, uint32_t start, uint32_t num) {
+            Render draw{
+                _vbo,
+                start,
+                num
+            };
+            m_ctx->submit(_program, draw);
         }
 
     }

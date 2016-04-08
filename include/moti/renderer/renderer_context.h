@@ -85,6 +85,18 @@ namespace moti {
         inline bool isValid(ShaderHandle _h) { return _h.m_id != UINT16_MAX; }
         inline bool isValid(ProgramHandle _h) { return _h.m_id != UINT16_MAX; }
 
+        struct Render {
+            VertexBufferHandle m_vertexBuffer;
+            uint32_t m_startVertex;
+            uint32_t m_endVertex;
+
+            void reset() {
+                m_vertexBuffer.m_id = UINT16_MAX;
+                m_startVertex = 0;
+                m_endVertex = UINT32_MAX;
+            }
+        };
+
 		struct RendererContext {
 			virtual ~RendererContext() = 0;
 			virtual void createVertexBuffer(VertexBufferHandle _handle, mem::Block* _mem, VertexDeclHandle _decl) = 0;
@@ -94,7 +106,7 @@ namespace moti {
             virtual void destroyShader(ShaderHandle _handle) = 0;
             virtual void destroyProgram(ProgramHandle _handle) = 0;
             virtual void createVertexDecl(VertexDeclHandle _handle, const VertexDecl& _decl) = 0;
-            virtual void submit(ProgramHandle _handle, VertexBufferHandle _vbo) = 0;
+            virtual void submit(ProgramHandle _handle, const Render& _draw) = 0;
 		};
 		inline RendererContext::~RendererContext() {}
 	}
