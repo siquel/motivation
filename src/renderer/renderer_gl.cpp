@@ -58,10 +58,12 @@ namespace moti {
                 else {
                     GL_CHECK(glBindVertexArray(vao));
                 }
+                GLIndexBuffer& ibo = m_indexBuffers[_draw.m_indexBuffer.m_id];
                 GL_CHECK(glUseProgram(program.m_id));
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 2);
+                GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo.m_id));
                 //glDrawArrays(GL_TRIANGLES, _draw.m_startVertex, _draw.m_endVertex);
-                GL_CHECK(glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, nullptr));
+                GL_CHECK(glDrawElements(GL_TRIANGLES, _draw.m_indexCount, GL_UNSIGNED_SHORT, nullptr));
+                GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
                 GL_CHECK(glUseProgram(0));
             }
 

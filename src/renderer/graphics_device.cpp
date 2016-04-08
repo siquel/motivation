@@ -14,7 +14,7 @@ namespace moti {
 
         GraphicsDevice::GraphicsDevice()
             : m_ctx(new gl::RendererContextGL) {
-
+            m_draw.reset();
         }
         GraphicsDevice::~GraphicsDevice() {
             delete m_ctx;
@@ -42,8 +42,16 @@ namespace moti {
             return handle;
         }
 
-        void GraphicsDevice::setVertexBuffer(VertexBufferHandle _handle) {
-            m_ctx->setVertexBuffer(_handle);
+        void GraphicsDevice::setVertexBuffer(VertexBufferHandle _handle, uint32_t _startVertex, uint32_t _count) {
+            m_draw.m_vertexBuffer = _handle;
+            m_draw.m_startVertex = _startVertex;
+            m_draw.m_endVertex = _count;
+        }
+
+        void GraphicsDevice::setIndexBuffer(IndexBufferHandle _handle, uint32_t firstIndex, uint32_t _count) {
+            m_draw.m_indexBuffer = _handle;
+            m_draw.m_startIndex = firstIndex;
+            m_draw.m_indexCount = _count;
         }
 
         ShaderHandle GraphicsDevice::createShader(mem::Block* _mem) {
@@ -85,13 +93,9 @@ namespace moti {
             }
         }
 
-        void GraphicsDevice::submit(ProgramHandle _program, VertexBufferHandle _vbo, uint32_t start, uint32_t num) {
-            Render draw{
-                _vbo,
-                start,
-                num
-            };
-            m_ctx->submit(_program, draw);
+        void GraphicsDevice::submit(ProgramHandle _program) {
+            m_ctx->submit(_program, m_draw);
+            m_draw.reset();
         }
 
     }

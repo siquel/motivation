@@ -122,7 +122,9 @@ int main(int argc, char** argv) {
         if (e.type == SDL_QUIT) break;
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        device.submit(p, vbo, 0, 8);
+        device.setIndexBuffer(ibo, 0, 36);
+        device.setVertexBuffer(vbo, 0, 8);
+        device.submit(p);
         SDL_GL_SwapWindow(wnd);
     }
 

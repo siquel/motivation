@@ -92,13 +92,19 @@ namespace moti {
 
         struct Render {
             VertexBufferHandle m_vertexBuffer;
+            IndexBufferHandle m_indexBuffer;
             uint32_t m_startVertex;
             uint32_t m_endVertex;
+            uint32_t m_startIndex;
+            uint32_t m_indexCount;
 
             void reset() {
                 m_vertexBuffer.m_id = UINT16_MAX;
+                m_indexBuffer.m_id = UINT16_MAX;
                 m_startVertex = 0;
                 m_endVertex = UINT32_MAX;
+                m_startIndex = 0;
+                m_indexCount = UINT32_MAX;
             }
         };
 
