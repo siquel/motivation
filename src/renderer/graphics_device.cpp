@@ -33,6 +33,10 @@ namespace moti {
             return handle;
         }
 
+        IndexBufferHandle GraphicsDevice::createIndexBuffer(mem::Block* _mem) {
+            return IndexBufferHandle{ UINT16_MAX };
+        }
+
         void GraphicsDevice::setVertexBuffer(VertexBufferHandle _handle) {
             m_ctx->setVertexBuffer(_handle);
         }

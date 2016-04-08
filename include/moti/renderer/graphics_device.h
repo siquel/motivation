@@ -13,6 +13,7 @@ namespace moti {
             GraphicsDevice();
             ~GraphicsDevice();
             VertexBufferHandle createVertexBuffer(mem::Block* _mem, const VertexDecl& _decl);
+            IndexBufferHandle createIndexBuffer(mem::Block* _mem);
             void setVertexBuffer(VertexBufferHandle _handle);
             ShaderHandle createShader(mem::Block* _mem);
             ProgramHandle createProgram(ShaderHandle _vertex, ShaderHandle _fragment);

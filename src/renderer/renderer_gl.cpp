@@ -59,9 +59,9 @@ namespace moti {
                     GL_CHECK(glBindVertexArray(vao));
                 }
                 GL_CHECK(glUseProgram(program.m_id));
-
-                glDrawArrays(GL_TRIANGLES, _draw.m_startVertex, _draw.m_endVertex);
-
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 2);
+                //glDrawArrays(GL_TRIANGLES, _draw.m_startVertex, _draw.m_endVertex);
+                GL_CHECK(glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, nullptr));
                 GL_CHECK(glUseProgram(0));
             }
 

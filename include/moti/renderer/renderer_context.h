@@ -68,6 +68,10 @@ namespace moti {
 			uint16_t m_id;
 		};
 
+        struct IndexBufferHandle {
+            uint16_t m_id;
+        };
+
 		struct VertexDeclHandle {
 			uint16_t m_id;
 		};
@@ -81,6 +85,7 @@ namespace moti {
         };
 
 		inline bool isValid(VertexBufferHandle _h) { return _h.m_id != UINT16_MAX; }
+        inline bool isValid(IndexBufferHandle _h) { return _h.m_id != UINT16_MAX; }
 		inline bool isValid(VertexDeclHandle _h) { return _h.m_id != UINT16_MAX; }
         inline bool isValid(ShaderHandle _h) { return _h.m_id != UINT16_MAX; }
         inline bool isValid(ProgramHandle _h) { return _h.m_id != UINT16_MAX; }

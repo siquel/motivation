@@ -20,11 +20,34 @@ struct PosColorVertex {
     uint32_t abgr;
 };
 
-static PosColorVertex s_vertices[3] = {
-    {-0.5, -0.5f, 0.0f, 0xFF4D00FF },
-    { 0.5, -0.5f, 0.0f, 0xFF4D00FF },
-    { 0.0, 0.5f, 0.0f, 0xFF4D00FF }
+static PosColorVertex s_vertices[8] =
+{
+    { -0.5f,  0.5f,  0.5f, 0xff000000 },
+    { 0.5f,  0.5f,  0.5f, 0xff0000ff },
+    { -0.5f, -0.5f,  0.5f, 0xff00ff00 },
+    { 0.5f, -0.5f,  0.5f, 0xff00ffff },
+    { -0.5f,  0.5f, -0.5f, 0xffff0000 },
+    { 0.5f,  0.5f, -0.5f, 0xffff00ff },
+    { -0.5f, -0.5f, -0.5f, 0xffffff00 },
+    { 0.5f, -0.5f, -0.5f, 0xffffffff },
 };
+
+static const uint16_t s_indices[36] =
+{
+    0, 1, 2, // 0
+    1, 3, 2,
+    4, 6, 5, // 2
+    5, 6, 7,
+    0, 2, 4, // 4
+    4, 2, 6,
+    1, 5, 3, // 6
+    5, 7, 3,
+    0, 4, 1, // 8
+    4, 5, 1,
+    2, 3, 6, // 10
+    6, 3, 7,
+};
+
 
 mg::VertexDecl s_decl;
 
@@ -67,7 +90,7 @@ int main(int argc, char** argv) {
     
     moti::memory_globals::init();
    
-    mem::StackAllocator<sizeof(s_vertices)> alloc;
+    mem::StackAllocator<4096> alloc;
 
     SDL_Init(SDL_INIT_VIDEO);
     moti::gl::GLContext context;
@@ -88,15 +111,23 @@ int main(int argc, char** argv) {
         .add(mg::Attribute::Position, 3, mg::AttributeType::Float, true)
         .add(mg::Attribute::Color, 4, mg::AttributeType::Uint8, false);
 
+    mem::Block indicesBlock = alloc.allocate(sizeof(s_indices));
+    memcpy(indicesBlock.m_ptr, s_indices, sizeof(s_indices));
+
     mg::VertexBufferHandle vbo = device.createVertexBuffer(&memory, s_decl);
-    
+    mg::IndexBufferHandle ibo = device.createIndexBuffer(&indicesBlock);
+
+    GLuint IBO = 0;
+    glGenBuffers(1, &IBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(s_indices), s_indices, GL_STATIC_DRAW);
 
     SDL_Event e;
     while (SDL_WaitEvent(&e)) {
         if (e.type == SDL_QUIT) break;
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        device.submit(p, vbo, 0, 3);
+        device.submit(p, vbo, 0, 8);
         SDL_GL_SwapWindow(wnd);
     }
 
