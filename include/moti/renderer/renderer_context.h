@@ -7,6 +7,30 @@ namespace moti {
 	namespace mem = memory;
 	namespace graphics {
 
+        struct UniformType {
+            enum Enum {
+                Vec4,
+                Mat3,
+                Mat4,
+                Count
+            };
+        };
+
+        struct PredefinedUniform {
+            enum Enum {
+                View,
+                Proj,
+                ViewProj,
+                Model,
+                ModelViewProj,
+                Count
+            };
+
+            uint32_t m_loc;
+            uint16_t m_count;
+            uint8_t m_type;
+        };
+
 		struct Attribute {
 			enum Enum {
 				Position,

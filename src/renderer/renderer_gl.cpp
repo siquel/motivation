@@ -3,20 +3,20 @@
 #include "moti/io/io.h"
 
 namespace moti {
-	namespace graphics {
-		namespace gl {
+    namespace graphics {
+        namespace gl {
 
-			RendererContextGL::RendererContextGL() {
+            RendererContextGL::RendererContextGL() {
                 memset(m_vaos, 0, sizeof(m_vaos));
-			}
+            }
 
-			RendererContextGL::~RendererContextGL() {
+            RendererContextGL::~RendererContextGL() {
 
-			}
+            }
 
-			void RendererContextGL::createVertexBuffer(VertexBufferHandle _handle, mem::Block* _mem, VertexDeclHandle _decl) {
-				m_vertexBuffers[_handle.m_id].create(_mem->m_length, _mem->m_ptr, _decl);
-			}
+            void RendererContextGL::createVertexBuffer(VertexBufferHandle _handle, mem::Block* _mem, VertexDeclHandle _decl) {
+                m_vertexBuffers[_handle.m_id].create(_mem->m_length, _mem->m_ptr, _decl);
+            }
 
             void RendererContextGL::setVertexBuffer(VertexBufferHandle _handle) {
                 auto& buffer = m_vertexBuffers[_handle.m_id];
@@ -76,23 +76,23 @@ namespace moti {
                 m_indexBuffers[_handle.m_id].create(_mem->m_length, _mem->m_ptr);
             }
 
-			void GLVertexBuffer::create(uint32_t _size, void* _data, VertexDeclHandle _handle) {
-				m_size = _size;
-				m_decl = _handle;
-				GL_CHECK(glGenBuffers(1, &m_id));
-				MOTI_ASSERT(m_id != 0, "Failed to create vertex buffer");
-				m_target = GL_ARRAY_BUFFER;
-				GL_CHECK(glBindBuffer(m_target, m_id));
-				GL_CHECK(glBufferData(m_target, m_size, _data, (_data == nullptr) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW));
-				GL_CHECK(glBindBuffer(m_target, 0));
-			}
+            void GLVertexBuffer::create(uint32_t _size, void* _data, VertexDeclHandle _handle) {
+                m_size = _size;
+                m_decl = _handle;
+                GL_CHECK(glGenBuffers(1, &m_id));
+                MOTI_ASSERT(m_id != 0, "Failed to create vertex buffer");
+                m_target = GL_ARRAY_BUFFER;
+                GL_CHECK(glBindBuffer(m_target, m_id));
+                GL_CHECK(glBufferData(m_target, m_size, _data, (_data == nullptr) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW));
+                GL_CHECK(glBindBuffer(m_target, 0));
+            }
 
             void GLShader::create(mem::Block* _mem) {
                 moti::MemoryReader reader(_mem->m_ptr, _mem->m_length);
                 uint32_t magic(0);
                 moti::read(&reader, magic);
 
-                
+
                 switch (magic) {
                 case MOTI_VERTEX_SHADER_MAGIC: m_type = GL_VERTEX_SHADER; break;
                 case MOTI_FRAGMENT_SHADER_MAGIC: m_type = GL_FRAGMENT_SHADER; break;
@@ -160,10 +160,10 @@ namespace moti {
 
                 GLint numActiveAttribs{ 0 };
                 GLint numActiveUniforms{ 0 };
-                
+
                 GL_CHECK(glGetProgramInterfaceiv(m_id, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &numActiveAttribs));
                 GL_CHECK(glGetProgramInterfaceiv(m_id, GL_UNIFORM, GL_ACTIVE_RESOURCES, &numActiveUniforms));
-                
+
                 GLint max0, max1;
                 GL_CHECK(glGetProgramiv(m_id, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &max0));
                 GL_CHECK(glGetProgramiv(m_id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &max1));
@@ -251,5 +251,5 @@ namespace moti {
             }
 
         }
-	}
+    }
 }
