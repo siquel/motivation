@@ -117,11 +117,6 @@ int main(int argc, char** argv) {
     mg::VertexBufferHandle vbo = device.createVertexBuffer(&memory, s_decl);
     mg::IndexBufferHandle ibo = device.createIndexBuffer(&indicesBlock);
 
-    GLuint IBO = 0;
-    glGenBuffers(1, &IBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(s_indices), s_indices, GL_STATIC_DRAW);
-
     SDL_Event e;
     while (SDL_WaitEvent(&e)) {
         if (e.type == SDL_QUIT) break;

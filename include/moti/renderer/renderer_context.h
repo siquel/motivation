@@ -105,6 +105,7 @@ namespace moti {
 		struct RendererContext {
 			virtual ~RendererContext() = 0;
 			virtual void createVertexBuffer(VertexBufferHandle _handle, mem::Block* _mem, VertexDeclHandle _decl) = 0;
+            virtual void createIndexBuffer(IndexBufferHandle _handle, mem::Block* _mem) = 0;
             virtual void setVertexBuffer(VertexBufferHandle _handle) = 0;
             virtual void createShader(ShaderHandle _handle, mem::Block* _mem) = 0; 
             virtual void createProgram(ProgramHandle _handle, ShaderHandle _vertex, ShaderHandle _fragment) = 0;

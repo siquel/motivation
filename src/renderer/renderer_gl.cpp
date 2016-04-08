@@ -70,6 +70,10 @@ namespace moti {
                 memcpy(decl, &_decl, sizeof(VertexDecl));
             }
 
+            void RendererContextGL::createIndexBuffer(IndexBufferHandle _handle, mem::Block* _mem) {
+                m_indexBuffers[_handle.m_id].create(_mem->m_length, _mem->m_ptr);
+            }
+
 			void GLVertexBuffer::create(uint32_t _size, void* _data, VertexDeclHandle _handle) {
 				m_size = _size;
 				m_decl = _handle;
@@ -228,6 +232,20 @@ namespace moti {
                     GL_CHECK(glDeleteProgram(m_id));
                     m_id = 0;
                 }
+            }
+
+            void GLIndexBuffer::create(uint32_t _size, void* _data) {
+                m_size = _size;
+                GL_CHECK(glGenBuffers(1, &m_id));
+                MOTI_ASSERT(m_id != 0, "Failed to create index buffer");
+                GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id));
+                GL_CHECK(glBufferData(
+                    GL_ELEMENT_ARRAY_BUFFER,
+                    m_size,
+                    _data,
+                    GL_STATIC_DRAW)
+                    );
+                GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
             }
 
         }

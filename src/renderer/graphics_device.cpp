@@ -8,6 +8,7 @@ namespace moti {
     namespace graphics {
 
         HandleManager<4096> m_vertexBufferHandles;
+        HandleManager<4096> m_indexBufferHandles;
         HandleManager<128> m_shaderHandles;
         HandleManager<128> m_programHandles;
 
@@ -34,7 +35,11 @@ namespace moti {
         }
 
         IndexBufferHandle GraphicsDevice::createIndexBuffer(mem::Block* _mem) {
-            return IndexBufferHandle{ UINT16_MAX };
+            IndexBufferHandle handle{ m_indexBufferHandles.create() };
+            if (isValid(handle)) {
+                m_ctx->createIndexBuffer(handle, _mem);
+            }
+            return handle;
         }
 
         void GraphicsDevice::setVertexBuffer(VertexBufferHandle _handle) {
