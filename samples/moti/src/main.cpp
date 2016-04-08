@@ -51,7 +51,17 @@ static const char* s_FragmentShader = FRAG_HEAD MOTI_TO_STRING(
         outColor = color;
     }
 );
-#include "moti/handle.h"
+
+mg::ShaderHandle createShader(const char* src, uint32_t magic, mg::GraphicsDevice& device) {
+    moti::memory::StackAllocator<4096> shaderAlloc;
+    mem::Block block;
+    moti::MemoryWriter writer(&block, &shaderAlloc);
+    moti::write<uint32_t>(&writer, magic);
+    int32_t len = static_cast<int32_t>(strlen(s_VertexShader));
+    moti::write(&writer, len);
+    moti::write(&writer, (void*)src, len);
+    return device.createShader(&block);
+}
 
 int main(int argc, char** argv) {
     
@@ -67,33 +77,9 @@ int main(int argc, char** argv) {
 
     mg::GraphicsDevice device;
 
-    moti::memory::StackAllocator<4096 * 2> shaderAlloc;
-    mem::Block vertexShaderMem;
-    mem::Block fragmentShaderMem;
-
-    moti::MemoryWriter vshwriter(&vertexShaderMem, &shaderAlloc);
-
-    uint32_t magic = MOTI_VERTEX_SHADER_MAGIC;
-    moti::write<uint32_t>(&vshwriter, magic);
-    int32_t len = static_cast<int32_t>(strlen(s_VertexShader));
-    moti::write(&vshwriter, len);
-    moti::write(&vshwriter, (void*)s_VertexShader, len);
-
-    magic = MOTI_FRAGMENT_SHADER_MAGIC;
-    moti::MemoryWriter fshwriter(&fragmentShaderMem, &shaderAlloc);
-    moti::write<uint32_t>(&fshwriter, magic);
-    len = static_cast<int32_t>(strlen(s_FragmentShader));
-    moti::write(&fshwriter, len);
-    moti::write(&fshwriter, (void*)s_FragmentShader, len);
-
-
-    mg::ShaderHandle vsh = device.createShader(&vertexShaderMem);
-    mg::ShaderHandle fsh = device.createShader(&fragmentShaderMem);
+    mg::ShaderHandle vsh = createShader(s_VertexShader, MOTI_VERTEX_SHADER_MAGIC, device);
+    mg::ShaderHandle fsh = createShader(s_FragmentShader, MOTI_FRAGMENT_SHADER_MAGIC, device);
     mg::ProgramHandle p = device.createProgram(vsh, fsh);
-
-    GLuint VAO;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
 
     mem::Block memory = alloc.allocate(sizeof(s_vertices));
     memcpy(memory.m_ptr, s_vertices, sizeof(s_vertices));
