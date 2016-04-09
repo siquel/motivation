@@ -6,6 +6,16 @@
 
 namespace moti {
 
+    static const char* s_predefinedUniformNames[] = {
+        "u_view",
+        "u_proj",
+        "u_viewProj",
+        "u_model",
+        "u_modelViewProj"
+    };
+
+    static_assert(MOTI_COUNTOF(s_predefinedUniformNames) == PredefinedUniform::Count, "Uniform names size differs from enum");
+
     int32_t vsnprintf(char* _str, size_t _count, const char* _format, va_list _argList) {
         int32_t len = ::vsnprintf_s(_str, _count, size_t(-1), _format, _argList);
         return -1 == len ? ::_vscprintf(_format, _argList) : len;
@@ -32,6 +42,19 @@ namespace moti {
 
     void fatal(const char* format, ...) {
         moti::debugBreak();
+    }
+
+    PredefinedUniform::Enum nameToPredefinedUniform(const char* _name) {
+        for (uint32_t i = 0; i < MOTI_COUNTOF(s_predefinedUniformNames); ++i) {
+            if (strcmp(_name, s_predefinedUniformNames[i]) == 0) {
+                return PredefinedUniform::Enum(i);
+            }
+        }
+        return PredefinedUniform::Count;
+    }
+
+    const char* predefinedUniformName(PredefinedUniform::Enum _enum) {
+        return s_predefinedUniformNames[_enum];
     }
 
 }

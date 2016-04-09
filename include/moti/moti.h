@@ -8,11 +8,6 @@ namespace moti {
     // http://cnicholson.net/2011/01/stupid-c-tricks-a-better-sizeof_array/
     template<typename T, size_t N> char(&COUNTOF_REQUIRES_ARRAY_ARGUMENT(const T(&)[N]))[N];
 #define MOTI_COUNTOF(_x) sizeof(moti::COUNTOF_REQUIRES_ARRAY_ARGUMENT(_x) )
-
-    int32_t vsnprintf(char* _str, size_t _count, const char* _format, va_list _argList);
-    void trace(const char* path, uint16_t line, const char* fmt, ...);
-    void abort(const char* path, uint16_t line, const char* fmt, ...);
-    void fatal(const char* format, ...);
 }
 
 #define FOURCC(_a, _b, _c, _d) ( ( (uint32_t)(_a) | ( (uint32_t)(_b) << 8) | ( (uint32_t)(_c) << 16) | ( (uint32_t)(_d) << 24) ) )
@@ -50,3 +45,57 @@ namespace moti {
 #endif
 
 #include "debug.h"
+
+namespace moti {
+    
+    struct UniformType {
+        enum Enum {
+            Vec4,
+            Mat3,
+            Mat4,
+            Count
+        };
+    };
+
+    struct PredefinedUniform {
+        enum Enum {
+            View,
+            Proj,
+            ViewProj,
+            Model,
+            ModelViewProj,
+            Count
+        };
+
+        uint32_t m_loc;
+        uint16_t m_count;
+        uint8_t m_type;
+    };
+
+    struct Attribute {
+        enum Enum {
+            Position,
+            Color,
+            Count
+        };
+    };
+
+    struct AttributeType {
+        enum Enum {
+            Uint8,
+            Float,
+            Count
+        };
+    };
+
+    int32_t vsnprintf(char* _str, size_t _count, const char* _format, va_list _argList);
+    void trace(const char* path, uint16_t line, const char* fmt, ...);
+    void abort(const char* path, uint16_t line, const char* fmt, ...);
+    void fatal(const char* format, ...);
+
+    PredefinedUniform::Enum nameToPredefinedUniform(const char* _name);
+
+    const char* predefinedUniformName(PredefinedUniform::Enum _enum);
+
+
+}

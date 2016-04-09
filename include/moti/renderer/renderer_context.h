@@ -7,46 +7,6 @@ namespace moti {
 	namespace mem = memory;
 	namespace graphics {
 
-        struct UniformType {
-            enum Enum {
-                Vec4,
-                Mat3,
-                Mat4,
-                Count
-            };
-        };
-
-        struct PredefinedUniform {
-            enum Enum {
-                View,
-                Proj,
-                ViewProj,
-                Model,
-                ModelViewProj,
-                Count
-            };
-
-            uint32_t m_loc;
-            uint16_t m_count;
-            uint8_t m_type;
-        };
-
-		struct Attribute {
-			enum Enum {
-				Position,
-				Color,
-				Count
-			};
-		};
-
-		struct AttributeType {
-			enum Enum {
-				Uint8,
-				Float,
-				Count
-			};
-		};
-
         static const uint8_t AttributeSizeGL[AttributeType::Count][4] = {
             { 1, 2, 4, 4}, // uint8
             { 4, 8, 12, 16} // float

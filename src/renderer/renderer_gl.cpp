@@ -7,6 +7,11 @@ namespace moti {
         namespace gl {
 
             RendererContextGL::RendererContextGL() {
+                int versionMajor;
+                int versionMinor;
+                GL_CHECK(glGetIntegerv(GL_MAJOR_VERSION, &versionMajor));
+                GL_CHECK(glGetIntegerv(GL_MAJOR_VERSION, &versionMinor));
+                MOTI_TRACE("OpenGL context version: %d.%d", versionMajor, versionMinor);
                 memset(m_vaos, 0, sizeof(m_vaos));
             }
 
@@ -132,7 +137,6 @@ namespace moti {
 
             void GLProgram::create(const GLShader& _vsh, const GLShader& _fsh) {
                 m_id = glCreateProgram();
-
                 GLint linked(0);
                 if (_vsh.m_id != 0) {
                     GL_CHECK(glAttachShader(m_id, _vsh.m_id));
@@ -164,6 +168,7 @@ namespace moti {
                 GL_CHECK(glGetProgramInterfaceiv(m_id, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &numActiveAttribs));
                 GL_CHECK(glGetProgramInterfaceiv(m_id, GL_UNIFORM, GL_ACTIVE_RESOURCES, &numActiveUniforms));
 
+                glGetProgramiv(m_id, GL_ACTIVE_UNIFORMS, &numActiveUniforms);
                 GLint max0, max1;
                 GL_CHECK(glGetProgramiv(m_id, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &max0));
                 GL_CHECK(glGetProgramiv(m_id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &max1));
@@ -181,6 +186,50 @@ namespace moti {
                 }
 
                 MOTI_TRACE("Uniform count %d", numActiveUniforms);
+
+                for (int32_t i = 0; i < numActiveUniforms; ++i) {
+                    struct Info {
+                        GLenum type;
+                        GLint loc;
+                        GLint count;
+                    };
+
+                    Info info;
+                    GLenum props[] = { GL_TYPE, GL_LOCATION, GL_ARRAY_SIZE };
+
+                    GL_CHECK(glGetProgramResourceiv(
+                        m_id,
+                        GL_UNIFORM,
+                        i,
+                        MOTI_COUNTOF(props), props, MOTI_COUNTOF(props),
+                        NULL,
+                        (GLint*)&info));
+
+                    GL_CHECK(glGetProgramResourceName(
+                        m_id,
+                        GL_UNIFORM,
+                        i,
+                        nameMaxLength + 1,
+                        NULL,
+                        name));
+
+                    uint16_t count = std::max(info.count, 1);
+
+                    PredefinedUniform::Enum predef = nameToPredefinedUniform(name);
+                    if (predef != PredefinedUniform::Count) {
+                        m_predefinedUniforms[uniformCount].m_type = uint8_t(predef);
+                        m_predefinedUniforms[uniformCount].m_loc = info.loc;
+                        m_predefinedUniforms[uniformCount].m_count = count;
+                        uniformCount++;
+                    }
+                    else {
+                        // its user defined uniform
+                    }
+
+                    MOTI_TRACE("uniform %s is at location %d, count %d", name, info.loc, count);
+
+                }
+                // TODO FIXME move this to moti.h
                 static const char* s_attribNames[] = {
                     "a_position",
                     "a_color"
@@ -202,7 +251,7 @@ namespace moti {
             }
 
             void GLProgram::bindAttributes(const VertexDecl& _decl) {
-
+                // TODO FIXME move this to moti.h
                 static const GLenum s_attribTypes[] = {
                     GL_FLOAT, // pos
                     GL_UNSIGNED_BYTE // color
@@ -217,6 +266,7 @@ namespace moti {
                             AttributeType::Enum type = _decl.m_type[attr];
 
                             GL_CHECK(glEnableVertexAttribArray(loc));
+                            // TODO FIXME move this to moti.h
                             GL_CHECK(glVertexAttribPointer(loc,
                                 _decl.m_count[attr],
                                 type == AttributeType::Float ? GL_FLOAT : GL_UNSIGNED_BYTE,

@@ -51,8 +51,15 @@ static const uint16_t s_indices[36] =
 
 mg::VertexDecl s_decl;
 
-#define VERT_HEAD \
-"#version 440\n"
+#define VERT_HEAD  "#version 440\n" MOTI_TO_STRING( \
+        uniform mat4 u_view;                        \
+        uniform mat4 u_proj;                        \
+        uniform mat4 u_viewProj;                    \
+        uniform mat4 u_model;                       \
+        uniform mat4 u_modelViewProj;               \
+)
+
+
 #define FRAG_HEAD \
 "#version 440\n"
 
@@ -63,11 +70,11 @@ static const char* s_VertexShader = VERT_HEAD MOTI_TO_STRING(
     out vec4 color;
     void main() {
         color = a_color;
-        gl_Position = vec4(a_position, 1.0);
+        gl_Position = u_modelViewProj * vec4(a_position, 1.0);
     }
 );
 
-static const char* s_FragmentShader = FRAG_HEAD MOTI_TO_STRING(
+static const char* s_FragmentShader = VERT_HEAD MOTI_TO_STRING(
     in vec4 color;
     out vec4 outColor;
     void main() {
@@ -87,7 +94,9 @@ mg::ShaderHandle createShader(const char* src, uint32_t magic, mg::GraphicsDevic
 }
 
 int main(int argc, char** argv) {
-    
+    using moti::Attribute;
+    using moti::AttributeType;
+
     moti::memory_globals::init();
    
     mem::StackAllocator<4096> alloc;
@@ -108,8 +117,8 @@ int main(int argc, char** argv) {
     memcpy(memory.m_ptr, s_vertices, sizeof(s_vertices));
 
     s_decl.begin()
-        .add(mg::Attribute::Position, 3, mg::AttributeType::Float, true)
-        .add(mg::Attribute::Color, 4, mg::AttributeType::Uint8, false);
+        .add(Attribute::Position, 3, AttributeType::Float, true)
+        .add(Attribute::Color, 4, AttributeType::Uint8, false);
 
     mem::Block indicesBlock = alloc.allocate(sizeof(s_indices));
     memcpy(indicesBlock.m_ptr, s_indices, sizeof(s_indices));
