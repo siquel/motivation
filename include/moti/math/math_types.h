@@ -6,64 +6,56 @@
 namespace moti {
 
     struct Vec3 {
-        union {
-            float fval[3];
-            int32_t ival[3];
-            uint32_t uval[3];
-        } un;
+        float x, y, z;
 
         void setIdentity() {
-            memset(un.fval, 0, sizeof(un.fval));
-            un.fval[2] = 1.f;
+            memset(&x, 0, sizeof(float) * 3);
+            z = 1.f;
         }
 
         float& operator[](uint32_t index) {
-            return un.fval[index];
+            return *(&x + index);
         }
 
         const float& operator[](uint32_t index) const {
-            return un.fval[index];
+            return *(&x + index);
         }
     };
 
     struct Vec4 {
-        union {
-            float fval[4];
-            int32_t ival[4];
-            uint32_t uval[4];
-        } un;
+        float x, y, z, w;
 
         void setIdentity() {
-            memset(un.fval, 0, sizeof(un.fval));
-            un.fval[3] = 1.f;
+            memset(&x, 0, 4 * sizeof(float));
+            w = 1.f;
         }
 
         float& operator[](uint32_t index) {
-            return un.fval[index];
+            return *(&x + index);
         }
 
         const float& operator[](uint32_t index) const {
-            return un.fval[index];
+            return *(&x + index);
         }
     };
 
     struct Mat4 {
-        union {
-            float val[16];
-            Vec4 col[4];
-        } un;
+        Vec4 col[4];
 
         void setIdentity() {
-            memset(un.val, 0, sizeof(un.val));
-            un.val[0] = un.val[5] = un.val[10] = un.val[15] = 1.0f;
+            memset(col, 0, sizeof(col));
+            col[0][0] = 1.f;
+            col[1][1] = 1.f;
+            col[2][2] = 1.f;
+            col[3][3] = 1.f;
         }
 
         Vec4& operator[](uint32_t index) {
-            return un.col[index];
+            return col[index];
         }
 
         const Vec4& operator[](uint32_t index) const {
-            return un.col[index];
+            return col[index];
         }
     };
 

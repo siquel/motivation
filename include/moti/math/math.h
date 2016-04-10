@@ -5,7 +5,7 @@
 
 namespace moti {
 
-    float radians(float degrees) {
+    inline float radians(float degrees) {
         return degrees * static_cast<float>(0.01745329251994329576923690768489);
     }
 
@@ -65,12 +65,12 @@ namespace moti {
         return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
     }
 
-    inline Vec3 cross(const Vec3& a, const Vec3& b) {
-        Vec3 v;
-        v[0] = a[1] * b[2] - a[2] * b[1];
-        v[1] = a[2] * b[0] - a[0] * b[2];
-        v[2] = a[0] * b[1] - a[1] * b[0];
-        return v;
+    inline Vec3 cross(const Vec3& x, const Vec3& y) {
+        return Vec3{
+            x.y * y.z - y.y * x.z,
+            x.z * y.x - y.z * x.x,
+            x.x * y.y - y.x * x.y
+        };
     }
 
     inline float lengthSquared(const Vec3& a) {
@@ -81,47 +81,45 @@ namespace moti {
         return sqrtf(lengthSquared(a));
     }
 
-    inline Vec3 normalize(Vec3& a) {
+    inline Vec3 normalize(const Vec3& a) {
         const float len = length(a);
         const float inv_len = 1.0f / len;
-        a[0] *= inv_len;
-        a[1] *= inv_len;
-        a[2] *= inv_len;
-        return a;
+        
+        return a * inv_len;
     }
 
     //////////////////////////////////////////////////////////////////////////
     // Vec4 
 
     inline Vec4& operator+=(Vec4& a, const Vec4& b) {
-        a.un.fval[0] += b.un.fval[0];
-        a.un.fval[1] += b.un.fval[1];
-        a.un.fval[2] += b.un.fval[2];
-        a.un.fval[3] += b.un.fval[3];
+        a[0] += b[0];
+        a[1] += b[1];
+        a[2] += b[2];
+        a[3] += b[3];
         return a;
     }
 
     inline Vec4& operator-=(Vec4& a, const Vec4& b) {
-        a.un.fval[0] -= b.un.fval[0];
-        a.un.fval[1] -= b.un.fval[1];
-        a.un.fval[2] -= b.un.fval[2];
-        a.un.fval[3] -= b.un.fval[3];
+        a[0] -= b[0];
+        a[1] -= b[1];
+        a[2] -= b[2];
+        a[3] -= b[3];
         return a;
     }
 
     inline Vec4& operator*=(Vec4& a, const Vec4& b) {
-        a.un.fval[0] *= b.un.fval[0];
-        a.un.fval[1] *= b.un.fval[1];
-        a.un.fval[2] *= b.un.fval[2];
-        a.un.fval[3] *= b.un.fval[3];
+        a[0] *= b[0];
+        a[1] *= b[1];
+        a[2] *= b[2];
+        a[3] *= b[3];
         return a;
     }
 
     inline Vec4& operator*=(Vec4& a, float s) {
-        a.un.fval[0] *= s;
-        a.un.fval[1] *= s;
-        a.un.fval[2] *= s;
-        a.un.fval[3] *= s;
+        a[0] *= s;
+        a[1] *= s;
+        a[2] *= s;
+        a[3] *= s;
         return a;
     }
 
@@ -135,10 +133,10 @@ namespace moti {
 
     inline Vec4 operator-(const Vec4& a) {
         return Vec4{
-            -a.un.fval[0],
-            -a.un.fval[1],
-            -a.un.fval[2],
-            -a.un.fval[3]
+            -a[0],
+            -a[1],
+            -a[2],
+            -a[3]
         };
     }
 
@@ -155,10 +153,10 @@ namespace moti {
     }
 
     inline float dot(const Vec4& a, const Vec4& b) {
-        return a.un.fval[0] * b.un.fval[0]
-            + a.un.fval[1] * b.un.fval[1]
-            + a.un.fval[2] * b.un.fval[2]
-            + a.un.fval[3] * b.un.fval[3];
+        return a[0] * b[0]
+            + a[1] * b[1]
+            + a[2] * b[2]
+            + a[3] * b[3];
     }
 
     inline float lengthSquared(const Vec4& a) {
@@ -185,37 +183,37 @@ namespace moti {
     }
 
     inline float* toPointer(Vec4& a) {
-        return &a.un.fval[0];
+        return &a[0];
     }
 
     inline const float* toPointer(const Vec4& a) {
-        return &a.un.fval[0];
+        return &a[0];
     }
 
     //////////////////////////////////////////////////////////////////////////
     // Mat 4
 
     inline Mat4& operator+=(Mat4& a, const Mat4& b) {
-        a.un.col[0] += b.un.col[0];
-        a.un.col[1] += b.un.col[1];
-        a.un.col[2] += b.un.col[2];
-        a.un.col[3] += b.un.col[3];
+        a.col[0] += b.col[0];
+        a.col[1] += b.col[1];
+        a.col[2] += b.col[2];
+        a.col[3] += b.col[3];
         return a;
     }
 
     inline Mat4& operator-=(Mat4& a, const Mat4& b) {
-        a.un.col[0] -= b.un.col[0];
-        a.un.col[1] -= b.un.col[1];
-        a.un.col[2] -= b.un.col[2];
-        a.un.col[3] -= b.un.col[3];
+        a.col[0] -= b.col[0];
+        a.col[1] -= b.col[1];
+        a.col[2] -= b.col[2];
+        a.col[3] -= b.col[3];
         return a;
     }
 
     inline Mat4& operator*=(Mat4& a, float k) {
-        a.un.col[0] *= k;
-        a.un.col[1] *= k;
-        a.un.col[2] *= k;
-        a.un.col[3] *= k;
+        a.col[0] *= k;
+        a.col[1] *= k;
+        a.col[2] *= k;
+        a.col[3] *= k;
         return a;
     }
 
@@ -282,25 +280,22 @@ namespace moti {
     }
 
     inline void perspective(Mat4& m, float fovy, float aspect, float nearz, float farz) {
-        m.setIdentity();
+        memset(&m, 0, sizeof(Mat4));
 
-        const float height = 1.0f / tanf(radians(fovy) * 0.5f);
-        const float width = height * 1.0f / aspect;
-        const float aa = farz / (farz - nearz);
-        const float bb = -nearz * aa;
-        m[0][0] = width;
-        m[1][1] = height;
-        m[2][2] = aa;
-        m[2][3] = 1.0f;
-        m[3][2] = bb;
-        m[3][3] = 0.f;
+        float const tanHalfFovy = tan(fovy / 2.f);
+
+        
+        m[0][0] = 1.f / (aspect * tanHalfFovy);
+        m[1][1] = 1.f / (tanHalfFovy);
+        m[2][2] = -(farz + nearz) / (farz - nearz);
+        m[2][3] = -1.f;
+        m[3][2] = -(2 * farz * nearz) / (farz - nearz);
     }
 
-    inline Mat4 translate(const Mat4& m, const Vec3& v) {
-        Mat4 r;
-        r.setIdentity();
-        r[3] = m[0] * v[0] + m[1] * v[1] + m[2] * v[2];
-        return r;
+    inline void translate(Mat4& m, const Vec3& v) {
+        m[3][0] = v[0];
+        m[3][1] = v[1];
+        m[3][2] = v[2];
     }
 
     inline Mat4 scale(const Mat4& m, const Vec3& v) {
@@ -313,30 +308,23 @@ namespace moti {
     }
 
     inline void look(Mat4& m, const Vec3& pos, const Vec3& target, const Vec3& up) {
-        Vec3 zaxis = pos - target;
-        normalize(zaxis);
-        const Vec3 xaxis = cross(up, zaxis);
-        const Vec3 yaxis = cross(zaxis, xaxis);
+        Vec3 const f(normalize(target - pos));
+        Vec3 const s(normalize(cross(f, up)));
+        Vec3 const u(cross(s, f));
 
-        m[0][0] = xaxis[0];
-        m[0][1] = yaxis[0];
-        m[0][2] = zaxis[0];
-        m[0][3] = 0.0f;
+        m[0][0] = s[0];
+        m[1][0] = s[1];
+        m[2][0] = s[2];
+        m[0][1] = u[0];
+        m[1][1] = u[1];
+        m[2][1] = u[2];
+        m[0][2] = -f[0];
+        m[1][2] = -f[1];
+        m[2][2] = -f[2];
+        m[3][0] = -dot(s, pos);
+        m[3][1] = -dot(u, pos);
+        m[3][2] = dot(f, pos);
 
-        m[1][0] = xaxis[1];
-        m[1][1] = yaxis[1];
-        m[1][2] = zaxis[1];
-        m[1][3] = 0.0f;
-
-        m[2][0] = xaxis[2];
-        m[2][1] = yaxis[2];
-        m[2][2] = zaxis[2];
-        m[2][3] = 0.0f;
-
-        m[3][0] = -dot(pos, xaxis);
-        m[3][1] = -dot(pos, yaxis);
-        m[3][2] = -dot(pos, zaxis);
-        m[3][3] = 1.0f;
     }
 }
 

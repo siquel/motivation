@@ -22,14 +22,14 @@ struct PosColorVertex {
 
 static PosColorVertex s_vertices[8] =
 {
-    { -0.5f,  0.5f,  0.5f, 0xff000000 },
-    { 0.5f,  0.5f,  0.5f, 0xff0000ff },
-    { -0.5f, -0.5f,  0.5f, 0xff00ff00 },
-    { 0.5f, -0.5f,  0.5f, 0xff00ffff },
-    { -0.5f,  0.5f, -0.5f, 0xffff0000 },
-    { 0.5f,  0.5f, -0.5f, 0xffff00ff },
-    { -0.5f, -0.5f, -0.5f, 0xffffff00 },
-    { 0.5f, -0.5f, -0.5f, 0xffffffff },
+    { -1.0f,  1.0f,  1.0f, 0xff000000 },
+    { 1.0f,  1.0f,  1.0f, 0xff0000ff },
+    { -1.0f, -1.0f,  1.0f, 0xff00ff00 },
+    { 1.0f, -1.0f,  1.0f, 0xff00ffff },
+    { -1.0f,  1.0f, -1.0f, 0xffff0000 },
+    { 1.0f,  1.0f, -1.0f, 0xffff00ff },
+    { -1.0f, -1.0f, -1.0f, 0xffffff00 },
+    { 1.0f, -1.0f, -1.0f, 0xffffffff },
 };
 
 static const uint16_t s_indices[36] =
@@ -110,7 +110,7 @@ int main(int argc, char** argv) {
     moti::gl::GLContext context;
     SDL_Window* wnd = SDL_CreateWindow("moti", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL);
     context.create(wnd);
-    glClearColor(0.f, 0.f, 0.f, 1.f);
+    glClearColor(0.0f, 0.f, 0.f, 1.f);
 
     mg::GraphicsDevice device;
 
@@ -132,9 +132,13 @@ int main(int argc, char** argv) {
     mg::IndexBufferHandle ibo = device.createIndexBuffer(&indicesBlock);
 
     SDL_Event e;
-    while (SDL_WaitEvent(&e)) {
-        if (e.type == SDL_QUIT) break;
-        
+    bool running = true;
+    while (running) {
+
+        while (SDL_PollEvent(&e)) {
+            if (e.type == SDL_QUIT) running = false;
+        }
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         device.setIndexBuffer(ibo, 0, 36);
         device.setVertexBuffer(vbo, 0, 8);
