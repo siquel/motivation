@@ -225,9 +225,9 @@ namespace moti {
     inline Mat4 scale(const Mat4& m, const Vec3& v) {
         Mat4 r;
         r[0] = m[0] * v[0];
-        r[0] = m[1] * v[1];
-        r[0] = m[2] * v[2];
-        r[0] = m[3];
+        r[1] = m[1] * v[1];
+        r[2] = m[2] * v[2];
+        r[3] = m[3];
         return r;
     }
 }
