@@ -10,6 +10,87 @@ namespace moti {
     }
 
     //////////////////////////////////////////////////////////////////////////
+    // Vec3
+
+    inline Vec3& operator+=(Vec3& a, const Vec3& b) {
+        a[0] += b[0];
+        a[1] += b[1];
+        a[2] += b[2];
+        return a;
+    }
+
+    inline Vec3& operator-=(Vec3& a, const Vec3& b) {
+        a[0] -= b[0];
+        a[1] -= b[1];
+        a[2] -= b[2];
+        return a;
+    }
+
+    inline Vec3& operator*=(Vec3& a, float k) {
+        a[0] *= k;
+        a[1] *= k;
+        a[2] *= k;
+        return a;
+    }
+
+    inline Vec3 operator-(const Vec3& a) {
+        Vec3 v;
+        v[0] = -a[0];
+        v[1] = -a[1];
+        v[2] = -a[2];
+        return v;
+    }
+
+    inline Vec3 operator+(Vec3 a, const Vec3& b) {
+        a += b;
+        return a;
+    }
+
+    inline Vec3 operator-(Vec3 a, const Vec3& b) {
+        a -= b;
+        return a;
+    }
+
+    inline Vec3 operator*(Vec3 a, float k) {
+        a *= k;
+        return a;
+    }
+
+    inline Vec3 operator*(float k, Vec3 a) {
+        a *= k;
+        return a;
+    }
+
+    inline float dot(const Vec3& a, const Vec3& b) {
+        return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    }
+
+    inline Vec3 cross(const Vec3& a, const Vec3& b) {
+        Vec3 v;
+        v[0] = a[1] * b[2] - a[2] * b[1];
+        v[1] = a[2] * b[0] - a[0] * b[2];
+        v[2] = a[0] * b[1] - a[1] * b[0];
+        return v;
+    }
+
+    inline float lengthSquared(const Vec3& a) {
+        return dot(a, a);
+    }
+
+    inline float length(const Vec3& a) {
+        return sqrtf(lengthSquared(a));
+    }
+
+    inline Vec3 normalize(Vec3& a) {
+        const float len = length(a);
+        const float inv_len = 1.0f / len;
+        a[0] *= inv_len;
+        a[1] *= inv_len;
+        a[2] *= inv_len;
+        return a;
+    }
+
+    //////////////////////////////////////////////////////////////////////////
     // Vec4 
 
     inline Vec4& operator+=(Vec4& a, const Vec4& b) {
@@ -229,6 +310,33 @@ namespace moti {
         r[2] = m[2] * v[2];
         r[3] = m[3];
         return r;
+    }
+
+    inline void look(Mat4& m, const Vec3& pos, const Vec3& target, const Vec3& up) {
+        Vec3 zaxis = pos - target;
+        normalize(zaxis);
+        const Vec3 xaxis = cross(up, zaxis);
+        const Vec3 yaxis = cross(zaxis, xaxis);
+
+        m[0][0] = xaxis[0];
+        m[0][1] = yaxis[0];
+        m[0][2] = zaxis[0];
+        m[0][3] = 0.0f;
+
+        m[1][0] = xaxis[1];
+        m[1][1] = yaxis[1];
+        m[1][2] = zaxis[1];
+        m[1][3] = 0.0f;
+
+        m[2][0] = xaxis[2];
+        m[2][1] = yaxis[2];
+        m[2][2] = zaxis[2];
+        m[2][3] = 0.0f;
+
+        m[3][0] = -dot(pos, xaxis);
+        m[3][1] = -dot(pos, yaxis);
+        m[3][2] = -dot(pos, zaxis);
+        m[3][3] = 1.0f;
     }
 }
 
