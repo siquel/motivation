@@ -5,6 +5,27 @@
 
 namespace moti {
 
+    struct Vec3 {
+        union {
+            float fval[3];
+            int32_t ival[3];
+            uint32_t uval[3];
+        } un;
+
+        void setIdentity() {
+            memset(un.fval, 0, sizeof(un.fval));
+            un.fval[2] = 1.f;
+        }
+
+        float& operator[](uint32_t index) {
+            return un.fval[index];
+        }
+
+        const float& operator[](uint32_t index) const {
+            return un.fval[index];
+        }
+    };
+
     struct Vec4 {
         union {
             float fval[4];

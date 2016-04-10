@@ -5,6 +5,10 @@
 
 namespace moti {
 
+    float radians(float degrees) {
+        return degrees * static_cast<float>(0.01745329251994329576923690768489);
+    }
+
     //////////////////////////////////////////////////////////////////////////
     // Vec4 
 
@@ -194,6 +198,37 @@ namespace moti {
     inline Mat4 operator*(Mat4 a, const Mat4& b) {
         a *= b;
         return a;
+    }
+
+    inline void perspective(Mat4& m, float fovy, float aspect, float nearz, float farz) {
+        m.setIdentity();
+
+        const float height = 1.0f / tanf(radians(fovy) * 0.5f);
+        const float width = height * 1.0f / aspect;
+        const float aa = farz / (farz - nearz);
+        const float bb = -nearz * aa;
+        m[0][0] = width;
+        m[1][1] = height;
+        m[2][2] = aa;
+        m[2][3] = 1.0f;
+        m[3][2] = bb;
+        m[3][3] = 0.f;
+    }
+
+    inline Mat4 translate(const Mat4& m, const Vec3& v) {
+        Mat4 r;
+        r.setIdentity();
+        r[3] = m[0] * v[0] + m[1] * v[1] + m[2] * v[2];
+        return r;
+    }
+
+    inline Mat4 scale(const Mat4& m, const Vec3& v) {
+        Mat4 r;
+        r[0] = m[0] * v[0];
+        r[0] = m[1] * v[1];
+        r[0] = m[2] * v[2];
+        r[0] = m[3];
+        return r;
     }
 }
 

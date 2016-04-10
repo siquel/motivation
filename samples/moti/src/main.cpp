@@ -96,6 +96,10 @@ mg::ShaderHandle createShader(const char* src, uint32_t magic, mg::GraphicsDevic
 int main(int argc, char** argv) {
     using moti::Attribute;
     using moti::AttributeType;
+    using moti::Mat4;
+    Mat4 a; a.setIdentity();
+    Mat4 b; b.setIdentity();
+    Mat4 c(a*b);
 
 
     moti::memory_globals::init();
