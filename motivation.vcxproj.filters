@@ -43,6 +43,9 @@
     <Filter Include="Header Files\io">
       <UniqueIdentifier>{35e0d585-7876-49b6-9691-d1e000d844b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\math">
+      <UniqueIdentifier>{9825ff5c-592b-466a-95d0-47a5a3bca151}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\moti\macros.h">
@@ -107,6 +110,12 @@
     </ClInclude>
     <ClInclude Include="include\moti\handle.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\moti\math\math_types.h">
+      <Filter>Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\moti\math\math.h">
+      <Filter>Header Files\math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

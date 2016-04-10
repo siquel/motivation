@@ -9,7 +9,7 @@
 #include "moti/memory/linear_allocator.h"
 #include "moti/memory/memory.h"
 #include "moti/io/io.h"
-
+#include "moti/math/math.h"
 namespace mem = moti::memory;
 namespace mg = moti::graphics;
 
@@ -96,6 +96,7 @@ mg::ShaderHandle createShader(const char* src, uint32_t magic, mg::GraphicsDevic
 int main(int argc, char** argv) {
     using moti::Attribute;
     using moti::AttributeType;
+
 
     moti::memory_globals::init();
    

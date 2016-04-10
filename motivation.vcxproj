@@ -158,6 +158,8 @@
     <ClInclude Include="include\moti\handle.h" />
     <ClInclude Include="include\moti\io\io.h" />
     <ClInclude Include="include\moti\macros.h" />
+    <ClInclude Include="include\moti\math\math.h" />
+    <ClInclude Include="include\moti\math\math_types.h" />
     <ClInclude Include="include\moti\memory\allocator.h" />
     <ClInclude Include="include\moti\memory\block.h" />
     <ClInclude Include="include\moti\memory\linear_allocator.h" />
