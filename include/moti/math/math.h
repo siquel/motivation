@@ -217,31 +217,26 @@ namespace moti {
         return a;
     }
 
-    inline Mat4& operator*=(Mat4& a, const Mat4& b) {
+    inline Mat4& operator*=(Mat4& m, const Mat4& b) {
+        const Vec4& srcA0 = m[0];
+        const Vec4& srcA1 = m[1];
+        const Vec4& srcA2 = m[2];
+        const Vec4& srcA3 = m[3];
+
+        const Vec4& srcB0 = b[0];
+        const Vec4& srcB1 = b[1];
+        const Vec4& srcB2 = b[2];
+        const Vec4& srcB3 = b[3];
+
         Mat4 tmp;
         
-        tmp[0][0] = a[0][0] * b[0][0] + a[0][1] * b[1][0] + a[0][2] * b[2][0] + a[0][3] * b[3][0];
-        tmp[0][1] = a[0][0] * b[0][1] + a[0][1] * b[1][1] + a[0][2] * b[2][1] + a[0][3] * b[3][1];
-        tmp[0][2] = a[0][0] * b[0][2] + a[0][1] * b[1][2] + a[0][2] * b[2][2] + a[0][3] * b[3][2];
-        tmp[0][3] = a[0][0] * b[0][3] + a[0][1] * b[1][3] + a[0][2] * b[2][3] + a[0][3] * b[3][3];
-
-        tmp[1][0] = a[1][0] * b[0][0] + a[1][1] * b[1][0] + a[1][2] * b[2][0] + a[1][3] * b[3][0];
-        tmp[1][1] = a[1][0] * b[0][1] + a[1][1] * b[1][1] + a[1][2] * b[2][1] + a[1][3] * b[3][1];
-        tmp[1][2] = a[1][0] * b[0][2] + a[1][1] * b[1][2] + a[1][2] * b[2][2] + a[1][3] * b[3][2];
-        tmp[1][3] = a[1][0] * b[0][3] + a[1][1] * b[1][3] + a[1][2] * b[2][3] + a[1][3] * b[3][3];
-
-        tmp[2][0] = a[2][0] * b[0][0] + a[2][1] * b[1][0] + a[2][2] * b[2][0] + a[2][3] * b[3][0];
-        tmp[2][1] = a[2][0] * b[0][1] + a[2][1] * b[1][1] + a[2][2] * b[2][1] + a[2][3] * b[3][1];
-        tmp[2][2] = a[2][0] * b[0][2] + a[2][1] * b[1][2] + a[2][2] * b[2][2] + a[2][3] * b[3][2];
-        tmp[2][3] = a[2][0] * b[0][3] + a[2][1] * b[1][3] + a[2][2] * b[2][3] + a[2][3] * b[3][3];
-
-        tmp[3][0] = a[3][0] * b[0][0] + a[3][1] * b[1][0] + a[3][2] * b[2][0] + a[3][3] * b[3][0];
-        tmp[3][1] = a[3][0] * b[0][1] + a[3][1] * b[1][1] + a[3][2] * b[2][1] + a[3][3] * b[3][1];
-        tmp[3][2] = a[3][0] * b[0][2] + a[3][1] * b[1][2] + a[3][2] * b[2][2] + a[3][3] * b[3][2];
-        tmp[3][3] = a[3][0] * b[0][3] + a[3][1] * b[1][3] + a[3][2] * b[2][3] + a[3][3] * b[3][3];
-
-        a = tmp;
-        return a;
+        tmp[0] = srcA0 * srcB0[0] + srcA1 * srcB0[1] + srcA2 * srcB0[2] + srcA3 * srcB0[3];
+        tmp[1] = srcA0 * srcB1[0] + srcA1 * srcB1[1] + srcA2 * srcB1[2] + srcA3 * srcB1[3];
+        tmp[2] = srcA0 * srcB2[0] + srcA1 * srcB2[1] + srcA2 * srcB2[2] + srcA3 * srcB2[3];
+        tmp[3] = srcA0 * srcB3[0] + srcA1 * srcB3[1] + srcA2 * srcB3[2] + srcA3 * srcB3[3];
+        
+        m = tmp;
+        return m;
     }
 
     
@@ -279,19 +274,6 @@ namespace moti {
         return a;
     }
 
-    inline void perspective(Mat4& m, float fovy, float aspect, float nearz, float farz) {
-        memset(&m, 0, sizeof(Mat4));
-
-        float const tanHalfFovy = tan(fovy / 2.f);
-
-        
-        m[0][0] = 1.f / (aspect * tanHalfFovy);
-        m[1][1] = 1.f / (tanHalfFovy);
-        m[2][2] = -(farz + nearz) / (farz - nearz);
-        m[2][3] = -1.f;
-        m[3][2] = -(2 * farz * nearz) / (farz - nearz);
-    }
-
     inline void translate(Mat4& m, const Vec3& v) {
         m[3][0] = v[0];
         m[3][1] = v[1];
@@ -306,8 +288,9 @@ namespace moti {
         r[3] = m[3];
         return r;
     }
-
+    // From GLM
     inline void look(Mat4& m, const Vec3& pos, const Vec3& target, const Vec3& up) {
+        m.setIdentity();
         Vec3 const f(normalize(target - pos));
         Vec3 const s(normalize(cross(f, up)));
         Vec3 const u(cross(s, f));
@@ -325,6 +308,56 @@ namespace moti {
         m[3][1] = -dot(u, pos);
         m[3][2] = dot(f, pos);
 
+    }
+
+    // From GLM
+    inline void rotate(Mat4& m, float radians, const Vec3& v) {
+        float const a = radians;
+        float const c = cos(a);
+        float const s = sin(a);
+
+        Vec3 axis(normalize(v));
+        Vec3 temp((1.f - c) * axis);
+
+        Mat4 Rotate;
+        Rotate[0][0] = c + temp[0] * axis[0];
+        Rotate[0][1] = 0 + temp[0] * axis[1] + s * axis[2];
+        Rotate[0][2] = 0 + temp[0] * axis[2] - s * axis[1];
+
+        Rotate[1][0] = 0 + temp[1] * axis[0] - s * axis[2];
+        Rotate[1][1] = c + temp[1] * axis[1];
+        Rotate[1][2] = 0 + temp[1] * axis[2] + s * axis[0];
+
+        Rotate[2][0] = 0 + temp[2] * axis[0] + s * axis[1];
+        Rotate[2][1] = 0 + temp[2] * axis[1] - s * axis[0];
+        Rotate[2][2] = c + temp[2] * axis[2];
+
+        Mat4 Result;
+        Result[0] = m[0] * Rotate[0][0] + m[1] * Rotate[0][1] + m[2] * Rotate[0][2];
+        Result[1] = m[0] * Rotate[1][0] + m[1] * Rotate[1][1] + m[2] * Rotate[1][2];
+        Result[2] = m[0] * Rotate[2][0] + m[1] * Rotate[2][1] + m[2] * Rotate[2][2];
+        Result[3] = m[3];
+        m = Result;
+    }
+
+    // From GLM
+    inline void perspective(Mat4& m, float fovy, float aspect, float nearz, float farz) {
+        memset(&m, 0, sizeof(Mat4));
+        float const tanHalfFovy = tan(fovy / 2.f);
+
+        m[0][0] = 1.f / (aspect * tanHalfFovy);
+        m[1][1] = 1.f / (tanHalfFovy);
+        m[2][2] = -(farz + nearz) / (farz - nearz);
+        m[2][3] = -1.f;
+        m[3][2] = -(2 * farz * nearz) / (farz - nearz);
+    }
+
+    inline float* toPointer(Mat4& m) {
+        return &m[0][0];
+    }
+
+    inline const float* toPointer(const Mat4& m){
+        return &m[0][0];
     }
 }
 

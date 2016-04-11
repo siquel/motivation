@@ -1,11 +1,8 @@
 #include "moti/renderer/renderer_gl.h"
 #include "moti/memory/block.h"
 #include "moti/io/io.h"
-#include <glm/glm.hpp>
-#include <glm/matrix.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include "moti/math/math.h"
+
 namespace moti {
     namespace graphics {
         namespace gl {
@@ -79,16 +76,19 @@ namespace moti {
 
                 GLint loc = glGetUniformLocation(program.m_id, "u_modelViewProj");
                 
-                glm::mat4 view = glm::lookAt(glm::vec3(0.0, 2.0, 0.0), glm::vec3(0.0, 0.0, -4.0), glm::vec3(0.0, 1.0, 0.0));
-                glm::mat4 projection = glm::perspective(45.0f, 1.0f*1280 / 720, 0.1f, 10.0f);
-                glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -4.0));
-                
-                glm::mat4 mvp = projection * view * model;
+                moti::Mat4 view;
+                moti::look(view, Vec3{ 0.f, 2.f, 0.f }, Vec3{ 0.f, 0.f, -4.f }, Vec3{ 0.f, 1.f, 0.f });
+                moti::Mat4 projection;
+                moti::perspective(projection, 45.f, 1.f * 1280 / 720, 0.1f, 10.f);
+                moti::Mat4 model;
+                model.setIdentity();
+                translate(model, Vec3{ 0.f, 0.f, -4.f });
                 float angle = SDL_GetTicks() / 1000.0f * 45.f;  // 45° per second
-                glm::mat4 rot = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0, 1,0));
-
-                glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(mvp * rot));
-                //glDrawArrays(GL_TRIANGLES, _draw.m_startVertex, _draw.m_endVertex);
+                
+                moti::rotate(model, moti::radians(angle), Vec3{ 0.f, 1.f, 0.f });
+                moti::Mat4 mvp2 = projection * view * model;
+                glUniformMatrix4fv(loc, 1, GL_FALSE, toPointer(mvp2));
+                
                 GL_CHECK(glDrawElements(GL_TRIANGLES, _draw.m_indexCount, GL_UNSIGNED_SHORT, nullptr));
                 GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
                 GL_CHECK(glUseProgram(0));
