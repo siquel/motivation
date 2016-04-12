@@ -25,6 +25,12 @@ namespace moti {
             ShaderHandle createShader(mem::Block* _mem);
             ProgramHandle createProgram(ShaderHandle _vertex, ShaderHandle _fragment);
 
+            void destroyVertexBuffer(VertexBufferHandle _handle);
+            void destroyIndexBuffer(IndexBufferHandle _handle);
+            
+            UniformHandle createUniform(UniformType::Enum _type, uint16_t _count, const char* _name);
+            void destroyUniform(UniformHandle _handle);
+
             void destroyShader(ShaderHandle _handle);
             void destroyProgram(ProgramHandle _handle);
             void submit(ProgramHandle _program);
@@ -32,6 +38,7 @@ namespace moti {
             void setViewTransform(const Mat4& _view, const Mat4& _proj);
             void setViewRect(uint32_t _x, uint32_t  _y, uint32_t _w, uint32_t h);
             void setTransform(const Mat4& _mtx);
+            void setUniform(UniformHandle _handle, const void* _value, uint16_t _count);
 		};
 	}
 }

@@ -67,21 +67,26 @@ namespace moti {
                 GLIndexBuffer m_indexBuffers[MAX_INDEX_BUFFERS];
                 GLShader m_shaders[MAX_SHADERS];
                 GLProgram m_programs[MAX_PROGRAMS];
+                // TODO this isn't working properly
                 GLuint m_vaos[MAX_PROGRAMS];
                 VertexDecl m_vertexDecls[MAX_VERTEX_BUFFERS];
 
 				RendererContextGL();
 				~RendererContextGL() override;
 				virtual void createVertexBuffer(VertexBufferHandle _handle, mem::Block* _mem, VertexDeclHandle _decl) override;
+                virtual void destroyVertexBuffer(VertexBufferHandle _handle) override;
                 virtual void createIndexBuffer(IndexBufferHandle _handle, mem::Block* _mem) override;
+                virtual void destroyIndexBuffer(IndexBufferHandle _handle) override;
                 virtual void setVertexBuffer(VertexBufferHandle _handle) override;
                 virtual void createShader(ShaderHandle _handle, mem::Block* _mem) override;
                 virtual void createProgram(ProgramHandle _handle, ShaderHandle _vertex, ShaderHandle _fragment) override;
                 virtual void destroyShader(ShaderHandle _handle) override;
                 virtual void destroyProgram(ProgramHandle _handle) override;
                 virtual void createVertexDecl(VertexDeclHandle _handle, const VertexDecl& _decl) override;
+                virtual void destroyVertexDecl(VertexDeclHandle _handle) override;
                 virtual void submit(ProgramHandle _handle, const Render& _draw) override;
-
+                virtual void createUniform(UniformHandle _handle, UniformType::Enum _type, uint16_t _count, const char* _name) override;
+                virtual void destroyUniform(UniformHandle _handle) override;
                 void setShaderUniform4f(uint32_t _index, const void* _val, uint32_t _num);
                 void setShaderUniform4x4f(uint32_t _index, const void* _val, uint32_t _num);
 

@@ -39,6 +39,10 @@ namespace moti {
                 m_vertexBuffers[_handle.m_id].create(_mem->m_length, _mem->m_ptr, _decl);
             }
 
+            void RendererContextGL::destroyVertexBuffer(VertexBufferHandle _handle)
+            {
+            }
+
             void RendererContextGL::setVertexBuffer(VertexBufferHandle _handle) {
                 auto& buffer = m_vertexBuffers[_handle.m_id];
                 GL_CHECK(glBindBuffer(buffer.m_target, buffer.m_id));
@@ -96,13 +100,29 @@ namespace moti {
                 GL_CHECK(glUseProgram(0));
             }
 
+            void RendererContextGL::createUniform(UniformHandle _handle, UniformType::Enum _type, uint16_t _count, const char * _name)
+            {
+            }
+
+            void RendererContextGL::destroyUniform(UniformHandle _handle)
+            {
+            }
+
             void RendererContextGL::createVertexDecl(VertexDeclHandle _handle, const VertexDecl& _decl) {
                 VertexDecl* decl = &m_vertexDecls[_handle.m_id];
                 memcpy(decl, &_decl, sizeof(VertexDecl));
             }
 
+            void RendererContextGL::destroyVertexDecl(VertexDeclHandle _handle)
+            {
+            }
+
             void RendererContextGL::createIndexBuffer(IndexBufferHandle _handle, mem::Block* _mem) {
                 m_indexBuffers[_handle.m_id].create(_mem->m_length, _mem->m_ptr);
+            }
+
+            void RendererContextGL::destroyIndexBuffer(IndexBufferHandle _handle)
+            {
             }
 
             void RendererContextGL::setPredefined(const GLProgram& _program, const Render& _draw) {

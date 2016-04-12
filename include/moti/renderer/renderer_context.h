@@ -70,6 +70,10 @@ namespace moti {
             uint16_t m_id;
         };
 
+        struct UniformHandle {
+            uint16_t m_id;
+        };
+
 		inline bool isValid(VertexBufferHandle _h) { return _h.m_id != UINT16_MAX; }
         inline bool isValid(IndexBufferHandle _h) { return _h.m_id != UINT16_MAX; }
 		inline bool isValid(VertexDeclHandle _h) { return _h.m_id != UINT16_MAX; }
@@ -111,13 +115,18 @@ namespace moti {
 		struct RendererContext {
 			virtual ~RendererContext() = 0;
 			virtual void createVertexBuffer(VertexBufferHandle _handle, mem::Block* _mem, VertexDeclHandle _decl) = 0;
+            virtual void destroyVertexBuffer(VertexBufferHandle _handle) = 0;
             virtual void createIndexBuffer(IndexBufferHandle _handle, mem::Block* _mem) = 0;
+            virtual void destroyIndexBuffer(IndexBufferHandle _handle) = 0;
             virtual void setVertexBuffer(VertexBufferHandle _handle) = 0;
             virtual void createShader(ShaderHandle _handle, mem::Block* _mem) = 0; 
             virtual void createProgram(ProgramHandle _handle, ShaderHandle _vertex, ShaderHandle _fragment) = 0;
             virtual void destroyShader(ShaderHandle _handle) = 0;
             virtual void destroyProgram(ProgramHandle _handle) = 0;
             virtual void createVertexDecl(VertexDeclHandle _handle, const VertexDecl& _decl) = 0;
+            virtual void destroyVertexDecl(VertexDeclHandle _handle) = 0;
+            virtual void createUniform(UniformHandle _handle, UniformType::Enum _type, uint16_t _count, const char* _name) = 0;
+            virtual void destroyUniform(UniformHandle _handle) = 0;
             virtual void submit(ProgramHandle _handle, const Render& _draw) = 0;
 		};
 		inline RendererContext::~RendererContext() {}

@@ -83,6 +83,23 @@ namespace moti {
             return handle;
         }
 
+        void GraphicsDevice::destroyVertexBuffer(VertexBufferHandle _handle)
+        {
+        }
+
+        void GraphicsDevice::destroyIndexBuffer(IndexBufferHandle _handle)
+        {
+        }
+
+        UniformHandle GraphicsDevice::createUniform(UniformType::Enum _type, uint16_t _count, const char * _name)
+        {
+            return UniformHandle{ UINT16_MAX };
+        }
+
+        void GraphicsDevice::destroyUniform(UniformHandle _handle)
+        {
+        }
+
         void GraphicsDevice::destroyShader(ShaderHandle _handle) {
             if (isValid(_handle)) {
                 m_ctx->destroyShader(_handle);
@@ -117,6 +134,10 @@ namespace moti {
 
         void GraphicsDevice::setTransform(const Mat4& _mtx) {
             m_draw.m_model = _mtx;
+        }
+
+        void GraphicsDevice::setUniform(UniformHandle _handle, const void * _value, uint16_t _count)
+        {
         }
 
     }

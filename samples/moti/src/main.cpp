@@ -102,6 +102,7 @@ int main(int argc, char** argv) {
     using moti::AttributeType;
     using moti::Mat4;
     using moti::Vec3;
+    using moti::UniformType;
 
     moti::memory_globals::init();
    
@@ -137,6 +138,8 @@ int main(int argc, char** argv) {
     moti::Mat4 projection;
     moti::perspective(projection, 60.f, float(Width) / float(Height), 0.1f, 100.f);
 
+    mg::UniformHandle u_time = device.createUniform(UniformType::Vec4, 1, "u_time");
+
     SDL_Event e;
     bool running = true;
 
@@ -148,8 +151,9 @@ int main(int argc, char** argv) {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        float angle = SDL_GetTicks() / 1000.0f * 45.f;  // 45° per second
-
+        float time = SDL_GetTicks() / 1000.f;
+        float angle = time * 45.f;  // 45° per second
+        
         for (uint32_t y = 0; y < 11; ++y) {
             for (uint32_t x = 0; x < 11; ++x) {
                 moti::Mat4 model;
@@ -162,6 +166,7 @@ int main(int argc, char** argv) {
                 device.setViewTransform(view, projection);
                 device.setViewRect(0, 0, Width, Height);
                 device.setTransform(model);
+                device.setUniform(u_time, &time, 1);
                 device.submit(p);
             }
         }
@@ -170,8 +175,11 @@ int main(int argc, char** argv) {
         SDL_GL_SwapWindow(wnd);
     }
 
+    device.destroyUniform(u_time);
     device.destroyShader(vsh);
     device.destroyShader(fsh);
+    device.destroyVertexBuffer(vbo);
+    device.destroyIndexBuffer(ibo);
     device.destroyProgram(p);
     SDL_DestroyWindow(wnd);
     SDL_Quit();
