@@ -133,32 +133,40 @@ int main(int argc, char** argv) {
     mg::IndexBufferHandle ibo = device.createIndexBuffer(&indicesBlock);
 
     moti::Mat4 view;
-    moti::look(view, Vec3{ 0.f, 2.f, 0.f }, Vec3{ 0.f, 0.f, -4.f }, Vec3{ 0.f, 1.f, 0.f });
+    moti::look(view, Vec3{ 0.f, 0.f, -4.f }, Vec3{ 0.f, 0.f, -0.f }, Vec3{ 0.f, 1.f, 0.f });
     moti::Mat4 projection;
-    moti::perspective(projection, 45.f, float(Width) / float(Height), 0.1f, 100.f);
+    moti::perspective(projection, 60.f, float(Width) / float(Height), 0.1f, 100.f);
 
     SDL_Event e;
     bool running = true;
 
     while (running) {
-        moti::Mat4 model;
-        model.setIdentity();
-        translate(model, Vec3{ 0.f, 0.f, -4.f });
-        float angle = SDL_GetTicks() / 1000.0f * 45.f;  // 45° per second
-        moti::rotate(model, moti::radians(angle), Vec3{ 0.f, 1.f, 0.f });
 
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) running = false;
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        device.setIndexBuffer(ibo, 0, 36);
-        device.setVertexBuffer(vbo, 0, 8);
-        device.setViewTransform(view, projection);
-        device.setViewRect(0, 0, Width, Height);
 
-        device.setTransform(model);
-        device.submit(p);
+        float angle = SDL_GetTicks() / 1000.0f * 45.f;  // 45° per second
+
+        for (uint32_t y = 0; y < 11; ++y) {
+            for (uint32_t x = 0; x < 11; ++x) {
+                moti::Mat4 model;
+                model.setIdentity();
+                translate(model, Vec3{ -15.f + float(x) * 3.f, -15.f + 3.f * float(y), 0.f });
+                moti::rotate(model, moti::radians(angle), Vec3{ 1.f, 1.f, 0.f });
+
+                device.setIndexBuffer(ibo, 0, 36);
+                device.setVertexBuffer(vbo, 0, 8);
+                device.setViewTransform(view, projection);
+                device.setViewRect(0, 0, Width, Height);
+                device.setTransform(model);
+                device.submit(p);
+            }
+        }
+        
+        
         SDL_GL_SwapWindow(wnd);
     }
 
