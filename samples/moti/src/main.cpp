@@ -71,7 +71,7 @@ static const char* s_VertexShader = VERT_HEAD MOTI_TO_STRING(
     out vec4 color;
     void main() {
         color = a_color;
-        gl_Position = u_viewProj * vec4(a_position, 1.0);
+        gl_Position = u_modelViewProj * vec4(a_position, 1.0);
     }
 );
 
@@ -139,7 +139,13 @@ int main(int argc, char** argv) {
 
     SDL_Event e;
     bool running = true;
+
     while (running) {
+        moti::Mat4 model;
+        model.setIdentity();
+        translate(model, Vec3{ 0.f, 0.f, -4.f });
+        float angle = SDL_GetTicks() / 1000.0f * 45.f;  // 45° per second
+        moti::rotate(model, moti::radians(angle), Vec3{ 0.f, 1.f, 0.f });
 
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) running = false;
@@ -150,6 +156,8 @@ int main(int argc, char** argv) {
         device.setVertexBuffer(vbo, 0, 8);
         device.setViewTransform(view, projection);
         device.setViewRect(0, 0, Width, Height);
+
+        device.setTransform(model);
         device.submit(p);
         SDL_GL_SwapWindow(wnd);
     }

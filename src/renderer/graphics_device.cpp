@@ -115,5 +115,9 @@ namespace moti {
             m_draw.m_viewRect = m_viewRect;
         }
 
+        void GraphicsDevice::setTransform(const Mat4& _mtx) {
+            m_draw.m_model = _mtx;
+        }
+
     }
 }

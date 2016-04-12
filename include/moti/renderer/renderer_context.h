@@ -93,6 +93,7 @@ namespace moti {
             Mat4 m_view;
             Mat4 m_proj;
             Rect m_viewRect;
+            Mat4 m_model;
 
             void reset() {
                 m_vertexBuffer.m_id = UINT16_MAX;
@@ -101,9 +102,9 @@ namespace moti {
                 m_endVertex = UINT32_MAX;
                 m_startIndex = 0;
                 m_indexCount = UINT32_MAX;
-                m_view.setIdentity();
-                m_proj.setIdentity();
-                memset(&m_viewRect, 0, sizeof(Rect));
+//              m_view.setIdentity();
+//              m_proj.setIdentity();
+//              memset(&m_viewRect, 0, sizeof(Rect));
             }
         };
 

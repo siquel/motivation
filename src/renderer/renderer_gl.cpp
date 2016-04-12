@@ -90,13 +90,6 @@ namespace moti {
                 GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo.m_id));
 
                 setPredefined(program, _draw);
-
-                moti::Mat4 model;
-                model.setIdentity();
-                translate(model, Vec3{ 0.f, 0.f, -4.f });
-                float angle = SDL_GetTicks() / 1000.0f * 45.f;  // 45° per second
-                
-                moti::rotate(model, moti::radians(angle), Vec3{ 0.f, 1.f, 0.f });
                 
                 GL_CHECK(glDrawElements(GL_TRIANGLES, _draw.m_indexCount, GL_UNSIGNED_SHORT, nullptr));
                 GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
@@ -113,6 +106,7 @@ namespace moti {
             }
 
             void RendererContextGL::setPredefined(const GLProgram& _program, const Render& _draw) {
+                
                 for (uint32_t i = 0; i < _program.m_uniformCount; ++i) {
                     const PredefinedUniform& predefined = _program.m_predefinedUniforms[i];
                     switch (predefined.m_type) {
@@ -131,11 +125,14 @@ namespace moti {
                         setShaderUniform4x4f(predefined.m_loc, &_draw.m_proj, predefined.m_count);
                         break;
                     case PredefinedUniform::ViewProj:
-                        Mat4 mvp = _draw.m_proj * _draw.m_view;
-                        setShaderUniform4x4f(predefined.m_loc, &mvp, predefined.m_count);
+                        Mat4 vp = _draw.m_proj * _draw.m_view;
+                        setShaderUniform4x4f(predefined.m_loc, &vp, predefined.m_count);
                     case PredefinedUniform::Model:
+                        setShaderUniform4x4f(predefined.m_loc, &_draw.m_model, predefined.m_count);
                         break;
                     case PredefinedUniform::ModelViewProj:
+                        Mat4 mvp = _draw.m_proj * _draw.m_view * _draw.m_model;
+                        setShaderUniform4x4f(predefined.m_loc, &mvp, predefined.m_count);
                         break;
                     }
                 }
