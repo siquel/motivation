@@ -7,6 +7,13 @@ namespace moti {
     namespace graphics {
         namespace gl {
 
+            static const GLenum s_attribTypes[] = {
+                GL_UNSIGNED_BYTE, // uint8
+                GL_FLOAT          // float
+            };
+
+            static_assert(MOTI_COUNTOF(s_attribTypes) == AttributeType::Count, "Invalid amount of attribute types");
+
             RendererContextGL::RendererContextGL() {
                 int versionMajor;
                 int versionMinor;
@@ -251,12 +258,6 @@ namespace moti {
                     MOTI_TRACE("uniform %s is at location %d, count %d", name, info.loc, count);
 
                 }
-                // TODO FIXME move this to moti.h
-                static const char* s_attribNames[] = {
-                    "a_position",
-                    "a_color"
-                };
-                static_assert(MOTI_COUNTOF(s_attribNames) == Attribute::Count, "Invalid amount of attribute names");
 
                 memset(m_attributes, 0xff, sizeof(m_attributes));
                 uint32_t used(0);
@@ -273,11 +274,6 @@ namespace moti {
             }
 
             void GLProgram::bindAttributes(const VertexDecl& _decl) {
-                // TODO FIXME move this to moti.h
-                static const GLenum s_attribTypes[] = {
-                    GL_FLOAT, // pos
-                    GL_UNSIGNED_BYTE // color
-                };
 
                 for (uint32_t i = 0; Attribute::Count != m_used[i]; ++i) {
                     Attribute::Enum attr = Attribute::Enum(m_used[i]);
@@ -288,10 +284,10 @@ namespace moti {
                             AttributeType::Enum type = _decl.m_type[attr];
 
                             GL_CHECK(glEnableVertexAttribArray(loc));
-                            // TODO FIXME move this to moti.h
+                            
                             GL_CHECK(glVertexAttribPointer(loc,
                                 _decl.m_count[attr],
-                                type == AttributeType::Float ? GL_FLOAT : GL_UNSIGNED_BYTE,
+                                s_attribTypes[type],
                                 !_decl.m_normalized[attr],
                                 _decl.m_stride,
                                 (void*)(uintptr_t)_decl.m_offset[attr]));

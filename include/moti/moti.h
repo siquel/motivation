@@ -80,6 +80,12 @@ namespace moti {
         };
     };
 
+    static const char* s_attribNames[] = {
+        "a_position",
+        "a_color"
+    };
+    static_assert(MOTI_COUNTOF(s_attribNames) == Attribute::Count, "Invalid amount of attribute names");
+
     struct AttributeType {
         enum Enum {
             Uint8,
