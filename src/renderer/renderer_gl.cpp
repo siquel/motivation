@@ -116,9 +116,27 @@ namespace moti {
                 for (uint32_t i = 0; i < _program.m_uniformCount; ++i) {
                     const PredefinedUniform& predefined = _program.m_predefinedUniforms[i];
                     switch (predefined.m_type) {
-                    case PredefinedUniform::ModelViewProj:
+                    case PredefinedUniform::ViewRect:
+                        float frect[4];
+                        frect[0] = (float)_draw.m_viewRect.m_x;
+                        frect[1] = (float)_draw.m_viewRect.m_y;
+                        frect[2] = (float)_draw.m_viewRect.m_width;
+                        frect[3] = (float)_draw.m_viewRect.m_height;
+                        setShaderUniform4f(predefined.m_loc, frect, predefined.m_count);
+                        break;
+                    case PredefinedUniform::View:
+                        setShaderUniform4x4f(predefined.m_loc, &_draw.m_view, predefined.m_count);
+                        break;
+                    case PredefinedUniform::Proj:
+                        setShaderUniform4x4f(predefined.m_loc, &_draw.m_proj, predefined.m_count);
+                        break;
+                    case PredefinedUniform::ViewProj:
                         Mat4 mvp = _draw.m_proj * _draw.m_view;
                         setShaderUniform4x4f(predefined.m_loc, &mvp, predefined.m_count);
+                    case PredefinedUniform::Model:
+                        break;
+                    case PredefinedUniform::ModelViewProj:
+                        break;
                     }
                 }
             }

@@ -59,6 +59,7 @@ namespace moti {
 
     struct PredefinedUniform {
         enum Enum {
+            ViewRect,
             View,
             Proj,
             ViewProj,

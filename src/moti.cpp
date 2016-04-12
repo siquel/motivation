@@ -7,6 +7,7 @@
 namespace moti {
 
     static const char* s_predefinedUniformNames[] = {
+        "u_viewRect",
         "u_view",
         "u_proj",
         "u_viewProj",

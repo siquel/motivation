@@ -52,6 +52,7 @@ static const uint16_t s_indices[36] =
 mg::VertexDecl s_decl;
 
 #define VERT_HEAD  "#version 440\n" MOTI_TO_STRING( \
+        uniform vec4 u_viewRect;                    \
         uniform mat4 u_view;                        \
         uniform mat4 u_proj;                        \
         uniform mat4 u_viewProj;                    \
@@ -70,7 +71,7 @@ static const char* s_VertexShader = VERT_HEAD MOTI_TO_STRING(
     out vec4 color;
     void main() {
         color = a_color;
-        gl_Position = u_modelViewProj * vec4(a_position, 1.0);
+        gl_Position = u_viewProj * vec4(a_position, 1.0);
     }
 );
 
