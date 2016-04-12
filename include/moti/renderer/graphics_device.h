@@ -1,6 +1,8 @@
 #pragma once
 
 #include "moti/renderer/renderer_context.h"
+#include "moti/math/math_types.h"
+
 #include <unordered_map>
 namespace moti {
 	namespace graphics {
@@ -10,6 +12,9 @@ namespace moti {
             // TODO
             std::unordered_map<uint16_t, VertexDecl> m_declLookup;
             Render m_draw;
+            Mat4 m_view;
+            Mat4 m_proj;
+            Rect m_viewRect;
         public:
             GraphicsDevice();
             ~GraphicsDevice();
@@ -23,6 +28,9 @@ namespace moti {
             void destroyShader(ShaderHandle _handle);
             void destroyProgram(ProgramHandle _handle);
             void submit(ProgramHandle _program);
+
+            void setViewTransform(const Mat4& _view, const Mat4& _proj);
+            void setViewRect(uint32_t _x, uint32_t  _y, uint32_t _w, uint32_t h);
 		};
 	}
 }

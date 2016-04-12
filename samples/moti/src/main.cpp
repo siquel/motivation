@@ -93,14 +93,14 @@ mg::ShaderHandle createShader(const char* src, uint32_t magic, mg::GraphicsDevic
     return device.createShader(&block);
 }
 
+const int Width = 1280;
+const int Height = 720;
+
 int main(int argc, char** argv) {
     using moti::Attribute;
     using moti::AttributeType;
     using moti::Mat4;
-    Mat4 a; a.setIdentity();
-    Mat4 b; b.setIdentity();
-    Mat4 c(a*b);
-
+    using moti::Vec3;
 
     moti::memory_globals::init();
    
@@ -108,7 +108,7 @@ int main(int argc, char** argv) {
 
     SDL_Init(SDL_INIT_VIDEO);
     moti::gl::GLContext context;
-    SDL_Window* wnd = SDL_CreateWindow("moti", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL);
+    SDL_Window* wnd = SDL_CreateWindow("moti", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Width, Height, SDL_WINDOW_OPENGL);
     context.create(wnd);
     glClearColor(0.0f, 0.f, 0.f, 1.f);
 
@@ -131,6 +131,11 @@ int main(int argc, char** argv) {
     mg::VertexBufferHandle vbo = device.createVertexBuffer(&memory, s_decl);
     mg::IndexBufferHandle ibo = device.createIndexBuffer(&indicesBlock);
 
+    moti::Mat4 view;
+    moti::look(view, Vec3{ 0.f, 2.f, 0.f }, Vec3{ 0.f, 0.f, -4.f }, Vec3{ 0.f, 1.f, 0.f });
+    moti::Mat4 projection;
+    moti::perspective(projection, 45.f, float(Width) / float(Height), 0.1f, 100.f);
+
     SDL_Event e;
     bool running = true;
     while (running) {
@@ -142,6 +147,8 @@ int main(int argc, char** argv) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         device.setIndexBuffer(ibo, 0, 36);
         device.setVertexBuffer(vbo, 0, 8);
+        device.setViewTransform(view, projection);
+        device.setViewRect(0, 0, Width, Height);
         device.submit(p);
         SDL_GL_SwapWindow(wnd);
     }

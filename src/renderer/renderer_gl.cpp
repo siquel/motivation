@@ -27,6 +27,14 @@ namespace moti {
 
             }
 
+            void RendererContextGL::setShaderUniform4f(uint32_t _index, const void* _val, uint32_t _num) {
+                GL_CHECK(glUniform4fv(_index, _num, (const GLfloat*)_val));
+            }
+
+            void RendererContextGL::setShaderUniform4x4f(uint32_t _index, const void* _val, uint32_t _num) {
+                GL_CHECK(glUniformMatrix4fv(_index, _num, GL_FALSE, (const GLfloat*)_val));
+            }
+
             void RendererContextGL::createVertexBuffer(VertexBufferHandle _handle, mem::Block* _mem, VertexDeclHandle _decl) {
                 m_vertexBuffers[_handle.m_id].create(_mem->m_length, _mem->m_ptr, _decl);
             }
@@ -81,20 +89,14 @@ namespace moti {
                 GL_CHECK(glUseProgram(program.m_id));
                 GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo.m_id));
 
-                GLint loc = glGetUniformLocation(program.m_id, "u_modelViewProj");
-                
-                moti::Mat4 view;
-                moti::look(view, Vec3{ 0.f, 2.f, 0.f }, Vec3{ 0.f, 0.f, -4.f }, Vec3{ 0.f, 1.f, 0.f });
-                moti::Mat4 projection;
-                moti::perspective(projection, 45.f, 1.f * 1280 / 720, 0.1f, 10.f);
+                setPredefined(program, _draw);
+
                 moti::Mat4 model;
                 model.setIdentity();
                 translate(model, Vec3{ 0.f, 0.f, -4.f });
                 float angle = SDL_GetTicks() / 1000.0f * 45.f;  // 45° per second
                 
                 moti::rotate(model, moti::radians(angle), Vec3{ 0.f, 1.f, 0.f });
-                moti::Mat4 mvp2 = projection * view * model;
-                glUniformMatrix4fv(loc, 1, GL_FALSE, toPointer(mvp2));
                 
                 GL_CHECK(glDrawElements(GL_TRIANGLES, _draw.m_indexCount, GL_UNSIGNED_SHORT, nullptr));
                 GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
@@ -108,6 +110,17 @@ namespace moti {
 
             void RendererContextGL::createIndexBuffer(IndexBufferHandle _handle, mem::Block* _mem) {
                 m_indexBuffers[_handle.m_id].create(_mem->m_length, _mem->m_ptr);
+            }
+
+            void RendererContextGL::setPredefined(const GLProgram& _program, const Render& _draw) {
+                for (uint32_t i = 0; i < _program.m_uniformCount; ++i) {
+                    const PredefinedUniform& predefined = _program.m_predefinedUniforms[i];
+                    switch (predefined.m_type) {
+                    case PredefinedUniform::ModelViewProj:
+                        Mat4 mvp = _draw.m_proj * _draw.m_view;
+                        setShaderUniform4x4f(predefined.m_loc, &mvp, predefined.m_count);
+                    }
+                }
             }
 
             void GLVertexBuffer::create(uint32_t _size, void* _data, VertexDeclHandle _handle) {
@@ -246,10 +259,10 @@ namespace moti {
 
                     PredefinedUniform::Enum predef = nameToPredefinedUniform(name);
                     if (predef != PredefinedUniform::Count) {
-                        m_predefinedUniforms[uniformCount].m_type = uint8_t(predef);
-                        m_predefinedUniforms[uniformCount].m_loc = info.loc;
-                        m_predefinedUniforms[uniformCount].m_count = count;
-                        uniformCount++;
+                        m_predefinedUniforms[m_uniformCount].m_type = uint8_t(predef);
+                        m_predefinedUniforms[m_uniformCount].m_loc = info.loc;
+                        m_predefinedUniforms[m_uniformCount].m_count = count;
+                        m_uniformCount++;
                     }
                     else {
                         // its user defined uniform

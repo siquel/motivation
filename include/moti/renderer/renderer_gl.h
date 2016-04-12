@@ -56,7 +56,7 @@ namespace moti {
                 GLint m_attributes[Attribute::Count];
 
                 PredefinedUniform m_predefinedUniforms[PredefinedUniform::Count];
-                uint8_t uniformCount{ 0 };
+                uint8_t m_uniformCount{ 0 };
                 void create(const GLShader& _vsh, const GLShader& _fsh);
                 void bindAttributes(const VertexDecl& _decl);
                 void destroy();
@@ -81,6 +81,11 @@ namespace moti {
                 virtual void destroyProgram(ProgramHandle _handle) override;
                 virtual void createVertexDecl(VertexDeclHandle _handle, const VertexDecl& _decl) override;
                 virtual void submit(ProgramHandle _handle, const Render& _draw) override;
+
+                void setShaderUniform4f(uint32_t _index, const void* _val, uint32_t _num);
+                void setShaderUniform4x4f(uint32_t _index, const void* _val, uint32_t _num);
+
+                void setPredefined(const GLProgram& _program, const Render& _draw);
 			};
 
 		}

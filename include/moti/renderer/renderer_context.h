@@ -1,6 +1,8 @@
 #pragma once
 
 #include "moti/moti.h"
+#include "moti/math/math_types.h"
+
 MOTI_FORWARD_DECLARE_STRUCT(moti, memory, Block);
 
 namespace moti {
@@ -73,7 +75,14 @@ namespace moti {
 		inline bool isValid(VertexDeclHandle _h) { return _h.m_id != UINT16_MAX; }
         inline bool isValid(ShaderHandle _h) { return _h.m_id != UINT16_MAX; }
         inline bool isValid(ProgramHandle _h) { return _h.m_id != UINT16_MAX; }
-
+        
+        struct Rect {
+            uint32_t m_x;
+            uint32_t m_y;
+            uint32_t m_width;
+            uint32_t m_height;
+        };
+          
         struct Render {
             VertexBufferHandle m_vertexBuffer;
             IndexBufferHandle m_indexBuffer;
@@ -81,6 +90,9 @@ namespace moti {
             uint32_t m_endVertex;
             uint32_t m_startIndex;
             uint32_t m_indexCount;
+            Mat4 m_view;
+            Mat4 m_proj;
+            Rect m_viewRect;
 
             void reset() {
                 m_vertexBuffer.m_id = UINT16_MAX;
@@ -89,6 +101,9 @@ namespace moti {
                 m_endVertex = UINT32_MAX;
                 m_startIndex = 0;
                 m_indexCount = UINT32_MAX;
+                m_view.setIdentity();
+                m_proj.setIdentity();
+                memset(&m_viewRect, 0, sizeof(Rect));
             }
         };
 

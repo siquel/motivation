@@ -1,9 +1,9 @@
-#include "..\..\include\moti\renderer\graphics_device.h"
-#include "..\..\include\moti\renderer\graphics_device.h"
 #include "moti/renderer/graphics_device.h"
 #include "moti/renderer/renderer_gl.h"
 #include "moti/io/io.h"
 #include "moti/handle.h"
+#include "moti/math/math.h"
+
 namespace moti {
     namespace graphics {
 
@@ -15,6 +15,8 @@ namespace moti {
         GraphicsDevice::GraphicsDevice()
             : m_ctx(new gl::RendererContextGL) {
             m_draw.reset();
+            m_view.setIdentity();
+            m_proj.setIdentity();
         }
         GraphicsDevice::~GraphicsDevice() {
             delete m_ctx;
@@ -96,6 +98,21 @@ namespace moti {
         void GraphicsDevice::submit(ProgramHandle _program) {
             m_ctx->submit(_program, m_draw);
             m_draw.reset();
+        }
+
+        void GraphicsDevice::setViewTransform(const Mat4& _view, const Mat4& _proj) {
+            m_view = _view;
+            m_draw.m_view = _view;
+            m_proj = _proj;
+            m_draw.m_proj = _proj;
+        }
+
+        void GraphicsDevice::setViewRect(uint32_t _x, uint32_t _y, uint32_t _w, uint32_t _h) {
+            m_viewRect.m_x = _x;
+            m_viewRect.m_y = _y;
+            m_viewRect.m_width = std::max(_w, 1u);
+            m_viewRect.m_height = std::max(_h, 1u);
+            m_draw.m_viewRect = m_viewRect;
         }
 
     }
