@@ -2,6 +2,7 @@
 #include "moti/memory/block.h"
 #include "moti/io/io.h"
 #include "moti/math/math.h"
+#include "moti/memory/memory.h"
 
 namespace moti {
     namespace graphics {
@@ -29,6 +30,7 @@ namespace moti {
                 GL_CHECK(glGetIntegerv(GL_MAJOR_VERSION, &versionMinor));
                 MOTI_TRACE("OpenGL context version: %d.%d", versionMajor, versionMinor);
                 memset(m_vaos, 0, sizeof(m_vaos));
+                memset(m_uniforms, 0, sizeof(m_uniforms));
             }
 
             RendererContextGL::~RendererContextGL() {
@@ -108,8 +110,16 @@ namespace moti {
                 GL_CHECK(glUseProgram(0));
             }
 
-            void RendererContextGL::createUniform(UniformHandle _handle, UniformType::Enum _type, uint16_t _count, const char * _name)
-            {
+            void RendererContextGL::createUniform(UniformHandle _handle, UniformType::Enum _type, uint16_t _count, const char * _name) {
+                memory::Block& data = m_uniforms[_handle.m_id];
+                if (data) {
+                    memory_globals::defaultAllocator().deallocate(m_uniforms[_handle.m_id]);
+                }
+                uint32_t size = s_uniformTypeSize[_type] * _count;
+                data = memory_globals::defaultAllocator().allocate(size);
+                memset(data.m_ptr, 0, data.m_length);
+                m_uniforms[_handle.m_id];
+                m_uniformReg.add(_handle, _name, data);
             }
 
             void RendererContextGL::destroyUniform(UniformHandle _handle)

@@ -2,6 +2,7 @@
 
 #include "moti/renderer/gl_context.h"
 #include "moti/renderer/renderer_context.h"
+#include "moti/memory/block.h"
 #include <GL/glew.h>
 #include "moti/config.h"
 
@@ -66,6 +67,8 @@ namespace moti {
                 // TODO this isn't working properly
                 GLuint m_vaos[MOTI_MAX_PROGRAMS];
                 VertexDecl m_vertexDecls[MOTI_MAX_VERTEX_BUFFERS];
+                memory::Block m_uniforms[MOTI_MAX_UNIFORMS];
+                UniformRegistry m_uniformReg;
 
 				RendererContextGL();
 				~RendererContextGL() override;

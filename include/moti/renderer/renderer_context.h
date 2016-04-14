@@ -2,6 +2,8 @@
 
 #include "moti/moti.h"
 #include "moti/math/math_types.h"
+#include "../memory/block.h"
+#include <unordered_map>
 
 MOTI_FORWARD_DECLARE_STRUCT(moti, memory, Block);
 
@@ -90,6 +92,41 @@ namespace moti {
         struct Uniform {
             UniformType::Enum m_type;
             uint16_t m_count;
+        };
+
+        struct UniformInfo {
+            memory::Block m_data;
+            UniformHandle m_handle;
+        };
+
+        class UniformRegistry {
+        public:
+            UniformRegistry() = default;
+            ~UniformRegistry() = default;
+            const UniformInfo* find(const char* _name) const {
+                auto search = m_uniforms.find(_name);
+                if (search != m_uniforms.end()) {
+                    return &search->second;
+                }
+                return nullptr;
+            }
+
+            const UniformInfo& add(UniformHandle _handle, const char* _name, mem::Block _data) {
+                UniformHashMap::iterator search = m_uniforms.find(_name);
+                if (search == m_uniforms.end()) {
+                    UniformInfo info{ _data, _handle };
+                    auto it = m_uniforms.insert(std::make_pair(_name, info));
+                    return it.first->second;
+                }
+
+                UniformInfo& info = search->second;
+                info.m_data = _data;
+                info.m_handle = _handle;
+                return info;
+            }
+        private:
+            using UniformHashMap = std::unordered_map<const char*, UniformInfo>;
+            UniformHashMap m_uniforms;
         };
           
         struct Render {
