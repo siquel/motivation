@@ -128,6 +128,29 @@ namespace moti {
             using UniformHashMap = std::unordered_map<const char*, UniformInfo>;
             UniformHashMap m_uniforms;
         };
+
+        struct Constant {
+            UniformType::Enum m_type;
+            uint16_t m_loc;
+            UniformHandle m_handle;
+            uint16_t m_count;
+        };
+
+        struct ConstantBuffer {
+            void writeUniform(UniformType::Enum _type, uint16_t _loc, UniformHandle _handle, uint16_t _count) {
+
+            }
+
+            ConstantBuffer(uint32_t _size) 
+                : m_size(_size), m_pos(0) {
+
+            }
+            ~ConstantBuffer() = default;
+        private:
+            uint32_t m_size;
+            uint32_t m_pos;
+            Constant* m_buffer;
+        };
           
         struct Render {
             VertexBufferHandle m_vertexBuffer;
@@ -148,6 +171,7 @@ namespace moti {
                 m_endVertex = UINT32_MAX;
                 m_startIndex = 0;
                 m_indexCount = UINT32_MAX;
+                
 //              m_view.setIdentity();
 //              m_proj.setIdentity();
 //              memset(&m_viewRect, 0, sizeof(Rect));
@@ -169,6 +193,7 @@ namespace moti {
             virtual void destroyVertexDecl(VertexDeclHandle _handle) = 0;
             virtual void createUniform(UniformHandle _handle, UniformType::Enum _type, uint16_t _count, const char* _name) = 0;
             virtual void destroyUniform(UniformHandle _handle) = 0;
+            virtual void updateUniform(UniformHandle _handle, const void* _value, uint32_t _size) = 0;
             virtual void submit(ProgramHandle _handle, const Render& _draw) = 0;
 		};
 		inline RendererContext::~RendererContext() {}

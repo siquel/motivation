@@ -86,6 +86,7 @@ namespace moti {
                 virtual void submit(ProgramHandle _handle, const Render& _draw) override;
                 virtual void createUniform(UniformHandle _handle, UniformType::Enum _type, uint16_t _count, const char* _name) override;
                 virtual void destroyUniform(UniformHandle _handle) override;
+                virtual void updateUniform(UniformHandle _handle, const void* _value, uint32_t _size) override;
                 void setShaderUniform4f(uint32_t _index, const void* _val, uint32_t _num);
                 void setShaderUniform4x4f(uint32_t _index, const void* _val, uint32_t _num);
 

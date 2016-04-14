@@ -162,6 +162,9 @@ namespace moti {
         }
 
         void GraphicsDevice::setUniform(UniformHandle _handle, const void * _value, uint16_t _count) {
+            Uniform& uniform = m_uniforms[_handle.m_id];
+            // hmm howto?
+            //m_draw.m_constantBuffer->writeUn
         }
 
     }

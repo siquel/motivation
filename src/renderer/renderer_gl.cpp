@@ -39,6 +39,22 @@ namespace moti {
 
             static_assert(MOTI_COUNTOF(s_uniformTypeSize) == UniformType::Count, "Invalid amount of uniform type sizes");
 
+            UniformType::Enum glTypeToUniformType(GLenum _type) {
+                switch (_type) {
+                case GL_FLOAT:
+                case GL_FLOAT_VEC2:
+                case GL_FLOAT_VEC3:
+                case GL_FLOAT_VEC4:
+                    return UniformType::Vec4;
+                case GL_FLOAT_MAT3:
+                    return UniformType::Mat3;
+                case GL_FLOAT_MAT4:
+                    return UniformType::Mat4;
+                }
+                MOTI_ASSERT(false, "Unrecognized enum 0x%04x", _type);
+                return UniformType::Count;
+            }
+
             RendererContextGL::RendererContextGL() {
                 int versionMajor;
                 int versionMinor;
@@ -136,6 +152,10 @@ namespace moti {
                 memset(data.m_ptr, 0, data.m_length);
                 m_uniforms[_handle.m_id];
                 m_uniformReg.add(_handle, _name, data);
+            }
+
+            void RendererContextGL::updateUniform(UniformHandle _handle, const void* _value, uint32_t _size) {
+                memcpy(m_uniforms[_handle.m_id].m_ptr, _value, _size);
             }
 
             void RendererContextGL::destroyUniform(UniformHandle _handle)
@@ -335,7 +355,20 @@ namespace moti {
                     }
                     else {
                         // its user defined uniform
-                        const UniformInfo* info = s_ctx->m_uniformReg.find(name);
+                        const UniformInfo* uniformInfo = s_ctx->m_uniformReg.find(name);
+                        if (uniformInfo == nullptr) {
+                            MOTI_TRACE("User defined uniform %s is not found", name);
+                        }
+                        else {
+                            UniformType::Enum type = glTypeToUniformType(info.type);
+                            
+                            /*struct Asd {
+                                UniformType type;
+                                uint16_t loc;
+                                UniformHandle handle;
+                                uint16_t count;
+                            };*/
+                        }
                     }
 
                     MOTI_TRACE("uniform %s is at location %d, count %d", name, info.loc, count);
