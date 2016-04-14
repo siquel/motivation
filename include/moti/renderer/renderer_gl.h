@@ -92,6 +92,8 @@ namespace moti {
                 void setPredefined(const GLProgram& _program, const Render& _draw);
 			};
 
+            RendererContext* createRenderer();
+            void destroyRenderer();
 		}
 	}
 }

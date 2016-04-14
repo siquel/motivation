@@ -17,14 +17,14 @@ namespace moti {
         std::unordered_map<const char*, UniformHandle> m_uniformLookup;
 
         GraphicsDevice::GraphicsDevice()
-            : m_ctx(new gl::RendererContextGL) {
+            : m_ctx(gl::createRenderer()) {
             m_uniformLookup.reserve(MOTI_MAX_UNIFORMS);
             m_draw.reset();
             m_view.setIdentity();
             m_proj.setIdentity();
         }
         GraphicsDevice::~GraphicsDevice() {
-            delete m_ctx;
+            gl::destroyRenderer();
         }
 
         VertexBufferHandle GraphicsDevice::createVertexBuffer(mem::Block* _mem, const VertexDecl& _decl) {
@@ -161,8 +161,7 @@ namespace moti {
             m_draw.m_model = _mtx;
         }
 
-        void GraphicsDevice::setUniform(UniformHandle _handle, const void * _value, uint16_t _count)
-        {
+        void GraphicsDevice::setUniform(UniformHandle _handle, const void * _value, uint16_t _count) {
         }
 
     }

@@ -185,7 +185,5 @@ int main(int argc, char** argv) {
     SDL_DestroyWindow(wnd);
     SDL_Quit();
 
-    moti::memory_globals::shutdown();
-
     return 0;
 }

@@ -8,6 +8,22 @@ namespace moti {
     namespace graphics {
         namespace gl {
 
+            static RendererContextGL* s_ctx;
+            static memory::Block s_rendererMem;
+
+            RendererContext* createRenderer() {
+                if (!s_rendererMem) {
+                    s_rendererMem = memory_globals::defaultAllocator().allocate(sizeof(RendererContextGL));
+                    s_ctx = new (s_rendererMem.m_ptr) RendererContextGL;
+                }
+                return s_ctx;
+            }
+
+            void destroyRenderer() {
+                memory_globals::defaultAllocator().deallocate(s_rendererMem);
+                s_ctx = nullptr;
+            }
+
             static const GLenum s_attribTypes[] = {
                 GL_UNSIGNED_BYTE, // uint8
                 GL_FLOAT          // float
@@ -319,6 +335,7 @@ namespace moti {
                     }
                     else {
                         // its user defined uniform
+                        const UniformInfo* info = s_ctx->m_uniformReg.find(name);
                     }
 
                     MOTI_TRACE("uniform %s is at location %d, count %d", name, info.loc, count);
