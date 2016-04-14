@@ -14,6 +14,14 @@ namespace moti {
 
             static_assert(MOTI_COUNTOF(s_attribTypes) == AttributeType::Count, "Invalid amount of attribute types");
 
+            static const uint32_t s_uniformTypeSize[] = {
+                sizeof(float) * 4, // vec4
+                sizeof(float) * 3 * 3, // mat3,
+                sizeof(float) * 4 * 4 // mat4
+            };
+
+            static_assert(MOTI_COUNTOF(s_uniformTypeSize) == UniformType::Count, "Invalid amount of uniform type sizes");
+
             RendererContextGL::RendererContextGL() {
                 int versionMajor;
                 int versionMinor;

@@ -11,9 +11,14 @@ namespace moti {
         HandleManager<MOTI_MAX_INDEX_BUFFERS> m_indexBufferHandles;
         HandleManager<MOTI_MAX_SHADERS> m_shaderHandles;
         HandleManager<MOTI_MAX_PROGRAMS> m_programHandles;
+        HandleManager<MOTI_MAX_UNIFORMS> m_uniformHandles;
+
+        Uniform m_uniforms[MOTI_MAX_UNIFORMS];
+        std::unordered_map<const char*, UniformHandle> m_uniformLookup;
 
         GraphicsDevice::GraphicsDevice()
             : m_ctx(new gl::RendererContextGL) {
+            m_uniformLookup.reserve(MOTI_MAX_UNIFORMS);
             m_draw.reset();
             m_view.setIdentity();
             m_proj.setIdentity();
@@ -92,7 +97,28 @@ namespace moti {
         }
 
         UniformHandle GraphicsDevice::createUniform(UniformType::Enum _type, uint16_t _count, const char * _name) {
-            return UniformHandle{ UINT16_MAX };
+            
+            if (nameToPredefinedUniform(_name) != PredefinedUniform::Count) {
+                MOTI_TRACE("Tried to create %s uniform which is predefined uniform", _name);
+                return UniformHandle{ UINT16_MAX };
+            }
+
+            auto search = m_uniformLookup.find(_name);
+            if (search != m_uniformLookup.end()) {
+                UniformHandle handle = search->second;
+                return handle;
+            }
+
+            UniformHandle handle = { m_uniformHandles.create() };
+            if (handle.m_id != UINT16_MAX) {
+                MOTI_TRACE("Creating uniform %s, handle %d", _name, handle.m_id);
+                Uniform& uni = m_uniforms[handle.m_id];
+                uni.m_type = _type;
+                uni.m_count = _count;
+                m_uniformLookup[_name] = handle;
+                m_ctx->createUniform(handle, _type, _count, _name);
+            }
+            return handle;
         }
 
         void GraphicsDevice::destroyUniform(UniformHandle _handle)

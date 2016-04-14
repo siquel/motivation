@@ -15,3 +15,7 @@
 #ifndef MOTI_MAX_PROGRAMS
 #   define MOTI_MAX_PROGRAMS        128
 #endif
+
+#ifndef MOTI_MAX_UNIFORMS
+#   define MOTI_MAX_UNIFORMS        128
+#endif

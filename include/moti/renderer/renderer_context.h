@@ -86,6 +86,11 @@ namespace moti {
             uint32_t m_width;
             uint32_t m_height;
         };
+
+        struct Uniform {
+            UniformType::Enum m_type;
+            uint16_t m_count;
+        };
           
         struct Render {
             VertexBufferHandle m_vertexBuffer;

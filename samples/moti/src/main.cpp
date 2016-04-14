@@ -139,6 +139,7 @@ int main(int argc, char** argv) {
     moti::perspective(projection, 60.f, float(Width) / float(Height), 0.1f, 100.f);
 
     mg::UniformHandle u_time = device.createUniform(UniformType::Vec4, 1, "u_time");
+    MOTI_ASSERT(u_time.m_id == device.createUniform(UniformType::Vec4, 1, "u_time").m_id, "Handles are different");
 
     SDL_Event e;
     bool running = true;
