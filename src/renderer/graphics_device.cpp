@@ -3,14 +3,14 @@
 #include "moti/io/io.h"
 #include "moti/handle.h"
 #include "moti/math/math.h"
-
+#include "moti/config.h"
 namespace moti {
     namespace graphics {
 
-        HandleManager<4096> m_vertexBufferHandles;
-        HandleManager<4096> m_indexBufferHandles;
-        HandleManager<128> m_shaderHandles;
-        HandleManager<128> m_programHandles;
+        HandleManager<MOTI_MAX_VERTEX_BUFFERS> m_vertexBufferHandles;
+        HandleManager<MOTI_MAX_INDEX_BUFFERS> m_indexBufferHandles;
+        HandleManager<MOTI_MAX_SHADERS> m_shaderHandles;
+        HandleManager<MOTI_MAX_PROGRAMS> m_programHandles;
 
         GraphicsDevice::GraphicsDevice()
             : m_ctx(new gl::RendererContextGL) {
@@ -91,8 +91,7 @@ namespace moti {
         {
         }
 
-        UniformHandle GraphicsDevice::createUniform(UniformType::Enum _type, uint16_t _count, const char * _name)
-        {
+        UniformHandle GraphicsDevice::createUniform(UniformType::Enum _type, uint16_t _count, const char * _name) {
             return UniformHandle{ UINT16_MAX };
         }
 

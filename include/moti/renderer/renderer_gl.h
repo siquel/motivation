@@ -3,6 +3,7 @@
 #include "moti/renderer/gl_context.h"
 #include "moti/renderer/renderer_context.h"
 #include <GL/glew.h>
+#include "moti/config.h"
 
 #if _DEBUG
 #define GL_CHECK(_call)                            \
@@ -14,11 +15,6 @@
 #else
 #define GL_CHECK(_call) _call
 #endif
-
-#define MAX_VERTEX_BUFFERS 4 << 10
-#define MAX_INDEX_BUFFERS MAX_VERTEX_BUFFERS
-#define MAX_SHADERS        512
-#define MAX_PROGRAMS       128
 
 namespace moti {
 	namespace graphics {
@@ -63,13 +59,13 @@ namespace moti {
             };
 
 			struct RendererContextGL : public graphics::RendererContext {
-				GLVertexBuffer m_vertexBuffers[MAX_VERTEX_BUFFERS];
-                GLIndexBuffer m_indexBuffers[MAX_INDEX_BUFFERS];
-                GLShader m_shaders[MAX_SHADERS];
-                GLProgram m_programs[MAX_PROGRAMS];
+				GLVertexBuffer m_vertexBuffers[MOTI_MAX_VERTEX_BUFFERS];
+                GLIndexBuffer m_indexBuffers[MOTI_MAX_VERTEX_BUFFERS];
+                GLShader m_shaders[MOTI_MAX_SHADERS];
+                GLProgram m_programs[MOTI_MAX_PROGRAMS];
                 // TODO this isn't working properly
-                GLuint m_vaos[MAX_PROGRAMS];
-                VertexDecl m_vertexDecls[MAX_VERTEX_BUFFERS];
+                GLuint m_vaos[MOTI_MAX_PROGRAMS];
+                VertexDecl m_vertexDecls[MOTI_MAX_VERTEX_BUFFERS];
 
 				RendererContextGL();
 				~RendererContextGL() override;
