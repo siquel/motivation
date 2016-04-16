@@ -4,6 +4,8 @@
 #include "moti/handle.h"
 #include "moti/math/math.h"
 #include "moti/config.h"
+#include "moti/core/container/array.h"
+#include "moti/memory/memory.h"
 namespace moti {
     namespace graphics {
 
@@ -161,10 +163,9 @@ namespace moti {
             m_draw.m_model = _mtx;
         }
 
-        void GraphicsDevice::setUniform(UniformHandle _handle, const void * _value, uint16_t _count) {
+        void GraphicsDevice::setUniform(UniformHandle _handle, const void * _value) {
             Uniform& uniform = m_uniforms[_handle.m_id];
-            // hmm howto?
-            //m_draw.m_constantBuffer->writeUn
+            m_ctx->updateUniform(_handle, _value, s_uniformTypeSize[uniform.m_type]);
         }
 
     }

@@ -38,7 +38,7 @@ namespace moti {
             void setViewTransform(const Mat4& _view, const Mat4& _proj);
             void setViewRect(uint32_t _x, uint32_t  _y, uint32_t _w, uint32_t h);
             void setTransform(const Mat4& _mtx);
-            void setUniform(UniformHandle _handle, const void* _value, uint16_t _count);
+            void setUniform(UniformHandle _handle, const void* _value);
 		};
 	}
 }

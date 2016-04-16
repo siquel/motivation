@@ -15,7 +15,7 @@ namespace moti {
             return *this;
         }
 
-        bool operator==(const FixedString& _str) {
+        bool operator==(const FixedString& _str) const {
             return (m_length == _str.m_length && !strncmp(m_data, _str.m_data, m_length));
         }
 

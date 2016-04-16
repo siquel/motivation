@@ -31,19 +31,12 @@ namespace moti {
 
             static_assert(MOTI_COUNTOF(s_attribTypes) == AttributeType::Count, "Invalid amount of attribute types");
 
-            static const uint32_t s_uniformTypeSize[] = {
-                sizeof(float) * 4, // vec4
-                sizeof(float) * 3 * 3, // mat3,
-                sizeof(float) * 4 * 4 // mat4
-            };
-
-            static_assert(MOTI_COUNTOF(s_uniformTypeSize) == UniformType::Count, "Invalid amount of uniform type sizes");
-
             UniformType::Enum glTypeToUniformType(GLenum _type) {
                 switch (_type) {
                 case GL_FLOAT:
-                case GL_FLOAT_VEC2:
-                case GL_FLOAT_VEC3:
+                    return UniformType::Float;
+/*                case GL_FLOAT_VEC2:
+                case GL_FLOAT_VEC3:*/
                 case GL_FLOAT_VEC4:
                     return UniformType::Vec4;
                 case GL_FLOAT_MAT3:
@@ -136,7 +129,38 @@ namespace moti {
                 GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo.m_id));
 
                 setPredefined(program, _draw);
-                
+                Array<UniformDecl>& uniforms = program.m_uniforms;
+
+#define UNIFORM_IMPL_CASE(_uniform, _suffix, _type) \
+                 case UniformType::_uniform:  \
+                 {                   \
+                     _type* value = (_type*)data;    \
+                     glUniform##_suffix(uniform->m_loc, uniform->m_count, value); \
+                 }\
+                 break
+                for (auto uniform = uniforms.begin(); uniform != uniforms.end(); ++uniform) {
+                    const char* data = (const char*)m_uniforms[uniform->m_handle.m_id].m_ptr;
+                    switch (uniform->m_type) {
+                        UNIFORM_IMPL_CASE(Float, 1fv, float);
+                        UNIFORM_IMPL_CASE(Vec4, 4fv, float);
+                    case UniformType::Mat3:
+                    {
+                        float* value = (float*)data;
+                        GL_CHECK(glUniformMatrix4fv(uniform->m_loc, uniform->m_count, GL_FALSE, value));
+                    }
+                    break;
+                    case UniformType::Mat4:
+                    {
+                        float* value = (float*)data;
+                        GL_CHECK(glUniformMatrix4fv(uniform->m_loc, uniform->m_count, GL_FALSE, value));
+                    }
+                    break;
+                    }
+                }
+#undef UNIFORM_IMPL_CASE
+
+
+
                 GL_CHECK(glDrawElements(GL_TRIANGLES, _draw.m_indexCount, GL_UNSIGNED_SHORT, nullptr));
                 GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
                 GL_CHECK(glUseProgram(0));
@@ -361,13 +385,12 @@ namespace moti {
                         }
                         else {
                             UniformType::Enum type = glTypeToUniformType(info.type);
-                            
-                            /*struct Asd {
-                                UniformType type;
-                                uint16_t loc;
-                                UniformHandle handle;
-                                uint16_t count;
-                            };*/
+                            UniformDecl decl;
+                            decl.m_handle = uniformInfo->m_handle;
+                            decl.m_loc = info.loc;
+                            decl.m_count = count;
+                            decl.m_type = type;
+                            m_uniforms.push_back(decl);
                         }
                     }
 

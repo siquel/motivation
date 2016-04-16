@@ -178,14 +178,14 @@ namespace moti {
     template <typename T>
     inline T* Array<T>::end() {
         return reinterpret_cast<T*>(
-            static_cast<char*>(m_data.m_ptr) + (m_size - 1) * sizeof(T)
+            static_cast<char*>(m_data.m_ptr) + (m_size) * sizeof(T)
         );
     }
 
     template <typename T>
     inline const T* Array<T>::end() const {
         return reinterpret_cast<const T*>(
-            static_cast<char*>(m_data.m_ptr) + (m_size - 1) * sizeof(T)
+            static_cast<char*>(m_data.m_ptr) + (m_size) * sizeof(T)
         );
     }
 

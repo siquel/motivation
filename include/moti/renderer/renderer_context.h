@@ -4,6 +4,10 @@
 #include "moti/math/math_types.h"
 #include "../memory/block.h"
 #include <unordered_map>
+#include "../core/container/array.h"
+#include "../memory/memory.h"
+#include "../core/string/fixed_string.h"
+#include <xhash>
 
 MOTI_FORWARD_DECLARE_STRUCT(moti, memory, Block);
 
@@ -15,6 +19,15 @@ namespace moti {
             { 1, 2, 4, 4}, // uint8
             { 4, 8, 12, 16} // float
         };
+
+        static const uint32_t s_uniformTypeSize[] = {
+            sizeof(float), // float
+            sizeof(float) * 4, // vec4
+            sizeof(float) * 3 * 3, // mat3,
+            sizeof(float) * 4 * 4 // mat4
+        };
+
+        static_assert(MOTI_COUNTOF(s_uniformTypeSize) == UniformType::Count, "Invalid amount of uniform type sizes");
 
         static uint16_t VertexDeclIdGenerator = 0;
 
@@ -99,12 +112,23 @@ namespace moti {
             UniformHandle m_handle;
         };
 
+
+        struct hasher {
+            size_t operator() (const FixedString& s) const {
+                size_t seed = 0;
+                for (uint32_t i = 0; i < s.m_length; ++i) {
+                    seed ^= std::hash_value(s.data() + i) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+                }
+                return seed;
+            }
+        };
+
         class UniformRegistry {
         public:
             UniformRegistry() = default;
             ~UniformRegistry() = default;
             const UniformInfo* find(const char* _name) const {
-                auto search = m_uniforms.find(_name);
+                auto search = m_uniforms.find(FixedString(_name));
                 if (search != m_uniforms.end()) {
                     return &search->second;
                 }
@@ -112,10 +136,10 @@ namespace moti {
             }
 
             const UniformInfo& add(UniformHandle _handle, const char* _name, mem::Block _data) {
-                UniformHashMap::iterator search = m_uniforms.find(_name);
+                UniformHashMap::iterator search = m_uniforms.find(FixedString(_name));
                 if (search == m_uniforms.end()) {
                     UniformInfo info{ _data, _handle };
-                    auto it = m_uniforms.insert(std::make_pair(_name, info));
+                    auto it = m_uniforms.insert(std::make_pair(FixedString(_name), info));
                     return it.first->second;
                 }
 
@@ -125,31 +149,16 @@ namespace moti {
                 return info;
             }
         private:
-            using UniformHashMap = std::unordered_map<const char*, UniformInfo>;
+            using UniformHashMap = std::unordered_map<FixedString, UniformInfo, hasher>;
             UniformHashMap m_uniforms;
         };
 
-        struct Constant {
+        
+        struct UniformDecl {
+            UniformHandle m_handle;
             UniformType::Enum m_type;
             uint16_t m_loc;
-            UniformHandle m_handle;
             uint16_t m_count;
-        };
-
-        struct ConstantBuffer {
-            void writeUniform(UniformType::Enum _type, uint16_t _loc, UniformHandle _handle, uint16_t _count) {
-
-            }
-
-            ConstantBuffer(uint32_t _size) 
-                : m_size(_size), m_pos(0) {
-
-            }
-            ~ConstantBuffer() = default;
-        private:
-            uint32_t m_size;
-            uint32_t m_pos;
-            Constant* m_buffer;
         };
           
         struct Render {
@@ -163,7 +172,7 @@ namespace moti {
             Mat4 m_proj;
             Rect m_viewRect;
             Mat4 m_model;
-
+            
             void reset() {
                 m_vertexBuffer.m_id = UINT16_MAX;
                 m_indexBuffer.m_id = UINT16_MAX;
@@ -171,7 +180,6 @@ namespace moti {
                 m_endVertex = UINT32_MAX;
                 m_startIndex = 0;
                 m_indexCount = UINT32_MAX;
-                
 //              m_view.setIdentity();
 //              m_proj.setIdentity();
 //              memset(&m_viewRect, 0, sizeof(Rect));

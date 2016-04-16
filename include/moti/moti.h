@@ -50,6 +50,7 @@ namespace moti {
     
     struct UniformType {
         enum Enum {
+            Float,
             Vec4,
             Mat3,
             Mat4,

@@ -47,13 +47,19 @@ namespace moti {
             };
 
             struct GLProgram {
-                GLuint m_id{ 0 };
+
+                GLProgram()
+                    : m_id(0), m_uniforms(memory_globals::defaultAllocator()) {
+
+                }
+                GLuint m_id;
                 
                 uint8_t m_used[Attribute::Count + 1];
                 GLint m_attributes[Attribute::Count];
 
                 PredefinedUniform m_predefinedUniforms[PredefinedUniform::Count];
                 uint8_t m_uniformCount{ 0 };
+                Array<UniformDecl> m_uniforms;
                 void create(const GLShader& _vsh, const GLShader& _fsh);
                 void bindAttributes(const VertexDecl& _decl);
                 void destroy();

@@ -68,9 +68,11 @@ static const char* s_VertexShader = VERT_HEAD MOTI_TO_STRING(
     layout(location = 0) in vec3 a_position;
     layout(location = 1) in vec4 a_color;
 
+    uniform float u_time;
+
     out vec4 color;
     void main() {
-        color = a_color;
+        color = vec4(a_color.x * sin(u_time) + 0.5f, cos(u_time) * a_color.y , a_color.zw);
         gl_Position = u_modelViewProj * vec4(a_position, 1.0);
     }
 );
@@ -116,6 +118,9 @@ int main(int argc, char** argv) {
 
     mg::GraphicsDevice device;
 
+    mg::UniformHandle u_time = device.createUniform(UniformType::Float, 1, "u_time");
+    MOTI_ASSERT(u_time.m_id == device.createUniform(UniformType::Float, 1, "u_time").m_id, "Handles are different");
+
     mg::ShaderHandle vsh = createShader(s_VertexShader, MOTI_VERTEX_SHADER_MAGIC, device);
     mg::ShaderHandle fsh = createShader(s_FragmentShader, MOTI_FRAGMENT_SHADER_MAGIC, device);
     mg::ProgramHandle p = device.createProgram(vsh, fsh);
@@ -137,9 +142,6 @@ int main(int argc, char** argv) {
     moti::look(view, Vec3{ 0.f, 0.f, -4.f }, Vec3{ 0.f, 0.f, -0.f }, Vec3{ 0.f, 1.f, 0.f });
     moti::Mat4 projection;
     moti::perspective(projection, 60.f, float(Width) / float(Height), 0.1f, 100.f);
-
-    mg::UniformHandle u_time = device.createUniform(UniformType::Vec4, 1, "u_time");
-    MOTI_ASSERT(u_time.m_id == device.createUniform(UniformType::Vec4, 1, "u_time").m_id, "Handles are different");
 
     SDL_Event e;
     bool running = true;
@@ -167,11 +169,10 @@ int main(int argc, char** argv) {
                 device.setViewTransform(view, projection);
                 device.setViewRect(0, 0, Width, Height);
                 device.setTransform(model);
-                device.setUniform(u_time, &time, 1);
+                device.setUniform(u_time, &time);
                 device.submit(p);
             }
         }
-        
         
         SDL_GL_SwapWindow(wnd);
     }
