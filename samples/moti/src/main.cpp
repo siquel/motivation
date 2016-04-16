@@ -72,16 +72,34 @@ static const char* s_VertexShader = VERT_HEAD MOTI_TO_STRING(
 
     out vec4 color;
     void main() {
-        color = vec4(a_color.x * sin(u_time) + 0.5f, cos(u_time) * a_color.y , a_color.zw);
+        color = vec4(abs( sin(u_time) ),  a_color.y , a_color.zw);
         gl_Position = u_modelViewProj * vec4(a_position, 1.0);
     }
 );
 
-static const char* s_FragmentShader = VERT_HEAD MOTI_TO_STRING(
+static const char* s_FragmentShader = VERT_HEAD "\n#define TWO_PI 6.28318530718\n" MOTI_TO_STRING(
     in vec4 color;
     out vec4 outColor;
+    uniform float u_time;
+
+    vec3 hsb2rgb(in vec3 c) {
+        vec3 rgb = clamp(abs(mod(c.x*6.0 + vec3(0.0, 4.0, 2.0),
+            6.0) - 3.0) - 1.0,
+            0.0,
+            1.0);
+        rgb = rgb*rgb*(3.0 - 2.0*rgb);
+        return c.z * mix(vec3(1.0), rgb, c.y);
+    }
+
     void main() {
-        outColor = color;
+        vec2 st = gl_FragCoord.xy / u_viewRect.zw;
+        
+
+        vec2 toCenter = vec2(0.5) - st;
+        float angle = atan(toCenter.y, toCenter.x);
+        float radius = length(toCenter)*2.0f;
+
+        outColor = vec4(hsb2rgb(vec3((angle / TWO_PI) + 0.5 * u_time, radius, 1.0f)), 1.f);
     }
 );
 
@@ -90,7 +108,7 @@ mg::ShaderHandle createShader(const char* src, uint32_t magic, mg::GraphicsDevic
     mem::Block block;
     moti::MemoryWriter writer(&block, &shaderAlloc);
     moti::write<uint32_t>(&writer, magic);
-    int32_t len = static_cast<int32_t>(strlen(s_VertexShader));
+    int32_t len = static_cast<int32_t>(strlen(src));
     moti::write(&writer, len);
     moti::write(&writer, (void*)src, len);
     return device.createShader(&block);
