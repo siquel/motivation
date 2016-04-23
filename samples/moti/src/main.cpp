@@ -67,40 +67,28 @@ mg::VertexDecl s_decl;
 
 static const char* s_VertexShader = VERT_HEAD MOTI_TO_STRING(
     layout(location = 0) in vec3 a_position;
-    layout(location = 1) in vec4 a_color;
-
+    layout(location = 1) in vec3 a_normal;
+    layout(location = 2) in vec2 a_texCoord0;
     uniform float u_time;
-
-    out vec4 color;
+    out vec3 normal;
+    out vec2 texcoords;
+    
     void main() {
-        color = vec4(abs( sin(u_time) ),  a_color.y , a_color.zw);
         gl_Position = u_modelViewProj * vec4(a_position, 1.0);
+        normal = a_normal;
+        texcoords = a_texCoord0;
     }
 );
 
 static const char* s_FragmentShader = VERT_HEAD "\n#define TWO_PI 6.28318530718\n" MOTI_TO_STRING(
-    in vec4 color;
+    in vec3 normal;
+    in vec2 texcoords;
     out vec4 outColor;
     uniform float u_time;
 
-    vec3 hsb2rgb(in vec3 c) {
-        vec3 rgb = clamp(abs(mod(c.x*6.0 + vec3(0.0, 4.0, 2.0),
-            6.0) - 3.0) - 1.0,
-            0.0,
-            1.0);
-        rgb = rgb*rgb*(3.0 - 2.0*rgb);
-        return c.z * mix(vec3(1.0), rgb, c.y);
-    }
-
     void main() {
-        vec2 st = gl_FragCoord.xy / u_viewRect.zw;
         
-
-        vec2 toCenter = vec2(0.5) - st;
-        float angle = atan(toCenter.y, toCenter.x);
-        float radius = length(toCenter)*2.0f;
-
-        outColor = vec4(hsb2rgb(vec3((angle / TWO_PI) + 0.5 * u_time, radius, 1.0f)), 1.f);
+        outColor = vec4(1.f, 0.f, 1.f, 1.f);
     }
 );
 
@@ -158,12 +146,12 @@ int main(int argc, char** argv) {
     mg::IndexBufferHandle ibo = device.createIndexBuffer(&indicesBlock);
 
     moti::Mat4 view;
-    moti::look(view, Vec3{ 0.f, 0.f, -4.f }, Vec3{ 0.f, 0.f, -0.f }, Vec3{ 0.f, 1.f, 0.f });
+    moti::look(view, Vec3{ 0.0f, 2.0f, 0.0f }, Vec3{ 0.0f, 0.0f, -4.0f }, Vec3{ 0.f, 1.f, 0.f });
     moti::Mat4 projection;
-    moti::perspective(projection, 60.f, float(Width) / float(Height), 0.1f, 100.f);
+    moti::perspective(projection, 45.f, float(Width) / float(Height), 0.1f, 100.f);
 
     Mesh mesh;
-    mesh.load("cube.obj", &device);
+    mesh.load("table.obj", &device);
 
     SDL_Event e;
     bool running = true;
@@ -178,7 +166,18 @@ int main(int argc, char** argv) {
 
         float time = SDL_GetTicks() / 1000.f;
         float angle = time * 45.f;  // 45° per second
-        
+
+        device.setUniform(u_time, &time);
+        device.setViewRect(0, 0, Width, Height);
+        device.setViewTransform(view, projection);
+
+        moti::Mat4 model;
+        model.setIdentity();
+        translate(model, Vec3{ 0.f, 0.f, -4.f });
+        moti::rotate(model, moti::radians(angle), Vec3{ 0.f, 1.f, 0.f });
+
+        mesh.submit(device, p, model);
+        /*
         for (uint32_t y = 0; y < 11; ++y) {
             for (uint32_t x = 0; x < 11; ++x) {
                 moti::Mat4 model;
@@ -194,7 +193,7 @@ int main(int argc, char** argv) {
                 device.setUniform(u_time, &time);
                 device.submit(p);
             }
-        }
+        }*/
         
         SDL_GL_SwapWindow(wnd);
     }

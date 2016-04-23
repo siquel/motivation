@@ -88,7 +88,7 @@ namespace moti {
         "a_position",
         "a_color",
         "a_normal",
-        "a_texcoord0"
+        "a_texCoord0"
     };
     static_assert(MOTI_COUNTOF(s_attribNames) == Attribute::Count, "Invalid amount of attribute names");
 

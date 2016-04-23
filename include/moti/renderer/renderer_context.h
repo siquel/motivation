@@ -46,6 +46,7 @@ namespace moti {
             inline bool has(Attribute::Enum _attr) { return m_attributes[_attr]; }
 
             VertexDecl& begin() {
+                m_stride = 0;
                 memset(&m_attributes, 0, sizeof(m_attributes));
                 memset(&m_count, 0, sizeof(m_count));
                 memset(&m_normalized, 0, sizeof(m_normalized));

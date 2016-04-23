@@ -118,10 +118,14 @@ namespace moti {
                 else {
                     GL_CHECK(glBindVertexArray(vao));
                 }
-                // Enable depth test
-                glEnable(GL_DEPTH_TEST);
-                // Accept fragment if it closer to the camera than the former one
-                glDepthFunc(GL_LESS);
+                
+                GL_CHECK(glEnable(GL_DEPTH_TEST));
+                GL_CHECK(glDepthFunc(GL_LESS));
+                GL_CHECK(glEnable(GL_BLEND));
+                GL_CHECK(glEnable(GL_CULL_FACE));
+                //GL_CHECK(glFrontFace(GL_CCW));
+                GL_CHECK(glCullFace(GL_BACK));
+                GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 
                 GLIndexBuffer& ibo = m_indexBuffers[_draw.m_indexBuffer.m_id];

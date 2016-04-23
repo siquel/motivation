@@ -11,7 +11,7 @@
 
 void Mesh::load(const char* _path, moti::graphics::GraphicsDevice* device) {
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(_path, aiProcess_FlipUVs);
+    const aiScene* scene = importer.ReadFile(_path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
     if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         printf("Assimp error %s\n", importer.GetErrorString());
@@ -31,9 +31,14 @@ void Mesh::load(const char* _path, moti::graphics::GraphicsDevice* device) {
             for (uint32_t vindex = 0; vindex < mesh->mNumVertices; ++vindex) {
                 auto& pos = mesh->mVertices[vindex];
                 auto& normal = mesh->mNormals[vindex];
-                auto& uvs = mesh->mTextureCoords[0][vindex];
-                
-                vertices.emplace_back(VertexNormalTexCoords{ pos.x, pos.y, pos.z, normal.x, normal.y, normal.z, uvs.x, uvs.y });
+
+                if (mesh->mTextureCoords[0]) {
+                    auto& uvs = mesh->mTextureCoords[0][vindex];
+                    vertices.emplace_back(VertexNormalTexCoords{ pos.x, pos.y, pos.z, normal.x, normal.y, normal.z, uvs.x, uvs.y });
+                }
+                else {
+                    vertices.emplace_back(VertexNormalTexCoords{ pos.x, pos.y, pos.z, normal.x, normal.y, normal.z, 0.f, 0.f });
+                }
             }
 
             for (uint32_t findex = 0; findex < mesh->mNumFaces; ++findex) {
@@ -58,4 +63,13 @@ void Mesh::load(const char* _path, moti::graphics::GraphicsDevice* device) {
     memory = moti::memory_globals::defaultAllocator().allocate(sizeof(uint16_t) * indices.size());
     memcpy(memory.m_ptr, indices.data(), sizeof(uint16_t) * indices.size());
     m_ibo = device->createIndexBuffer(&memory);
+    m_indices = indices.size();
+}
+
+void Mesh::submit(moti::graphics::GraphicsDevice& device, moti::graphics::ProgramHandle program, const moti::Mat4& transform) const
+{
+    device.setTransform(transform);
+    device.setIndexBuffer(m_ibo, 0, m_indices);
+    device.setVertexBuffer(m_vbo, 0, UINT32_MAX);
+    device.submit(program);
 }

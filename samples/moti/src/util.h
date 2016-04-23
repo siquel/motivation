@@ -14,6 +14,7 @@ struct Mesh {
 
     moti::graphics::VertexBufferHandle m_vbo;
     moti::graphics::IndexBufferHandle m_ibo;
-
+    uint32_t m_indices;
     void load(const char* _path, moti::graphics::GraphicsDevice* device);
+    void submit(moti::graphics::GraphicsDevice&, moti::graphics::ProgramHandle handle, const moti::Mat4& transform) const;
 };
