@@ -78,13 +78,17 @@ namespace moti {
         enum Enum {
             Position,
             Color,
+            Normal,
+            TexCoord0,
             Count
         };
     };
 
     static const char* s_attribNames[] = {
         "a_position",
-        "a_color"
+        "a_color",
+        "a_normal",
+        "a_texcoord0"
     };
     static_assert(MOTI_COUNTOF(s_attribNames) == Attribute::Count, "Invalid amount of attribute names");
 

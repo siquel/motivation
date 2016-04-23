@@ -10,6 +10,7 @@
 #include "moti/memory/memory.h"
 #include "moti/io/io.h"
 #include "moti/math/math.h"
+#include "util.h"
 namespace mem = moti::memory;
 namespace mg = moti::graphics;
 
@@ -160,6 +161,9 @@ int main(int argc, char** argv) {
     moti::look(view, Vec3{ 0.f, 0.f, -4.f }, Vec3{ 0.f, 0.f, -0.f }, Vec3{ 0.f, 1.f, 0.f });
     moti::Mat4 projection;
     moti::perspective(projection, 60.f, float(Width) / float(Height), 0.1f, 100.f);
+
+    Mesh mesh;
+    mesh.load("cube.obj", &device);
 
     SDL_Event e;
     bool running = true;
