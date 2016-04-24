@@ -124,7 +124,7 @@ namespace moti {
                 GL_CHECK(glEnable(GL_BLEND));
                 GL_CHECK(glEnable(GL_CULL_FACE));
                 GL_CHECK(glFrontFace(GL_CCW));
-                GL_CHECK(glCullFace(GL_BACK));
+                GL_CHECK(glCullFace(GL_FRONT));
                 GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 

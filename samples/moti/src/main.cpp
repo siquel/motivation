@@ -70,25 +70,85 @@ static const char* s_VertexShader = VERT_HEAD MOTI_TO_STRING(
     layout(location = 1) in vec3 a_normal;
     layout(location = 2) in vec2 a_texCoord0;
     uniform float u_time;
-    out vec3 normal;
-    out vec2 texcoords;
-    
+
+    out vec3 v_pos;
+    out vec3 v_view;
+    out vec3 v_normal;
+    out vec4 v_color;
     void main() {
-        gl_Position = u_modelViewProj * vec4(a_position, 1.0);
-        normal = a_normal;
-        texcoords = a_texCoord0;
+        vec3 pos = a_position;
+
+        float sx = sin(pos.x*32.0 + u_time.x*4.0)*0.5 + 0.5;
+        float cy = cos(pos.y*32.0 + u_time.x*4.0)*0.5 + 0.5;
+        vec3 displacement = vec3(sx, cy, sx*cy);
+        vec3 normal = a_normal.xyz*2.0 - 1.0;
+
+        pos = pos + normal*displacement*vec3(0.06, 0.06, 0.06);
+
+        gl_Position = u_modelViewProj * vec4(pos, 1.0);
+
+        mat4 mv = u_view * u_model;
+        v_pos = gl_Position.xyz;
+        v_view = (mv * vec4(pos, 1.0)).xyz;
+
+        v_normal = (mv * vec4(normal, 0.0)).xyz;
+        
+        float len = length(displacement)*0.4 + 0.6;
+        v_color = vec4(len, len, len, 1.0);
     }
 );
 
-static const char* s_FragmentShader = VERT_HEAD "\n#define TWO_PI 6.28318530718\n" MOTI_TO_STRING(
-    in vec3 normal;
-    in vec2 texcoords;
-    out vec4 outColor;
+static const char* s_FragmentShader = VERT_HEAD "\n#define M_PI 3.1415926535897935\n" MOTI_TO_STRING(
+    in vec3 v_pos;
+    in vec3 v_view;
+    in vec3 v_normal;
+    in vec4 v_color;
+    out vec4 outcolor;
     uniform float u_time;
 
-    void main() {
+    vec2 blinn(vec3 _lightDir, vec3 _normal, vec3 _viewDir)
+    {
+        float ndotl = dot(_normal, _lightDir);
+        vec3 reflected = _lightDir - 2.0*ndotl*_normal; // reflect(_lightDir, _normal);
+        float rdotv = dot(reflected, _viewDir);
+        return vec2(ndotl, rdotv);
+    }
+
+    float fresnel(float _ndotl, float _bias, float _pow)
+    {
+        float facing = (1.0 - _ndotl);
+        return max(_bias + (1.0 - _bias) * pow(facing, _pow), 0.0);
+    }
+
+    vec4 lit(float _ndotl, float _rdotv, float _m)
+    {
+        float diff = max(0.0, _ndotl);
+        float spec = step(0.0, _ndotl) * max(0.0, _rdotv * _m);
+        return vec4(1.0, diff, spec, 1.0);
+    }
+
+    void main()
+    {
+        vec3 lightDir = vec3(0.0, 0.0, -1.0);
+        vec3 normal = normalize(v_normal);
+        vec3 view = normalize(v_view);
+        vec2 bln = blinn(lightDir, normal, view);
+        vec4 lc = lit(bln.x, bln.y, 1.0);
+        float fres = fresnel(bln.x, 0.2, 5.0);
+
+        float index = ((sin(v_pos.x*3.0 + u_time)*0.3 + 0.7)
+            + (cos(v_pos.y*3.0 + u_time)*0.4 + 0.6)
+            + (cos(v_pos.z*3.0 + u_time)*0.2 + 0.8)
+            )*M_PI;
+
+        vec3 color = vec3(sin(index*8.0)*0.4 + 0.6
+            , sin(index*4.0)*0.4 + 0.6
+            , sin(index*2.0)*0.4 + 0.6
+            ) * v_color.xyz;
+
+        outcolor.xyz = (pow(vec3(0.07, 0.06, 0.08) + color*lc.y + fres*pow(lc.z, 128.0), vec3(1.0 / 2.2)));
+        outcolor.w = 1.0;
         
-        outColor = vec4(1.f, 0.f, 1.f, 1.f);
     }
 );
 
@@ -146,7 +206,7 @@ int main(int argc, char** argv) {
     mg::IndexBufferHandle ibo = device.createIndexBuffer(&indicesBlock);
 
     moti::Mat4 view;
-    moti::look(view, Vec3{ 0.0f, 2.0f, 0.0f }, Vec3{ 0.0f, 0.0f, -4.0f }, Vec3{ 0.f, 1.f, 0.f });
+    moti::look(view, Vec3{ 0.0f, 1.0f, 0.0f }, Vec3{ 0.0f, 1.0f, -3.f }, Vec3{ 0.f, 1.f, 0.f });
     moti::Mat4 projection;
     moti::perspective(projection, 45.f, float(Width) / float(Height), 0.1f, 100.f);
 
