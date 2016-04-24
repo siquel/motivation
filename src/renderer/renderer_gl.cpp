@@ -123,14 +123,14 @@ namespace moti {
                 GL_CHECK(glDepthFunc(GL_LESS));
                 GL_CHECK(glEnable(GL_BLEND));
                 GL_CHECK(glEnable(GL_CULL_FACE));
-                //GL_CHECK(glFrontFace(GL_CCW));
+                GL_CHECK(glFrontFace(GL_CCW));
                 GL_CHECK(glCullFace(GL_BACK));
                 GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 
-                GLIndexBuffer& ibo = m_indexBuffers[_draw.m_indexBuffer.m_id];
+    //            GLIndexBuffer& ibo = m_indexBuffers[_draw.m_indexBuffer.m_id];
                 GL_CHECK(glUseProgram(program.m_id));
-                GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo.m_id));
+    //            GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo.m_id));
 
                 setPredefined(program, _draw);
                 Array<UniformDecl>& uniforms = program.m_uniforms;
@@ -165,8 +165,8 @@ namespace moti {
 
 
 
-                GL_CHECK(glDrawElements(GL_TRIANGLES, _draw.m_indexCount, GL_UNSIGNED_SHORT, nullptr));
-                GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+                GL_CHECK(glDrawArrays(GL_TRIANGLES, 0, _draw.m_endVertex));
+                //GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
                 GL_CHECK(glUseProgram(0));
             }
 

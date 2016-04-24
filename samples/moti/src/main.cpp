@@ -151,7 +151,7 @@ int main(int argc, char** argv) {
     moti::perspective(projection, 45.f, float(Width) / float(Height), 0.1f, 100.f);
 
     Mesh mesh;
-    mesh.load("table.obj", &device);
+    mesh.load("bunny.obj", &device);
 
     SDL_Event e;
     bool running = true;

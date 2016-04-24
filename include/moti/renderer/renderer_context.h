@@ -41,7 +41,7 @@ namespace moti {
 
             uint16_t id;
 
-            VertexDecl() : id(VertexDeclIdGenerator++) {}
+            VertexDecl() {}
 
             inline bool has(Attribute::Enum _attr) { return m_attributes[_attr]; }
 
@@ -52,6 +52,7 @@ namespace moti {
                 memset(&m_normalized, 0, sizeof(m_normalized));
                 memset(&m_type, 0, sizeof(m_type));
                 memset(&m_offset, 0, sizeof(m_offset));
+                id = VertexDeclIdGenerator++;
                 return *this;
             }
 

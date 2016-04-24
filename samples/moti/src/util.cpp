@@ -9,67 +9,83 @@
 #include "moti/memory/memory.h"
 
 
+void processMesh(aiMesh* mesh, const aiScene* scene, const moti::graphics::VertexDecl& decl, MeshGroup& group, moti::graphics::GraphicsDevice* device) {
+    std::vector<VertexNormalTexCoords> vertices;
+    std::vector<uint16_t> indices;
+
+    vertices.reserve(mesh->mNumVertices);
+    indices.reserve(mesh->mNumVertices);
+
+    for (uint32_t i = 0; i < mesh->mNumVertices; ++i) {
+
+        auto& pos = mesh->mVertices[i];
+        auto& normal = mesh->mNormals[i];
+
+        if (mesh->mTextureCoords[0]) {
+            auto& uvs = mesh->mTextureCoords[0][i];
+            vertices.emplace_back(VertexNormalTexCoords{ pos.x, pos.y, pos.z, normal.x, normal.y, normal.z, uvs.x, uvs.y });
+        }
+        else {
+            vertices.emplace_back(VertexNormalTexCoords{ pos.x, pos.y, pos.z, normal.x, normal.y, normal.z, 0.f, 0.f });
+        }
+
+    }
+
+    for (uint32_t findex = 0; findex < mesh->mNumFaces; ++findex) {
+        aiFace& face = mesh->mFaces[findex];
+        for (uint32_t index = 0; index < face.mNumIndices; ++index) {
+            indices.emplace_back(face.mIndices[index]);
+        }
+    }
+
+    moti::memory::Block memory = moti::memory_globals::defaultAllocator().allocate(sizeof(VertexNormalTexCoords) * vertices.size());
+    memcpy(memory.m_ptr, vertices.data(), sizeof(VertexNormalTexCoords) * vertices.size());
+    group.m_vbo = device->createVertexBuffer(&memory, decl);
+    moti::memory_globals::defaultAllocator().deallocate(memory);
+    memory = moti::memory_globals::defaultAllocator().allocate(sizeof(uint16_t) * indices.size());
+    memcpy(memory.m_ptr, indices.data(), sizeof(uint16_t) * indices.size());
+    group.m_ibo = device->createIndexBuffer(&memory);
+    moti::memory_globals::defaultAllocator().deallocate(memory);
+    group.m_indices = vertices.size();
+}
+
+void processNode(aiNode* node, const aiScene* scene, const moti::graphics::VertexDecl& decl, std::vector<MeshGroup>& groups, moti::graphics::GraphicsDevice* dev) {
+    for (uint32_t i = 0; i < node->mNumMeshes; ++i) {
+        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+        groups.emplace_back(MeshGroup{ 0 });
+        processMesh(mesh, scene, decl, groups.back(), dev);
+    }
+
+    for (uint32_t i = 0; i < node->mNumChildren; ++i) {
+        processNode(node->mChildren[i], scene, decl, groups, dev);
+    }
+}
+
+
+
 void Mesh::load(const char* _path, moti::graphics::GraphicsDevice* device) {
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(_path, aiProcess_Triangulate | aiProcess_FlipUVs);
+    const aiScene* scene = importer.ReadFile(_path, aiProcess_FlipUVs | aiProcess_Triangulate);
 
     if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         printf("Assimp error %s\n", importer.GetErrorString());
         return;
     }
-
-    std::vector<VertexNormalTexCoords> vertices;
-    std::vector<uint16_t> indices;
-    
-    aiNode* root = scene->mRootNode;
-
-    for (uint32_t i = 0; i < root->mNumChildren; ++i) {
-        aiNode* node = root->mChildren[i];
-        for (uint32_t j = 0; j < node->mNumMeshes; ++j) {
-            aiMesh* mesh = scene->mMeshes[node->mMeshes[j]];
-            vertices.reserve(mesh->mNumVertices);
-            for (uint32_t vindex = 0; vindex < mesh->mNumVertices; ++vindex) {
-                auto& pos = mesh->mVertices[vindex];
-                auto& normal = mesh->mNormals[vindex];
-
-                if (mesh->mTextureCoords[0]) {
-                    auto& uvs = mesh->mTextureCoords[0][vindex];
-                    vertices.emplace_back(VertexNormalTexCoords{ pos.x, pos.y, pos.z, normal.x, normal.y, normal.z, uvs.x, uvs.y });
-                }
-                else {
-                    vertices.emplace_back(VertexNormalTexCoords{ pos.x, pos.y, pos.z, normal.x, normal.y, normal.z, 0.f, 0.f });
-                }
-            }
-
-            for (uint32_t findex = 0; findex < mesh->mNumFaces; ++findex) {
-                aiFace& face = mesh->mFaces[findex];
-                for (uint32_t index = 0; index < face.mNumIndices; ++index) {
-                    indices.emplace_back(face.mIndices[index]);
-                }
-            }
-        }
-    }
-
     moti::graphics::VertexDecl decl;
     decl.begin().
         add(moti::Attribute::Position, 3, moti::AttributeType::Float, true).
         add(moti::Attribute::Normal, 3, moti::AttributeType::Float, true).
         add(moti::Attribute::TexCoord0, 2, moti::AttributeType::Float, true);
-    
-    moti::memory::Block memory = moti::memory_globals::defaultAllocator().allocate(sizeof(VertexNormalTexCoords) * vertices.size());
-    memcpy(memory.m_ptr, vertices.data(), sizeof(VertexNormalTexCoords) * vertices.size());
-    m_vbo = device->createVertexBuffer(&memory, decl);
-    moti::memory_globals::defaultAllocator().deallocate(memory);
-    memory = moti::memory_globals::defaultAllocator().allocate(sizeof(uint16_t) * indices.size());
-    memcpy(memory.m_ptr, indices.data(), sizeof(uint16_t) * indices.size());
-    m_ibo = device->createIndexBuffer(&memory);
-    m_indices = indices.size();
+
+    processNode(scene->mRootNode, scene, decl, m_groups, device);
 }
 
 void Mesh::submit(moti::graphics::GraphicsDevice& device, moti::graphics::ProgramHandle program, const moti::Mat4& transform) const
 {
-    device.setTransform(transform);
-    device.setIndexBuffer(m_ibo, 0, m_indices);
-    device.setVertexBuffer(m_vbo, 0, UINT32_MAX);
-    device.submit(program);
+    for (auto& group : m_groups) {
+        device.setTransform(transform);
+        device.setVertexBuffer(group.m_vbo, 0, group.m_indices);
+        //device.setIndexBuffer(group.m_ibo, 0, group.m_indices);
+        device.submit(program);
+    }
 }

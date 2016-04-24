@@ -10,11 +10,15 @@ struct VertexNormalTexCoords {
     float v;
 };
 MOTI_FORWARD_DECLARE(moti, graphics, GraphicsDevice);
-struct Mesh {
 
+struct MeshGroup {
     moti::graphics::VertexBufferHandle m_vbo;
     moti::graphics::IndexBufferHandle m_ibo;
     uint32_t m_indices;
+};
+
+struct Mesh {
+    std::vector<MeshGroup> m_groups;
     void load(const char* _path, moti::graphics::GraphicsDevice* device);
     void submit(moti::graphics::GraphicsDevice&, moti::graphics::ProgramHandle handle, const moti::Mat4& transform) const;
 };
