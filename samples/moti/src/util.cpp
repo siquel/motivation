@@ -30,7 +30,7 @@ void processMesh(aiMesh* mesh, const aiScene* scene, const moti::graphics::Verte
         }
 
     }
-
+    indices.reserve(3 * mesh->mNumFaces);
     for (uint32_t findex = 0; findex < mesh->mNumFaces; ++findex) {
         aiFace& face = mesh->mFaces[findex];
         for (uint32_t index = 0; index < face.mNumIndices; ++index) {
@@ -46,7 +46,7 @@ void processMesh(aiMesh* mesh, const aiScene* scene, const moti::graphics::Verte
     memcpy(memory.m_ptr, indices.data(), sizeof(uint16_t) * indices.size());
     group.m_ibo = device->createIndexBuffer(&memory);
     moti::memory_globals::defaultAllocator().deallocate(memory);
-    group.m_indices = vertices.size();
+    group.m_indices = indices.size();
 }
 
 void processNode(aiNode* node, const aiScene* scene, const moti::graphics::VertexDecl& decl, std::vector<MeshGroup>& groups, moti::graphics::GraphicsDevice* dev) {

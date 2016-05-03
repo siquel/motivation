@@ -38,6 +38,9 @@ namespace moti {
                     m_declLookup[_decl.id] = _decl;
                     m_ctx->createVertexDecl(declhandle, _decl);
                 }
+                else {
+                    declhandle = { _decl.id };
+                }
                 m_ctx->createVertexBuffer(handle, _mem, declhandle);
             }
             return handle;

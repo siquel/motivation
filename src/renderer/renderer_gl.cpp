@@ -71,7 +71,10 @@ namespace moti {
             }
 
             void RendererContextGL::createVertexBuffer(VertexBufferHandle _handle, mem::Block* _mem, VertexDeclHandle _decl) {
+                GLuint vao = 0;
+                GL_CHECK(glGenVertexArrays(1, &vao));
                 m_vertexBuffers[_handle.m_id].create(_mem->m_length, _mem->m_ptr, _decl);
+                m_vaos[_handle.m_id] = vao;
             }
 
             void RendererContextGL::destroyVertexBuffer(VertexBufferHandle _handle)
@@ -102,35 +105,28 @@ namespace moti {
             }
 
             void RendererContextGL::submit(ProgramHandle _handle, const Render& _draw) {
+                GLIndexBuffer* ibo = nullptr;
                 GLProgram& program = m_programs[_handle.m_id];
-                GLuint vao = m_vaos[program.m_id];
-                if (vao == 0) {
-                    GL_CHECK(glGenVertexArrays(1, &vao));
-                    m_vaos[program.m_id] = vao;
-                    GL_CHECK(glBindVertexArray(vao));
-                    if (isValid(_draw.m_vertexBuffer)) {
-                        GLVertexBuffer& vb = m_vertexBuffers[_draw.m_vertexBuffer.m_id];
-                        GL_CHECK(glBindBuffer(vb.m_target, vb.m_id));
-                        VertexDecl& decl = m_vertexDecls[vb.m_decl.m_id];
-                        program.bindAttributes(decl);
-                    }
-                }
-                else {
-                    GL_CHECK(glBindVertexArray(vao));
+                GLuint vao = m_vaos[_draw.m_vertexBuffer.m_id];
+
+                GL_CHECK(glBindVertexArray(vao));
+                if (isValid(_draw.m_vertexBuffer)) {
+                    GLVertexBuffer& vb = m_vertexBuffers[_draw.m_vertexBuffer.m_id];
+                    GL_CHECK(glBindBuffer(vb.m_target, vb.m_id));
+                    VertexDecl& decl = m_vertexDecls[vb.m_decl.m_id];
+                    program.bindAttributes(decl);
                 }
                 
-                GL_CHECK(glEnable(GL_DEPTH_TEST));
-                GL_CHECK(glDepthFunc(GL_LESS));
-                GL_CHECK(glEnable(GL_BLEND));
-                GL_CHECK(glEnable(GL_CULL_FACE));
-                GL_CHECK(glFrontFace(GL_CCW));
-                GL_CHECK(glCullFace(GL_FRONT));
-                GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
+                const bool drawIndexed = _draw.m_indexBuffer.m_id != UINT16_MAX;
 
-    //            GLIndexBuffer& ibo = m_indexBuffers[_draw.m_indexBuffer.m_id];
+                if (drawIndexed) {
+                    ibo = &m_indexBuffers[_draw.m_indexBuffer.m_id];
+                    GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo->m_id));
+                }
+                
                 GL_CHECK(glUseProgram(program.m_id));
-    //            GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo.m_id));
+    
 
                 setPredefined(program, _draw);
                 Array<UniformDecl>& uniforms = program.m_uniforms;
@@ -163,10 +159,15 @@ namespace moti {
                 }
 #undef UNIFORM_IMPL_CASE
 
+                if (drawIndexed) {
+                    GL_CHECK(glDrawElements(GL_TRIANGLES, _draw.m_indexCount, GL_UNSIGNED_SHORT, nullptr));
+                    GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+                }
+                else {
 
-
-                GL_CHECK(glDrawArrays(GL_TRIANGLES, 0, _draw.m_endVertex));
-                //GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+                    GL_CHECK(glDrawArrays(GL_TRIANGLES, _draw.m_startVertex, _draw.m_endVertex));
+                }
+                GL_CHECK(glBindVertexArray(0));
                 GL_CHECK(glUseProgram(0));
             }
 

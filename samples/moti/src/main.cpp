@@ -192,26 +192,13 @@ int main(int argc, char** argv) {
     mg::ShaderHandle fsh = createShader(s_FragmentShader, MOTI_FRAGMENT_SHADER_MAGIC, device);
     mg::ProgramHandle p = device.createProgram(vsh, fsh);
 
-    mem::Block memory = alloc.allocate(sizeof(s_vertices));
-    memcpy(memory.m_ptr, s_vertices, sizeof(s_vertices));
-
-    s_decl.begin()
-        .add(Attribute::Position, 3, AttributeType::Float, true)
-        .add(Attribute::Color, 4, AttributeType::Uint8, false);
-
-    mem::Block indicesBlock = alloc.allocate(sizeof(s_indices));
-    memcpy(indicesBlock.m_ptr, s_indices, sizeof(s_indices));
-
-    mg::VertexBufferHandle vbo = device.createVertexBuffer(&memory, s_decl);
-    mg::IndexBufferHandle ibo = device.createIndexBuffer(&indicesBlock);
-
     moti::Mat4 view;
-    moti::look(view, Vec3{ 0.0f, 1.0f, 0.0f }, Vec3{ 0.0f, 1.0f, -3.f }, Vec3{ 0.f, 1.f, 0.f });
+    moti::look(view, Vec3{ 0.0f, 1.0f, 0.0f }, Vec3{ 0.0f, 1.0f, -4.f }, Vec3{ 0.f, 1.f, 0.f });
     moti::Mat4 projection;
     moti::perspective(projection, 45.f, float(Width) / float(Height), 0.1f, 100.f);
 
     Mesh mesh;
-    mesh.load("bunny.obj", &device);
+    mesh.load("table.obj", &device);
 
     SDL_Event e;
     bool running = true;
@@ -225,7 +212,7 @@ int main(int argc, char** argv) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         float time = SDL_GetTicks() / 1000.f;
-        float angle = time * 45.f;  // 45° per second
+        float angle = time * 25.f;  // 45° per second
 
         device.setUniform(u_time, &time);
         device.setViewRect(0, 0, Width, Height);
@@ -233,27 +220,15 @@ int main(int argc, char** argv) {
 
         moti::Mat4 model;
         model.setIdentity();
-        translate(model, Vec3{ 0.f, 0.f, -4.f });
+        translate(model, Vec3{ 0.f, 0.f, -5.f });
         moti::rotate(model, moti::radians(angle), Vec3{ 0.f, 1.f, 0.f });
 
+        glFrontFace(GL_CCW);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
         mesh.submit(device, p, model);
-        /*
-        for (uint32_t y = 0; y < 11; ++y) {
-            for (uint32_t x = 0; x < 11; ++x) {
-                moti::Mat4 model;
-                model.setIdentity();
-                translate(model, Vec3{ -15.f + float(x) * 3.f, -15.f + 3.f * float(y), 0.f });
-                moti::rotate(model, moti::radians(angle), Vec3{ 1.f, 1.f, 0.f });
-
-                device.setIndexBuffer(ibo, 0, 36);
-                device.setVertexBuffer(vbo, 0, 8);
-                device.setViewTransform(view, projection);
-                device.setViewRect(0, 0, Width, Height);
-                device.setTransform(model);
-                device.setUniform(u_time, &time);
-                device.submit(p);
-            }
-        }*/
         
         SDL_GL_SwapWindow(wnd);
     }
@@ -261,8 +236,6 @@ int main(int argc, char** argv) {
     device.destroyUniform(u_time);
     device.destroyShader(vsh);
     device.destroyShader(fsh);
-    device.destroyVertexBuffer(vbo);
-    device.destroyIndexBuffer(ibo);
     device.destroyProgram(p);
     SDL_DestroyWindow(wnd);
     SDL_Quit();
