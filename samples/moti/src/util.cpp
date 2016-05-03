@@ -89,7 +89,7 @@ moti::graphics::ShaderHandle create_shader(const char* src, uint32_t magic, mg::
     moti::write<uint32_t>(&writer, magic);
     moti::write<uint32_t>(&writer, size);
     fread((char*)(memory.m_ptr) + 2 * sizeof(uint32_t), sizeof(char), size, file);
-
+    fclose(file);
     return device.createShader(&memory);
 }
 
