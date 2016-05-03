@@ -22,3 +22,5 @@ struct Mesh {
     void load(const char* _path, moti::graphics::GraphicsDevice* device);
     void submit(moti::graphics::GraphicsDevice&, moti::graphics::ProgramHandle handle, const moti::Mat4& transform) const;
 };
+
+moti::graphics::ProgramHandle load_program(const char* vshpath, const char* fshpath, moti::graphics::GraphicsDevice&);

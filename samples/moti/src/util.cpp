@@ -7,6 +7,8 @@
 #include "moti/renderer/graphics_device.h"
 #include "moti/memory/block.h"
 #include "moti/memory/memory.h"
+#include "moti/memory/stack_allocator.h"
+#include "moti/io/io.h"
 
 
 void processMesh(aiMesh* mesh, const aiScene* scene, const moti::graphics::VertexDecl& decl, MeshGroup& group, moti::graphics::GraphicsDevice* device) {
@@ -60,7 +62,50 @@ void processNode(aiNode* node, const aiScene* scene, const moti::graphics::Verte
         processNode(node->mChildren[i], scene, decl, groups, dev);
     }
 }
+namespace mg = moti::graphics;
+namespace mem = moti::memory;
 
+moti::graphics::ShaderHandle create_shader(const char* src, uint32_t magic, mg::GraphicsDevice& device) {
+    FILE* file = nullptr;
+    fopen_s(&file, src, "rb");
+
+    if (file == nullptr) {
+        MOTI_TRACE("Failed to open file %s", src);
+        __debugbreak();
+    }
+
+    fseek(file, 0, SEEK_END);
+    uint32_t size = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    const uint32_t MaxSize = 4096;
+    if (size >= MaxSize) {
+        fprintf(stderr, "Out of mem");
+        __debugbreak();
+    }
+    moti::memory::StackAllocator<MaxSize> alloc;
+    mem::Block memory;
+    moti::MemoryWriter writer(&memory, &alloc);
+    moti::write<uint32_t>(&writer, magic);
+    moti::write<uint32_t>(&writer, size);
+    fread((char*)(memory.m_ptr) + 2 * sizeof(uint32_t), sizeof(char), size, file);
+
+    return device.createShader(&memory);
+}
+
+
+
+moti::graphics::ProgramHandle load_program(const char* vshpath, const char* fshpath, mg::GraphicsDevice& device)
+{
+
+    mg::ShaderHandle vsh = create_shader(vshpath, MOTI_VERTEX_SHADER_MAGIC, device);
+    mg::ShaderHandle fsh = create_shader(fshpath, MOTI_FRAGMENT_SHADER_MAGIC, device);
+    mg::ProgramHandle program = device.createProgram(vsh, fsh);
+    device.destroyShader(vsh);
+    device.destroyShader(fsh);
+    
+    return program;
+}
 
 
 void Mesh::load(const char* _path, moti::graphics::GraphicsDevice* device) {
@@ -85,7 +130,7 @@ void Mesh::submit(moti::graphics::GraphicsDevice& device, moti::graphics::Progra
     for (auto& group : m_groups) {
         device.setTransform(transform);
         device.setVertexBuffer(group.m_vbo, 0, group.m_indices);
-        //device.setIndexBuffer(group.m_ibo, 0, group.m_indices);
+        device.setIndexBuffer(group.m_ibo, 0, group.m_indices);
         device.submit(program);
     }
 }
