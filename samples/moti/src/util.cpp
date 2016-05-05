@@ -32,6 +32,15 @@ void processMesh(aiMesh* mesh, const aiScene* scene, const moti::graphics::Verte
         }
 
     }
+
+    if (mesh->mMaterialIndex >= 0) {
+        aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+        aiColor4D diffuse;
+        aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuse);
+        
+        printf("diffuse count ");
+    }
+
     indices.reserve(3 * mesh->mNumFaces);
     for (uint32_t findex = 0; findex < mesh->mNumFaces; ++findex) {
         aiFace& face = mesh->mFaces[findex];

@@ -91,11 +91,16 @@ namespace moti {
             uint16_t m_id;
         };
 
+        struct TextureHandle {
+            uint16_t m_id;
+        };
+
 		inline bool isValid(VertexBufferHandle _h) { return _h.m_id != UINT16_MAX; }
         inline bool isValid(IndexBufferHandle _h) { return _h.m_id != UINT16_MAX; }
 		inline bool isValid(VertexDeclHandle _h) { return _h.m_id != UINT16_MAX; }
         inline bool isValid(ShaderHandle _h) { return _h.m_id != UINT16_MAX; }
         inline bool isValid(ProgramHandle _h) { return _h.m_id != UINT16_MAX; }
+        inline bool isValid(TextureHandle _h) { return _h.m_id != UINT16_MAX; }
         
         struct Rect {
             uint32_t m_x;
@@ -204,6 +209,8 @@ namespace moti {
             virtual void createUniform(UniformHandle _handle, UniformType::Enum _type, uint16_t _count, const char* _name) = 0;
             virtual void destroyUniform(UniformHandle _handle) = 0;
             virtual void updateUniform(UniformHandle _handle, const void* _value, uint32_t _size) = 0;
+            virtual void createTexture(TextureHandle handle, mem::Block* memory) = 0;
+            virtual void destroyTexture(TextureHandle handle) = 0;
             virtual void submit(ProgramHandle _handle, const Render& _draw) = 0;
 		};
 		inline RendererContext::~RendererContext() {}

@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
     moti::perspective(projection, 45.f, float(Width) / float(Height), 0.1f, 100.f);
 
     Mesh mesh;
-    mesh.load("minion for upload.obj", &device);
+    mesh.load("cube.obj", &device);
 
     SDL_Event e;
     bool running = true;
@@ -68,12 +68,11 @@ int main(int argc, char** argv) {
 
         moti::Mat4 model;
         model.setIdentity();
-        translate(model, Vec3{ 0.f, -10.f, -30.f });
-        moti::rotate(model, moti::radians(angle), Vec3{ 0.f, 1.f, 0.f });
-
+        translate(model, Vec3{ 0.f, -0.f, -5.f });
+        //moti::rotate(model, moti::radians(angle), Vec3{ 0.f, 1.f, 0.f });
         glFrontFace(GL_CCW);
         glEnable(GL_CULL_FACE);
-        glCullFace(GL_FRONT);
+        //glCullFace(GL_FRONT);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
         mesh.submit(device, p, model);

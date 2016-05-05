@@ -35,8 +35,8 @@ namespace moti {
                 switch (_type) {
                 case GL_FLOAT:
                     return UniformType::Float;
-/*                case GL_FLOAT_VEC2:
-                case GL_FLOAT_VEC3:*/
+                    /*                case GL_FLOAT_VEC2:
+                                    case GL_FLOAT_VEC3:*/
                 case GL_FLOAT_VEC4:
                     return UniformType::Vec4;
                 case GL_FLOAT_MAT3:
@@ -116,7 +116,7 @@ namespace moti {
                     VertexDecl& decl = m_vertexDecls[vb.m_decl.m_id];
                     program.bindAttributes(decl);
                 }
-                
+
 
                 const bool drawIndexed = _draw.m_indexBuffer.m_id != UINT16_MAX;
 
@@ -124,9 +124,9 @@ namespace moti {
                     ibo = &m_indexBuffers[_draw.m_indexBuffer.m_id];
                     GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo->m_id));
                 }
-                
+
                 GL_CHECK(glUseProgram(program.m_id));
-    
+
 
                 setPredefined(program, _draw);
                 Array<UniformDecl>& uniforms = program.m_uniforms;
@@ -187,6 +187,16 @@ namespace moti {
                 memcpy(m_uniforms[_handle.m_id].m_ptr, _value, _size);
             }
 
+            void RendererContextGL::createTexture(TextureHandle handle, mem::Block * memory)
+            {
+                m_textures[handle.m_id].create(*memory);
+            }
+
+            void RendererContextGL::destroyTexture(TextureHandle handle)
+            {
+                m_textures[handle.m_id].destroy();
+            }
+
             void RendererContextGL::destroyUniform(UniformHandle _handle)
             {
             }
@@ -209,7 +219,7 @@ namespace moti {
             }
 
             void RendererContextGL::setPredefined(const GLProgram& _program, const Render& _draw) {
-                
+
                 for (uint32_t i = 0; i < _program.m_uniformCount; ++i) {
                     const PredefinedUniform& predefined = _program.m_predefinedUniforms[i];
                     switch (predefined.m_type) {
@@ -428,7 +438,7 @@ namespace moti {
                             AttributeType::Enum type = _decl.m_type[attr];
 
                             GL_CHECK(glEnableVertexAttribArray(loc));
-                            
+
                             GL_CHECK(glVertexAttribPointer(loc,
                                 _decl.m_count[attr],
                                 s_attribTypes[type],
@@ -460,6 +470,52 @@ namespace moti {
                     GL_STATIC_DRAW)
                     );
                 GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+            }
+
+            void GLTexture::init(GLenum target, uint32_t width, uint32_t height)
+            {
+                m_width = width;
+                m_height = height;
+
+                GL_CHECK(glGenTextures(1, &m_id));
+                MOTI_ASSERT(m_id != 0, "Failed to generate texture id");
+                GL_CHECK(glBindTexture(target, m_id));
+
+                m_format = GL_RGBA;
+                
+            }
+
+            void GLTexture::create(mem::Block& memory)
+            {
+                MemoryReader reader(memory.m_ptr, memory.m_length);
+                uint32_t width, height;
+                read(&reader, width);
+                read(&reader, height);
+                GLenum target = GL_TEXTURE_2D;
+
+                init(target, width, height);
+
+                m_type = GL_UNSIGNED_BYTE;
+                // todo read this from memory somehow
+                void* data = nullptr;
+
+                if (m_target == GL_TEXTURE_2D) {
+                    GL_CHECK(glTexImage2D(m_target, 0, m_format, width, height, 0, m_format, m_type, data));
+                }
+                else {
+                    MOTI_ASSERT(false, "Not implemented");
+                }
+
+                GL_CHECK(glBindTexture(m_target, 0));
+            }
+
+            void GLTexture::destroy()
+            {
+                if (m_id != 0) {
+                    GL_CHECK(glBindTexture(m_target, 0));
+                    GL_CHECK(glDeleteTextures(1, &m_id));
+                    m_id = 0;
+                }
             }
 
         }

@@ -36,6 +36,7 @@ namespace moti {
                 GLuint m_id;
                 uint32_t m_size;
                 void create(uint32_t _size, void* data);
+                
             };
 
             struct GLShader {
@@ -43,6 +44,20 @@ namespace moti {
                 GLenum m_type;
 
                 void create(mem::Block* _mem);
+                void destroy();
+            };
+
+            struct GLTexture {
+                GLuint m_id;
+                GLuint m_type;
+                GLenum m_target;
+                GLenum m_format;
+                uint32_t m_width;
+                uint32_t m_height;
+                GLTexture()
+                    : m_id(0), m_type(GL_ZERO), m_target(GL_TEXTURE_2D), m_format(GL_ZERO), m_width(0), m_height(0){}
+                void init(GLenum target, uint32_t width, uint32_t height);
+                void create(mem::Block& memory);
                 void destroy();
             };
 
@@ -75,6 +90,7 @@ namespace moti {
                 VertexDecl m_vertexDecls[MOTI_MAX_VERTEX_BUFFERS];
                 memory::Block m_uniforms[MOTI_MAX_UNIFORMS];
                 UniformRegistry m_uniformReg;
+                GLTexture m_textures[MOTI_MAX_TEXTURES];
 
 				RendererContextGL();
 				~RendererContextGL() override;
@@ -93,6 +109,8 @@ namespace moti {
                 virtual void createUniform(UniformHandle _handle, UniformType::Enum _type, uint16_t _count, const char* _name) override;
                 virtual void destroyUniform(UniformHandle _handle) override;
                 virtual void updateUniform(UniformHandle _handle, const void* _value, uint32_t _size) override;
+                virtual void createTexture(TextureHandle handle, mem::Block* memory) override;
+                virtual void destroyTexture(TextureHandle handle) override;
                 void setShaderUniform4f(uint32_t _index, const void* _val, uint32_t _num);
                 void setShaderUniform4x4f(uint32_t _index, const void* _val, uint32_t _num);
 
