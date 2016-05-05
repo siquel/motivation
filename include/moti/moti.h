@@ -111,3 +111,42 @@ namespace moti {
 
 
 }
+
+
+// "API"
+namespace moti
+{
+    struct VertexBufferHandle;
+    struct IndexBufferHandle;
+    struct VertexDecl;
+    struct ShaderHandle;
+    struct ProgramHandle;
+    struct UniformHandle;
+    struct Mat4;
+    namespace memory
+    {
+        struct Block;
+    }
+
+    VertexBufferHandle createVertexBuffer(memory::Block* _mem, const VertexDecl& _decl);
+    IndexBufferHandle createIndexBuffer(memory::Block* _mem);
+    void setVertexBuffer(VertexBufferHandle _handle, uint32_t _startVertex, uint32_t _count);
+    void setIndexBuffer(IndexBufferHandle _handle, uint32_t firstIndex, uint32_t _count);
+    ShaderHandle createShader(memory::Block* _mem);
+    ProgramHandle createProgram(ShaderHandle _vertex, ShaderHandle _fragment);
+
+    void destroyVertexBuffer(VertexBufferHandle _handle);
+    void destroyIndexBuffer(IndexBufferHandle _handle);
+
+    UniformHandle createUniform(UniformType::Enum _type, uint16_t _count, const char* _name);
+    void destroyUniform(UniformHandle _handle);
+
+    void destroyShader(ShaderHandle _handle);
+    void destroyProgram(ProgramHandle _handle);
+    void submit(ProgramHandle _program);
+
+    void setViewTransform(const Mat4& _view, const Mat4& _proj);
+    void setViewRect(uint32_t _x, uint32_t  _y, uint32_t _w, uint32_t h);
+    void setTransform(const Mat4& _mtx);
+    void setUniform(UniformHandle _handle, const void* _value);
+}

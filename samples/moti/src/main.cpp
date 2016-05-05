@@ -36,9 +36,9 @@ int main(int argc, char** argv) {
 
     mg::GraphicsDevice device;
 
-    mg::UniformHandle u_time = device.createUniform(UniformType::Float, 1, "u_time");
+    moti::UniformHandle u_time = device.createUniform(UniformType::Float, 1, "u_time");
 
-    mg::ProgramHandle p = load_program("shaders/juttu.vs", "shaders/juttu.fs", device);
+    moti::ProgramHandle p = load_program("shaders/juttu.vs", "shaders/juttu.fs", device);
     
     moti::Mat4 view;
     moti::look(view, Vec3{ 0.0f, 1.0f, 0.0f }, Vec3{ 0.0f, 1.0f, -4.f }, Vec3{ 0.f, 1.f, 0.f });

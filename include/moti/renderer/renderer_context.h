@@ -13,7 +13,7 @@ MOTI_FORWARD_DECLARE_STRUCT(moti, memory, Block);
 
 namespace moti {
 	namespace mem = memory;
-	namespace graphics {
+	
 
         static const uint8_t AttributeSizeGL[AttributeType::Count][4] = {
             { 1, 2, 4, 4}, // uint8
@@ -214,5 +214,5 @@ namespace moti {
             virtual void submit(ProgramHandle _handle, const Render& _draw) = 0;
 		};
 		inline RendererContext::~RendererContext() {}
-	}
+	
 }

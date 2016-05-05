@@ -11,7 +11,7 @@
 #include "moti/io/io.h"
 
 
-void processMesh(aiMesh* mesh, const aiScene* scene, const moti::graphics::VertexDecl& decl, MeshGroup& group, moti::graphics::GraphicsDevice* device) {
+void processMesh(aiMesh* mesh, const aiScene* scene, const moti::VertexDecl& decl, MeshGroup& group, moti::graphics::GraphicsDevice* device) {
     std::vector<VertexNormalTexCoords> vertices;
     std::vector<uint16_t> indices;
 
@@ -60,7 +60,7 @@ void processMesh(aiMesh* mesh, const aiScene* scene, const moti::graphics::Verte
     group.m_indices = indices.size();
 }
 
-void processNode(aiNode* node, const aiScene* scene, const moti::graphics::VertexDecl& decl, std::vector<MeshGroup>& groups, moti::graphics::GraphicsDevice* dev) {
+void processNode(aiNode* node, const aiScene* scene, const moti::VertexDecl& decl, std::vector<MeshGroup>& groups, moti::graphics::GraphicsDevice* dev) {
     for (uint32_t i = 0; i < node->mNumMeshes; ++i) {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
         groups.emplace_back(MeshGroup{ 0 });
@@ -74,7 +74,7 @@ void processNode(aiNode* node, const aiScene* scene, const moti::graphics::Verte
 namespace mg = moti::graphics;
 namespace mem = moti::memory;
 
-moti::graphics::ShaderHandle create_shader(const char* src, uint32_t magic, mg::GraphicsDevice& device) {
+moti::ShaderHandle create_shader(const char* src, uint32_t magic, mg::GraphicsDevice& device) {
     FILE* file = nullptr;
     fopen_s(&file, src, "rb");
 
@@ -104,12 +104,12 @@ moti::graphics::ShaderHandle create_shader(const char* src, uint32_t magic, mg::
 
 
 
-moti::graphics::ProgramHandle load_program(const char* vshpath, const char* fshpath, mg::GraphicsDevice& device)
+moti::ProgramHandle load_program(const char* vshpath, const char* fshpath, mg::GraphicsDevice& device)
 {
 
-    mg::ShaderHandle vsh = create_shader(vshpath, MOTI_VERTEX_SHADER_MAGIC, device);
-    mg::ShaderHandle fsh = create_shader(fshpath, MOTI_FRAGMENT_SHADER_MAGIC, device);
-    mg::ProgramHandle program = device.createProgram(vsh, fsh);
+    moti::ShaderHandle vsh = create_shader(vshpath, MOTI_VERTEX_SHADER_MAGIC, device);
+    moti::ShaderHandle fsh = create_shader(fshpath, MOTI_FRAGMENT_SHADER_MAGIC, device);
+    moti::ProgramHandle program = device.createProgram(vsh, fsh);
     device.destroyShader(vsh);
     device.destroyShader(fsh);
     
@@ -125,7 +125,7 @@ void Mesh::load(const char* _path, moti::graphics::GraphicsDevice* device) {
         printf("Assimp error %s\n", importer.GetErrorString());
         return;
     }
-    moti::graphics::VertexDecl decl;
+    moti::VertexDecl decl;
     decl.begin().
         add(moti::Attribute::Position, 3, moti::AttributeType::Float, true).
         add(moti::Attribute::Normal, 3, moti::AttributeType::Float, true).
@@ -134,7 +134,7 @@ void Mesh::load(const char* _path, moti::graphics::GraphicsDevice* device) {
     processNode(scene->mRootNode, scene, decl, m_groups, device);
 }
 
-void Mesh::submit(moti::graphics::GraphicsDevice& device, moti::graphics::ProgramHandle program, const moti::Mat4& transform) const
+void Mesh::submit(moti::graphics::GraphicsDevice& device, moti::ProgramHandle program, const moti::Mat4& transform) const
 {
     for (auto& group : m_groups) {
         device.setTransform(transform);

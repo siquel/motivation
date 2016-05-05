@@ -80,7 +80,7 @@ namespace moti {
                 void destroy();
             };
 
-			struct RendererContextGL : public graphics::RendererContext {
+			struct RendererContextGL : public RendererContext {
 				GLVertexBuffer m_vertexBuffers[MOTI_MAX_VERTEX_BUFFERS];
                 GLIndexBuffer m_indexBuffers[MOTI_MAX_VERTEX_BUFFERS];
                 GLShader m_shaders[MOTI_MAX_SHADERS];
