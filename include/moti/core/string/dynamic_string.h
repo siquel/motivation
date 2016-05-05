@@ -8,8 +8,8 @@ namespace moti {
     struct DynamicString {
         Array<char> m_data;
 
-        DynamicString(memory::Allocator& _allocator);
-        DynamicString(const char* _str, memory::Allocator& _allocator);
+        DynamicString(Allocator& _allocator);
+        DynamicString(const char* _str, Allocator& _allocator);
 
         DynamicString& operator=(const DynamicString& _string);
         DynamicString& operator=(const char* _string);
@@ -30,12 +30,12 @@ namespace moti {
 
 namespace moti {
 
-    inline DynamicString::DynamicString(memory::Allocator& _allocator)
+    inline DynamicString::DynamicString(Allocator& _allocator)
         : m_data(_allocator) {
 
     }
 
-    inline DynamicString::DynamicString(const char* _str, memory::Allocator& _allocator) 
+    inline DynamicString::DynamicString(const char* _str, Allocator& _allocator) 
         : m_data(_allocator) {
         MOTI_ASSERT(_str != nullptr, "String cannot be null");
         m_data.push(_str, strlen32(_str));

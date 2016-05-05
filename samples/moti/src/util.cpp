@@ -11,7 +11,7 @@
 #include "moti/io/io.h"
 
 
-void processMesh(aiMesh* mesh, const aiScene* scene, const moti::VertexDecl& decl, MeshGroup& group, moti::graphics::GraphicsDevice* device) {
+void processMesh(aiMesh* mesh, const aiScene* scene, const moti::VertexDecl& decl, MeshGroup& group, moti::GraphicsDevice* device) {
     std::vector<VertexNormalTexCoords> vertices;
     std::vector<uint16_t> indices;
 
@@ -49,7 +49,7 @@ void processMesh(aiMesh* mesh, const aiScene* scene, const moti::VertexDecl& dec
         }
     }
 
-    moti::memory::Block memory = moti::memory_globals::defaultAllocator().allocate(sizeof(VertexNormalTexCoords) * vertices.size());
+    moti::Block memory = moti::memory_globals::defaultAllocator().allocate(sizeof(VertexNormalTexCoords) * vertices.size());
     memcpy(memory.m_ptr, vertices.data(), sizeof(VertexNormalTexCoords) * vertices.size());
     group.m_vbo = device->createVertexBuffer(&memory, decl);
     moti::memory_globals::defaultAllocator().deallocate(memory);
@@ -60,7 +60,7 @@ void processMesh(aiMesh* mesh, const aiScene* scene, const moti::VertexDecl& dec
     group.m_indices = indices.size();
 }
 
-void processNode(aiNode* node, const aiScene* scene, const moti::VertexDecl& decl, std::vector<MeshGroup>& groups, moti::graphics::GraphicsDevice* dev) {
+void processNode(aiNode* node, const aiScene* scene, const moti::VertexDecl& decl, std::vector<MeshGroup>& groups, moti::GraphicsDevice* dev) {
     for (uint32_t i = 0; i < node->mNumMeshes; ++i) {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
         groups.emplace_back(MeshGroup{ 0 });
@@ -71,10 +71,8 @@ void processNode(aiNode* node, const aiScene* scene, const moti::VertexDecl& dec
         processNode(node->mChildren[i], scene, decl, groups, dev);
     }
 }
-namespace mg = moti::graphics;
-namespace mem = moti::memory;
 
-moti::ShaderHandle create_shader(const char* src, uint32_t magic, mg::GraphicsDevice& device) {
+moti::ShaderHandle create_shader(const char* src, uint32_t magic, moti::GraphicsDevice& device) {
     FILE* file = nullptr;
     fopen_s(&file, src, "rb");
 
@@ -92,8 +90,8 @@ moti::ShaderHandle create_shader(const char* src, uint32_t magic, mg::GraphicsDe
         fprintf(stderr, "Out of mem");
         __debugbreak();
     }
-    moti::memory::StackAllocator<MaxSize> alloc;
-    mem::Block memory;
+    moti::StackAllocator<MaxSize> alloc;
+    moti::Block memory;
     moti::MemoryWriter writer(&memory, &alloc);
     moti::write<uint32_t>(&writer, magic);
     moti::write<uint32_t>(&writer, size);
@@ -104,7 +102,7 @@ moti::ShaderHandle create_shader(const char* src, uint32_t magic, mg::GraphicsDe
 
 
 
-moti::ProgramHandle load_program(const char* vshpath, const char* fshpath, mg::GraphicsDevice& device)
+moti::ProgramHandle load_program(const char* vshpath, const char* fshpath, moti::GraphicsDevice& device)
 {
 
     moti::ShaderHandle vsh = create_shader(vshpath, MOTI_VERTEX_SHADER_MAGIC, device);
@@ -117,7 +115,7 @@ moti::ProgramHandle load_program(const char* vshpath, const char* fshpath, mg::G
 }
 
 
-void Mesh::load(const char* _path, moti::graphics::GraphicsDevice* device) {
+void Mesh::load(const char* _path, moti::GraphicsDevice* device) {
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(_path, aiProcess_FlipUVs | aiProcess_Triangulate);
 
@@ -134,7 +132,7 @@ void Mesh::load(const char* _path, moti::graphics::GraphicsDevice* device) {
     processNode(scene->mRootNode, scene, decl, m_groups, device);
 }
 
-void Mesh::submit(moti::graphics::GraphicsDevice& device, moti::ProgramHandle program, const moti::Mat4& transform) const
+void Mesh::submit(moti::GraphicsDevice& device, moti::ProgramHandle program, const moti::Mat4& transform) const
 {
     for (auto& group : m_groups) {
         device.setTransform(transform);

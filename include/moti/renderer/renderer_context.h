@@ -9,10 +9,9 @@
 #include "../core/string/fixed_string.h"
 #include <xhash>
 
-MOTI_FORWARD_DECLARE_STRUCT(moti, memory, Block);
+MOTI_FORWARD_DECLARE_STRUCT(moti, Block);
 
 namespace moti {
-	namespace mem = memory;
 	
 
         static const uint8_t AttributeSizeGL[AttributeType::Count][4] = {
@@ -115,7 +114,7 @@ namespace moti {
         };
 
         struct UniformInfo {
-            memory::Block m_data;
+            Block m_data;
             UniformHandle m_handle;
         };
 
@@ -142,7 +141,7 @@ namespace moti {
                 return nullptr;
             }
 
-            const UniformInfo& add(UniformHandle _handle, const char* _name, mem::Block _data) {
+            const UniformInfo& add(UniformHandle _handle, const char* _name, Block _data) {
                 UniformHashMap::iterator search = m_uniforms.find(FixedString(_name));
                 if (search == m_uniforms.end()) {
                     UniformInfo info{ _data, _handle };
@@ -195,12 +194,12 @@ namespace moti {
 
 		struct RendererContext {
 			virtual ~RendererContext() = 0;
-			virtual void createVertexBuffer(VertexBufferHandle _handle, mem::Block* _mem, VertexDeclHandle _decl) = 0;
+			virtual void createVertexBuffer(VertexBufferHandle _handle, Block* _mem, VertexDeclHandle _decl) = 0;
             virtual void destroyVertexBuffer(VertexBufferHandle _handle) = 0;
-            virtual void createIndexBuffer(IndexBufferHandle _handle, mem::Block* _mem) = 0;
+            virtual void createIndexBuffer(IndexBufferHandle _handle, Block* _mem) = 0;
             virtual void destroyIndexBuffer(IndexBufferHandle _handle) = 0;
             virtual void setVertexBuffer(VertexBufferHandle _handle) = 0;
-            virtual void createShader(ShaderHandle _handle, mem::Block* _mem) = 0; 
+            virtual void createShader(ShaderHandle _handle, Block* _mem) = 0; 
             virtual void createProgram(ProgramHandle _handle, ShaderHandle _vertex, ShaderHandle _fragment) = 0;
             virtual void destroyShader(ShaderHandle _handle) = 0;
             virtual void destroyProgram(ProgramHandle _handle) = 0;
@@ -209,7 +208,7 @@ namespace moti {
             virtual void createUniform(UniformHandle _handle, UniformType::Enum _type, uint16_t _count, const char* _name) = 0;
             virtual void destroyUniform(UniformHandle _handle) = 0;
             virtual void updateUniform(UniformHandle _handle, const void* _value, uint32_t _size) = 0;
-            virtual void createTexture(TextureHandle handle, mem::Block* memory) = 0;
+            virtual void createTexture(TextureHandle handle, Block* memory) = 0;
             virtual void destroyTexture(TextureHandle handle) = 0;
             virtual void submit(ProgramHandle _handle, const Render& _draw) = 0;
 		};

@@ -5,7 +5,7 @@
 
 #include <unordered_map>
 namespace moti {
-	namespace graphics {
+	
 		class GraphicsDevice {
         private:
             RendererContext* m_ctx;
@@ -18,11 +18,11 @@ namespace moti {
         public:
             GraphicsDevice();
             ~GraphicsDevice();
-            VertexBufferHandle createVertexBuffer(mem::Block* _mem, const VertexDecl& _decl);
-            IndexBufferHandle createIndexBuffer(mem::Block* _mem);
+            VertexBufferHandle createVertexBuffer(Block* _mem, const VertexDecl& _decl);
+            IndexBufferHandle createIndexBuffer(Block* _mem);
             void setVertexBuffer(VertexBufferHandle _handle, uint32_t _startVertex, uint32_t _count);
             void setIndexBuffer(IndexBufferHandle _handle, uint32_t firstIndex, uint32_t _count);
-            ShaderHandle createShader(mem::Block* _mem);
+            ShaderHandle createShader(Block* _mem);
             ProgramHandle createProgram(ShaderHandle _vertex, ShaderHandle _fragment);
 
             void destroyVertexBuffer(VertexBufferHandle _handle);
@@ -40,5 +40,5 @@ namespace moti {
             void setTransform(const Mat4& _mtx);
             void setUniform(UniformHandle _handle, const void* _value);
 		};
-	}
+	
 }

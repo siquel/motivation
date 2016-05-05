@@ -6,13 +6,13 @@
 namespace moti {
     template <typename T>
     struct Array {
-        memory::Allocator* m_allocator;
+        Allocator* m_allocator;
         uint32_t m_capacity;
         uint32_t m_size;
-        memory::Block m_data;
+        Block m_data;
 
-        Array(memory::Allocator& _alloc);
-        Array(memory::Allocator& _alloc, uint32_t _capacity);
+        Array(Allocator& _alloc);
+        Array(Allocator& _alloc, uint32_t _capacity);
         ~Array();
         T& operator[](uint32_t _index);
         const T& operator[](uint32_t index) const;
@@ -47,13 +47,13 @@ namespace moti {
 
 namespace moti {
     template <typename T>
-    inline Array<T>::Array(memory::Allocator& _alloc) 
+    inline Array<T>::Array(Allocator& _alloc) 
         : m_allocator(&_alloc), m_capacity(0u), m_size(0u) {
         static_assert(std::is_pod<T>::value, "T must be POD type");
     }
 
     template <typename T>
-    inline Array<T>::Array(memory::Allocator& _alloc, uint32_t _capacity)
+    inline Array<T>::Array(Allocator& _alloc, uint32_t _capacity)
         : m_allocator(&_alloc), m_capacity(0u), m_size(0u) {
         static_assert(std::is_pod<T>::value, "T must be POD type");
         resize(_capacity);

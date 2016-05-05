@@ -2,36 +2,35 @@
 #include <stdint.h>
 
 namespace moti {
-    namespace memory {
-        struct Block {
+    struct Block {
 
-            Block();
+        Block();
 
-			Block(void* _ptr, uint32_t _length);
+        Block(void* _ptr, uint32_t _length);
 
-            Block(Block&& b);
+        Block(Block&& b);
 
-            Block& operator=(Block&& b);
+        Block& operator=(Block&& b);
 
-            Block(const Block&) = default;
-            Block& operator=(const Block&) = default;
-            
-            ~Block();
+        Block(const Block&) = default;
+        Block& operator=(const Block&) = default;
 
-            void reset();
+        ~Block();
 
-            operator bool() const;
+        void reset();
 
-            bool operator==(const Block& rhs) const;
+        operator bool() const;
 
-            // pointer to start address of the block
-            void* m_ptr;
-            // length of the reserved bytes
-			uint32_t m_length;
-        };
-    }
+        bool operator==(const Block& rhs) const;
 
-	inline uint32_t roundToAlignment(uint32_t basis, uint32_t n) {
+        // pointer to start address of the block
+        void* m_ptr;
+        // length of the reserved bytes
+        uint32_t m_length;
+    };
+    inline uint32_t roundToAlignment(uint32_t basis, uint32_t n) {
         return n + ((n % basis == 0) ? 0 : (basis - n % basis));
     }
 }
+
+	

@@ -123,16 +123,14 @@ namespace moti
     struct ProgramHandle;
     struct UniformHandle;
     struct Mat4;
-    namespace memory
-    {
-        struct Block;
-    }
+    struct Block;
+    
 
-    VertexBufferHandle createVertexBuffer(memory::Block* _mem, const VertexDecl& _decl);
-    IndexBufferHandle createIndexBuffer(memory::Block* _mem);
+    VertexBufferHandle createVertexBuffer(Block* _mem, const VertexDecl& _decl);
+    IndexBufferHandle createIndexBuffer(Block* _mem);
     void setVertexBuffer(VertexBufferHandle _handle, uint32_t _startVertex, uint32_t _count);
     void setIndexBuffer(IndexBufferHandle _handle, uint32_t firstIndex, uint32_t _count);
-    ShaderHandle createShader(memory::Block* _mem);
+    ShaderHandle createShader(Block* _mem);
     ProgramHandle createProgram(ShaderHandle _vertex, ShaderHandle _fragment);
 
     void destroyVertexBuffer(VertexBufferHandle _handle);

@@ -7,7 +7,6 @@
 #include "moti/core/container/array.h"
 #include "moti/memory/memory.h"
 namespace moti {
-    namespace graphics {
 
         HandleManager<MOTI_MAX_VERTEX_BUFFERS> m_vertexBufferHandles;
         HandleManager<MOTI_MAX_INDEX_BUFFERS> m_indexBufferHandles;
@@ -29,7 +28,7 @@ namespace moti {
             gl::destroyRenderer();
         }
 
-        VertexBufferHandle GraphicsDevice::createVertexBuffer(mem::Block* _mem, const VertexDecl& _decl) {
+        VertexBufferHandle GraphicsDevice::createVertexBuffer(Block* _mem, const VertexDecl& _decl) {
             VertexBufferHandle handle{ m_vertexBufferHandles.create() };
             if (isValid(handle)) {
                 VertexDeclHandle declhandle{ UINT16_MAX };
@@ -46,7 +45,7 @@ namespace moti {
             return handle;
         }
 
-        IndexBufferHandle GraphicsDevice::createIndexBuffer(mem::Block* _mem) {
+        IndexBufferHandle GraphicsDevice::createIndexBuffer(Block* _mem) {
             IndexBufferHandle handle{ m_indexBufferHandles.create() };
             if (isValid(handle)) {
                 m_ctx->createIndexBuffer(handle, _mem);
@@ -66,7 +65,7 @@ namespace moti {
             m_draw.m_indexCount = _count;
         }
 
-        ShaderHandle GraphicsDevice::createShader(mem::Block* _mem) {
+        ShaderHandle GraphicsDevice::createShader(Block* _mem) {
             uint32_t magic = 0;
             moti::MemoryReader reader(_mem->m_ptr, _mem->m_length);
             moti::read(&reader, magic);
@@ -170,6 +169,4 @@ namespace moti {
             Uniform& uniform = m_uniforms[_handle.m_id];
             m_ctx->updateUniform(_handle, _value, s_uniformTypeSize[uniform.m_type]);
         }
-
-    }
 }

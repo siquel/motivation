@@ -11,8 +11,6 @@
 #include "moti/io/io.h"
 #include "moti/math/math.h"
 #include "util.h"
-namespace mem = moti::memory;
-namespace mg = moti::graphics;
 
 const int Width = 1280;
 const int Height = 720;
@@ -23,10 +21,11 @@ int main(int argc, char** argv) {
     using moti::Mat4;
     using moti::Vec3;
     using moti::UniformType;
+    using moti::GraphicsDevice;
 
     moti::memory_globals::init();
    
-    mem::StackAllocator<4096> alloc;
+    moti::StackAllocator<4096> alloc;
 
     SDL_Init(SDL_INIT_VIDEO);
     moti::gl::GLContext context;
@@ -34,7 +33,7 @@ int main(int argc, char** argv) {
     context.create(wnd);
     glClearColor(0.0f, 0.f, 0.f, 1.f);
 
-    mg::GraphicsDevice device;
+    GraphicsDevice device;
 
     moti::UniformHandle u_time = device.createUniform(UniformType::Float, 1, "u_time");
 

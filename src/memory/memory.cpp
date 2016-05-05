@@ -6,8 +6,8 @@
 namespace moti {
     namespace memory_globals {
 
-        using DefaultMemoryAllocator = memory::Mallocator;
-        using DefaultScratchAllocator = memory::LinearAllocator;
+        using DefaultMemoryAllocator = Mallocator;
+        using DefaultScratchAllocator = LinearAllocator;
 
         struct MemoryGlobals {
             static const int AllocatorMemory = sizeof(DefaultMemoryAllocator) + sizeof(DefaultScratchAllocator);
@@ -31,11 +31,11 @@ namespace moti {
             memset(&s_memoryGlobals, 0, sizeof(MemoryGlobals));
         }
 
-        memory::Allocator& defaultAllocator() {
+        Allocator& defaultAllocator() {
             return *s_memoryGlobals.m_defaultAllocator;
         }
 
-        memory::Allocator& defaultScratchAllocator() {
+        Allocator& defaultScratchAllocator() {
             return *s_memoryGlobals.m_defaultScratchAllocator;
         }
     }

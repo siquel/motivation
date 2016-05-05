@@ -135,13 +135,13 @@ namespace moti {
     
     class MemoryWriter : public WriterSeeker {
     private:
-        memory::Block* m_data;
-        memory::Allocator* m_allocator;
+        Block* m_data;
+        Allocator* m_allocator;
         int64_t m_pos;
         int64_t m_top;
         int64_t m_size;
     public:
-        MemoryWriter(memory::Block* _block, memory::Allocator* _allocator)
+        MemoryWriter(Block* _block, Allocator* _allocator)
             : m_data(_block), m_allocator(_allocator), m_pos(0), m_top(0), m_size(0) {}
 
         virtual ~MemoryWriter() {}

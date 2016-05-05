@@ -3,8 +3,11 @@
 #include "moti/moti.h"
 #include <stdio.h>
 #include <stdarg.h>
+#include "moti/renderer/graphics_device.h"
 
 namespace moti {
+
+    static GraphicsDevice* s_device = nullptr;
 
     static const char* s_predefinedUniformNames[] = {
         "u_viewRect",
