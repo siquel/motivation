@@ -125,6 +125,7 @@ namespace moti
     struct Mat4;
     struct Block;
     
+    void init();
 
     VertexBufferHandle createVertexBuffer(Block* _mem, const VertexDecl& _decl);
     IndexBufferHandle createIndexBuffer(Block* _mem);

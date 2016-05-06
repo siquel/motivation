@@ -3,10 +3,6 @@
 #include <assert.h>
 #include <SDL/SDL.h>
 #include "moti/renderer/gl_context.h"
-#include "moti/renderer/graphics_device.h"
-#include "moti/core/string/dynamic_string.h"
-#include "moti/memory/mallocator.h"
-#include "moti/memory/linear_allocator.h"
 #include "moti/memory/memory.h"
 #include "moti/io/io.h"
 #include "moti/math/math.h"
@@ -21,7 +17,6 @@ int main(int argc, char** argv) {
     using moti::Mat4;
     using moti::Vec3;
     using moti::UniformType;
-    using moti::GraphicsDevice;
 
     moti::memory_globals::init();
    
@@ -33,11 +28,11 @@ int main(int argc, char** argv) {
     context.create(wnd);
     glClearColor(0.0f, 0.f, 0.f, 1.f);
 
-    GraphicsDevice device;
+    moti::init();
 
-    moti::UniformHandle u_time = device.createUniform(UniformType::Float, 1, "u_time");
+    moti::UniformHandle u_time = moti::createUniform(UniformType::Float, 1, "u_time");
 
-    moti::ProgramHandle p = load_program("shaders/juttu.vs", "shaders/juttu.fs", device);
+    moti::ProgramHandle p = load_program("shaders/juttu.vs", "shaders/juttu.fs");
     
     moti::Mat4 view;
     moti::look(view, Vec3{ 0.0f, 1.0f, 0.0f }, Vec3{ 0.0f, 1.0f, -4.f }, Vec3{ 0.f, 1.f, 0.f });
@@ -45,7 +40,7 @@ int main(int argc, char** argv) {
     moti::perspective(projection, 45.f, float(Width) / float(Height), 0.1f, 100.f);
 
     Mesh mesh;
-    mesh.load("cube.obj", &device);
+    mesh.load("cube.obj");
 
     SDL_Event e;
     bool running = true;
@@ -61,9 +56,9 @@ int main(int argc, char** argv) {
         float time = SDL_GetTicks() / 1000.f;
         float angle = time * 25.f;  // 45° per second
 
-        device.setUniform(u_time, &time);
-        device.setViewRect(0, 0, Width, Height);
-        device.setViewTransform(view, projection);
+        moti::setUniform(u_time, &time);
+        moti::setViewRect(0, 0, Width, Height);
+        moti::setViewTransform(view, projection);
 
         moti::Mat4 model;
         model.setIdentity();
@@ -74,13 +69,13 @@ int main(int argc, char** argv) {
         //glCullFace(GL_FRONT);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
-        mesh.submit(device, p, model);
+        mesh.submit(p, model);
         
         SDL_GL_SwapWindow(wnd);
     }
 
-    device.destroyUniform(u_time);
-    device.destroyProgram(p);
+    moti::destroyUniform(u_time);
+    moti::destroyProgram(p);
     SDL_DestroyWindow(wnd);
     SDL_Quit();
 

@@ -7,6 +7,7 @@
 
 namespace moti {
 
+    static char* s_deviceMem[sizeof(GraphicsDevice)];
     static GraphicsDevice* s_device = nullptr;
 
     static const char* s_predefinedUniformNames[] = {
@@ -59,6 +60,114 @@ namespace moti {
 
     const char* predefinedUniformName(PredefinedUniform::Enum _enum) {
         return s_predefinedUniformNames[_enum];
+    }
+
+    void init()
+    {
+        MOTI_ASSERT(s_device == nullptr, "Device has already been initialized");
+        s_device = new (s_deviceMem)GraphicsDevice();
+    }
+
+    moti::VertexBufferHandle createVertexBuffer(Block* _mem, const VertexDecl& _decl)
+    {
+        MOTI_ASSERT(s_device != nullptr, "Device hasnt been initialized");
+        return s_device->createVertexBuffer(_mem, _decl);
+    }
+
+    moti::IndexBufferHandle createIndexBuffer(Block* _mem)
+    {
+        MOTI_ASSERT(s_device != nullptr, "Device hasnt been initialized");
+        return s_device->createIndexBuffer(_mem);
+    }
+
+    void setVertexBuffer(VertexBufferHandle _handle, uint32_t _startVertex, uint32_t _count)
+    {
+        MOTI_ASSERT(s_device != nullptr, "Device hasnt been initialized");
+        s_device->setVertexBuffer(_handle, _startVertex, _count);
+    }
+
+    void setIndexBuffer(IndexBufferHandle _handle, uint32_t firstIndex, uint32_t _count)
+    {
+        MOTI_ASSERT(s_device != nullptr, "Device hasnt been initialized");
+        s_device->setIndexBuffer(_handle, firstIndex, _count);
+    }
+
+    moti::ShaderHandle createShader(Block* _mem)
+    {
+        MOTI_ASSERT(s_device != nullptr, "Device hasnt been initialized");
+        return s_device->createShader(_mem);
+    }
+
+    moti::ProgramHandle createProgram(ShaderHandle _vertex, ShaderHandle _fragment)
+    {
+        MOTI_ASSERT(s_device != nullptr, "Device hasnt been initialized");
+        return s_device->createProgram(_vertex, _fragment);
+    }
+
+    void destroyVertexBuffer(VertexBufferHandle _handle)
+    {
+        MOTI_ASSERT(s_device != nullptr, "Device hasnt been initialized");
+        s_device->destroyVertexBuffer(_handle);
+    }
+
+    void destroyIndexBuffer(IndexBufferHandle _handle)
+    {
+        MOTI_ASSERT(s_device != nullptr, "Device hasnt been initialized");
+        s_device->destroyIndexBuffer(_handle);
+    }
+
+    moti::UniformHandle createUniform(UniformType::Enum _type, uint16_t _count, const char* _name)
+    {
+        MOTI_ASSERT(s_device != nullptr, "Device hasnt been initialized");
+        return s_device->createUniform(_type, _count, _name);
+    }
+
+    void destroyUniform(UniformHandle _handle)
+    {
+        MOTI_ASSERT(s_device != nullptr, "Device hasnt been initialized");
+        s_device->destroyUniform(_handle);
+    }
+
+    void destroyShader(ShaderHandle _handle)
+    {
+        MOTI_ASSERT(s_device != nullptr, "Device hasnt been initialized");
+        s_device->destroyShader(_handle);
+    }
+
+    void destroyProgram(ProgramHandle _handle)
+    {
+        MOTI_ASSERT(s_device != nullptr, "Device hasnt been initialized");
+        return s_device->destroyProgram(_handle);
+    }
+
+    void submit(ProgramHandle _program)
+    {
+        MOTI_ASSERT(s_device != nullptr, "Device hasnt been initialized");
+        s_device->submit(_program);
+    }
+
+    void setViewTransform(const Mat4& _view, const Mat4& _proj)
+    {
+        MOTI_ASSERT(s_device != nullptr, "Device hasnt been initialized");
+        s_device->setViewTransform(_view, _proj);
+    }
+
+    void setViewRect(uint32_t _x, uint32_t _y, uint32_t _w, uint32_t _h)
+    {
+        MOTI_ASSERT(s_device != nullptr, "Device hasnt been initialized");
+        s_device->setViewRect(_x, _y, _w, _h);
+    }
+
+    void setTransform(const Mat4& _mtx)
+    {
+        MOTI_ASSERT(s_device != nullptr, "Device hasnt been initialized");
+        s_device->setTransform(_mtx);
+    }
+
+    void setUniform(UniformHandle _handle, const void* _value)
+    {
+        MOTI_ASSERT(s_device != nullptr, "Device hasnt been initialized");
+        s_device->setUniform(_handle, _value);
     }
 
 }

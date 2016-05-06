@@ -11,7 +11,7 @@
 #include "moti/io/io.h"
 
 
-void processMesh(aiMesh* mesh, const aiScene* scene, const moti::VertexDecl& decl, MeshGroup& group, moti::GraphicsDevice* device) {
+void processMesh(aiMesh* mesh, const aiScene* scene, const moti::VertexDecl& decl, MeshGroup& group) {
     std::vector<VertexNormalTexCoords> vertices;
     std::vector<uint16_t> indices;
 
@@ -51,28 +51,28 @@ void processMesh(aiMesh* mesh, const aiScene* scene, const moti::VertexDecl& dec
 
     moti::Block memory = moti::memory_globals::defaultAllocator().allocate(sizeof(VertexNormalTexCoords) * vertices.size());
     memcpy(memory.m_ptr, vertices.data(), sizeof(VertexNormalTexCoords) * vertices.size());
-    group.m_vbo = device->createVertexBuffer(&memory, decl);
+    group.m_vbo = moti::createVertexBuffer(&memory, decl);
     moti::memory_globals::defaultAllocator().deallocate(memory);
     memory = moti::memory_globals::defaultAllocator().allocate(sizeof(uint16_t) * indices.size());
     memcpy(memory.m_ptr, indices.data(), sizeof(uint16_t) * indices.size());
-    group.m_ibo = device->createIndexBuffer(&memory);
+    group.m_ibo = moti::createIndexBuffer(&memory);
     moti::memory_globals::defaultAllocator().deallocate(memory);
     group.m_indices = indices.size();
 }
 
-void processNode(aiNode* node, const aiScene* scene, const moti::VertexDecl& decl, std::vector<MeshGroup>& groups, moti::GraphicsDevice* dev) {
+void processNode(aiNode* node, const aiScene* scene, const moti::VertexDecl& decl, std::vector<MeshGroup>& groups) {
     for (uint32_t i = 0; i < node->mNumMeshes; ++i) {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
         groups.emplace_back(MeshGroup{ 0 });
-        processMesh(mesh, scene, decl, groups.back(), dev);
+        processMesh(mesh, scene, decl, groups.back());
     }
 
     for (uint32_t i = 0; i < node->mNumChildren; ++i) {
-        processNode(node->mChildren[i], scene, decl, groups, dev);
+        processNode(node->mChildren[i], scene, decl, groups);
     }
 }
 
-moti::ShaderHandle create_shader(const char* src, uint32_t magic, moti::GraphicsDevice& device) {
+moti::ShaderHandle create_shader(const char* src, uint32_t magic) {
     FILE* file = nullptr;
     fopen_s(&file, src, "rb");
 
@@ -97,25 +97,25 @@ moti::ShaderHandle create_shader(const char* src, uint32_t magic, moti::Graphics
     moti::write<uint32_t>(&writer, size);
     fread((char*)(memory.m_ptr) + 2 * sizeof(uint32_t), sizeof(char), size, file);
     fclose(file);
-    return device.createShader(&memory);
+    return moti::createShader(&memory);
 }
 
 
 
-moti::ProgramHandle load_program(const char* vshpath, const char* fshpath, moti::GraphicsDevice& device)
+moti::ProgramHandle load_program(const char* vshpath, const char* fshpath)
 {
 
-    moti::ShaderHandle vsh = create_shader(vshpath, MOTI_VERTEX_SHADER_MAGIC, device);
-    moti::ShaderHandle fsh = create_shader(fshpath, MOTI_FRAGMENT_SHADER_MAGIC, device);
-    moti::ProgramHandle program = device.createProgram(vsh, fsh);
-    device.destroyShader(vsh);
-    device.destroyShader(fsh);
+    moti::ShaderHandle vsh = create_shader(vshpath, MOTI_VERTEX_SHADER_MAGIC);
+    moti::ShaderHandle fsh = create_shader(fshpath, MOTI_FRAGMENT_SHADER_MAGIC);
+    moti::ProgramHandle program = moti::createProgram(vsh, fsh);
+    moti::destroyShader(vsh);
+    moti::destroyShader(fsh);
     
     return program;
 }
 
 
-void Mesh::load(const char* _path, moti::GraphicsDevice* device) {
+void Mesh::load(const char* _path) {
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(_path, aiProcess_FlipUVs | aiProcess_Triangulate);
 
@@ -129,15 +129,15 @@ void Mesh::load(const char* _path, moti::GraphicsDevice* device) {
         add(moti::Attribute::Normal, 3, moti::AttributeType::Float, true).
         add(moti::Attribute::TexCoord0, 2, moti::AttributeType::Float, true);
 
-    processNode(scene->mRootNode, scene, decl, m_groups, device);
+    processNode(scene->mRootNode, scene, decl, m_groups);
 }
 
-void Mesh::submit(moti::GraphicsDevice& device, moti::ProgramHandle program, const moti::Mat4& transform) const
+void Mesh::submit(moti::ProgramHandle program, const moti::Mat4& transform) const
 {
     for (auto& group : m_groups) {
-        device.setTransform(transform);
-        device.setVertexBuffer(group.m_vbo, 0, group.m_indices);
-        device.setIndexBuffer(group.m_ibo, 0, group.m_indices);
-        device.submit(program);
+        moti::setTransform(transform);
+        moti::setVertexBuffer(group.m_vbo, 0, group.m_indices);
+        moti::setIndexBuffer(group.m_ibo, 0, group.m_indices);
+        moti::submit(program);
     }
 }
