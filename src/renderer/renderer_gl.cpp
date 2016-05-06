@@ -487,7 +487,7 @@ namespace moti {
         void GLTexture::create(Block& memory)
         {
             MemoryReader reader(memory.m_ptr, memory.m_length);
-            uint32_t width, height;
+            uint16_t width, height;
             read(&reader, width);
             read(&reader, height);
             GLenum target = GL_TEXTURE_2D;

@@ -13,6 +13,7 @@ namespace moti {
         HandleManager<MOTI_MAX_SHADERS> m_shaderHandles;
         HandleManager<MOTI_MAX_PROGRAMS> m_programHandles;
         HandleManager<MOTI_MAX_UNIFORMS> m_uniformHandles;
+        HandleManager<MOTI_MAX_TEXTURES> m_textureHandles;
 
         Uniform m_uniforms[MOTI_MAX_UNIFORMS];
         std::unordered_map<const char*, UniformHandle> m_uniformLookup;
@@ -169,4 +170,14 @@ namespace moti {
             Uniform& uniform = m_uniforms[_handle.m_id];
             m_ctx->updateUniform(_handle, _value, s_uniformTypeSize[uniform.m_type]);
         }
+
+        moti::TextureHandle GraphicsDevice::createTexture(Block* mem)
+        {
+            TextureHandle handle = { m_textureHandles.create() };
+            if (isValid(handle)) {
+                m_ctx->createTexture(handle, mem);
+            }
+            return handle;
+        }
+
 }

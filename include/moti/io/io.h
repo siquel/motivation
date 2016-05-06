@@ -133,16 +133,59 @@ namespace moti {
         int64_t remaining() const { return m_size - m_pos; }
     };
     
+    struct __declspec(novtable) MemBlock {
+        virtual Block& reallocate(uint32_t size) = 0;
+        virtual uint32_t getSize() = 0;
+    };
+
+    struct DynamicMemoryBlock : public MemBlock {
+
+        DynamicMemoryBlock(Allocator* alloc)
+            : m_allocator(alloc) {}
+
+        virtual ~DynamicMemoryBlock() {
+            m_allocator->deallocate(m_data);
+        }
+
+        virtual Block& reallocate(uint32_t size) override {
+            uint32_t needed = m_data.m_length + size;
+            m_allocator->reallocate(m_data, needed);
+            return m_data;
+        }
+
+        virtual uint32_t getSize() override { return m_data.m_length; }
+
+        Allocator* m_allocator;
+        Block m_data;
+    };
+
+    struct StaticMemoryBlock : public MemBlock {
+        StaticMemoryBlock(void* data, uint32_t size)
+            : m_data(data, size) {
+
+        }
+
+        ~StaticMemoryBlock() {}
+
+        virtual Block& reallocate(uint32_t) override {
+            return m_data;
+        }
+
+        virtual uint32_t getSize() override { return m_data.m_length; }
+
+        Block m_data;
+    };
+
     class MemoryWriter : public WriterSeeker {
     private:
-        Block* m_data;
-        Allocator* m_allocator;
+        MemBlock* m_mem;
+        Block m_data;
         int64_t m_pos;
         int64_t m_top;
         int64_t m_size;
     public:
-        MemoryWriter(Block* _block, Allocator* _allocator)
-            : m_data(_block), m_allocator(_allocator), m_pos(0), m_top(0), m_size(0) {}
+        MemoryWriter(MemBlock* mem)
+            : m_mem(mem), m_pos(0), m_top(0), m_size(0) {}
 
         virtual ~MemoryWriter() {}
         virtual int64_t seek(int64_t _offset = 0, Whence::Enum _whence = Whence::Current) override {
@@ -159,14 +202,13 @@ namespace moti {
              // we need more memory
             if (0 < more) {
                 more = (((more)+(0xfff)) & ((~0)&(~(0xfff))));
-                bool result = m_allocator->reallocate(*m_data, more);
-                MOTI_ASSERT(result, "Couldn't reallocate");
-                m_size = m_data->m_length;
+                m_data = m_mem->reallocate(more);
+                m_size = m_mem->getSize();
             }
 
             int64_t remainder = m_size - m_pos;
             int32_t size = std::min(_size, int32_t(remainder > INT32_MAX ? INT32_MAX : remainder));
-            memcpy(&((uint8_t*)m_data->m_ptr)[m_pos], _data, size);
+            memcpy(&((uint8_t*)m_data.m_ptr)[m_pos], _data, size);
             m_pos += size;
             m_top = std::max(m_top, m_pos);
             if (size != _size) {
@@ -174,5 +216,13 @@ namespace moti {
             }
             return size;
         }
+    };
+
+    struct StaticMemoryWriter : public MemoryWriter {
+        StaticMemoryBlock m_block;
+
+        StaticMemoryWriter(void* data, uint32_t size)
+            : MemoryWriter(&m_block), m_block(data, size) {}
+        ~StaticMemoryWriter() {}
     };
 }

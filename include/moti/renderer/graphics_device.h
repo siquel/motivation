@@ -39,6 +39,8 @@ namespace moti {
             void setViewRect(uint32_t _x, uint32_t  _y, uint32_t _w, uint32_t h);
             void setTransform(const Mat4& _mtx);
             void setUniform(UniformHandle _handle, const void* _value);
+
+            TextureHandle createTexture(Block* mem);
 		};
 	
 }

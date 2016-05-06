@@ -122,6 +122,7 @@ namespace moti
     struct ShaderHandle;
     struct ProgramHandle;
     struct UniformHandle;
+    struct TextureHandle;
     struct Mat4;
     struct Block;
     
@@ -148,4 +149,6 @@ namespace moti
     void setViewRect(uint32_t _x, uint32_t  _y, uint32_t _w, uint32_t h);
     void setTransform(const Mat4& _mtx);
     void setUniform(UniformHandle _handle, const void* _value);
+
+    TextureHandle createTexture(uint16_t width, uint16_t height, Block* memory);
 }

@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include "moti/renderer/graphics_device.h"
+#include "moti/io/io.h"
+#include "moti/memory/stack_allocator.h"
 
 namespace moti {
 
@@ -168,6 +170,19 @@ namespace moti {
     {
         MOTI_ASSERT(s_device != nullptr, "Device hasnt been initialized");
         s_device->setUniform(_handle, _value);
+    }
+
+    moti::TextureHandle createTexture(uint16_t width, uint16_t height, Block* memory)
+    {
+        StackAllocator<128> alloc;
+        uint32_t size = sizeof(uint16_t) * 2 + sizeof(Block*);
+        Block block = alloc.allocate(size);
+        StaticMemoryWriter writer(block.m_ptr, block.m_length);
+        write(&writer, width);
+        write(&writer, height);
+        write(&writer, memory);
+
+        return s_device->createTexture(&block);
     }
 
 }

@@ -91,13 +91,13 @@ moti::ShaderHandle create_shader(const char* src, uint32_t magic) {
         __debugbreak();
     }
     moti::StackAllocator<MaxSize> alloc;
-    moti::Block memory;
-    moti::MemoryWriter writer(&memory, &alloc);
+    moti::DynamicMemoryBlock memory(&alloc);
+    moti::MemoryWriter writer(&memory);
     moti::write<uint32_t>(&writer, magic);
     moti::write<uint32_t>(&writer, size);
-    fread((char*)(memory.m_ptr) + 2 * sizeof(uint32_t), sizeof(char), size, file);
+    fread((char*)(memory.m_data.m_ptr) + 2 * sizeof(uint32_t), sizeof(char), size, file);
     fclose(file);
-    return moti::createShader(&memory);
+    return moti::createShader(&memory.m_data);
 }
 
 
