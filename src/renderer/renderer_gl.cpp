@@ -495,8 +495,16 @@ namespace moti {
             init(target, width, height);
 
             m_type = GL_UNSIGNED_BYTE;
-            // todo read this from memory somehow
+
+            Block* mem = nullptr;
+            read(&reader, mem);
+            
             void* data = nullptr;
+
+            if (mem) {
+                data = mem->m_ptr;
+            }
+
 
             if (m_target == GL_TEXTURE_2D) {
                 GL_CHECK(glTexImage2D(m_target, 0, m_format, width, height, 0, m_format, m_type, data));

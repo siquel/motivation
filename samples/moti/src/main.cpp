@@ -29,6 +29,8 @@ int main(int argc, char** argv) {
     glClearColor(0.0f, 0.f, 0.f, 1.f);
 
     moti::init();
+    
+    moti::createTexture(uint16_t(1337), uint16_t(80085), nullptr);
 
     moti::UniformHandle u_time = moti::createUniform(UniformType::Float, 1, "u_time");
 
@@ -44,6 +46,8 @@ int main(int argc, char** argv) {
 
     SDL_Event e;
     bool running = true;
+
+
 
     while (running) {
 
