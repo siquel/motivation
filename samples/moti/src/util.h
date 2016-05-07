@@ -23,3 +23,5 @@ struct Mesh {
 };
 
 moti::ProgramHandle load_program(const char* vshpath, const char* fshpath);
+
+moti::TextureHandle load_texture(const char* filePath);

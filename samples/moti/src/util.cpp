@@ -9,7 +9,8 @@
 #include "moti/memory/memory.h"
 #include "moti/memory/stack_allocator.h"
 #include "moti/io/io.h"
-
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb/stb_image.h"
 
 void processMesh(aiMesh* mesh, const aiScene* scene, const moti::VertexDecl& decl, MeshGroup& group) {
     std::vector<VertexNormalTexCoords> vertices;
@@ -114,6 +115,27 @@ moti::ProgramHandle load_program(const char* vshpath, const char* fshpath)
     return program;
 }
 
+
+moti::TextureHandle load_texture(const char* filePath)
+{
+    moti::TextureHandle handle{ UINT16_MAX };
+    int width, height, n;
+    unsigned char* data = stbi_load(filePath, &width, &height, &n, 0);
+
+    if (data == NULL) {
+        return handle;
+    }
+
+    uint32_t size = width * height;
+
+    moti::Block block((void*)data, size);
+
+    handle = moti::createTexture(width, height, &block);
+
+    stbi_image_free(data);
+
+    return handle;
+}
 
 void Mesh::load(const char* _path) {
     Assimp::Importer importer;

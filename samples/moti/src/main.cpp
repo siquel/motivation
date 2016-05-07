@@ -30,11 +30,11 @@ int main(int argc, char** argv) {
 
     moti::init();
     
-    moti::createTexture(uint16_t(1337), uint16_t(80085), nullptr);
-
+    moti::TextureHandle texture = load_texture("assets/ella.png");
+    
     moti::UniformHandle u_time = moti::createUniform(UniformType::Float, 1, "u_time");
 
-    moti::ProgramHandle p = load_program("shaders/juttu.vs", "shaders/juttu.fs");
+    moti::ProgramHandle p = load_program("shaders/palikka.vs", "shaders/palikka.fs");
     
     moti::Mat4 view;
     moti::look(view, Vec3{ 0.0f, 1.0f, 0.0f }, Vec3{ 0.0f, 1.0f, -4.f }, Vec3{ 0.f, 1.f, 0.f });
