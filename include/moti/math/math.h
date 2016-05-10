@@ -280,13 +280,10 @@ namespace moti {
         m[3][2] = v[2];
     }
 
-    inline Mat4 scale(const Mat4& m, const Vec3& v) {
-        Mat4 r;
-        r[0] = m[0] * v[0];
-        r[1] = m[1] * v[1];
-        r[2] = m[2] * v[2];
-        r[3] = m[3];
-        return r;
+    inline void scale(Mat4& m, const Vec3& v) {
+        m[0] *= v[0];
+        m[1] *= v[1];
+        m[2] *= v[2];
     }
     // From GLM
     inline void look(Mat4& m, const Vec3& pos, const Vec3& target, const Vec3& up) {
