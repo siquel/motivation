@@ -26,11 +26,11 @@ int main(int argc, char** argv) {
     moti::gl::GLContext context;
     SDL_Window* wnd = SDL_CreateWindow("moti", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Width, Height, SDL_WINDOW_OPENGL);
     context.create(wnd);
-    glClearColor(0.0f, 0.f, 0.f, 1.f);
+    glClearColor(1.0f, 1.f, 0.f, 1.f);
 
     moti::init();
     
-    moti::TextureHandle texture = load_texture("assets/ella.png");
+    moti::TextureHandle texture = load_texture("assets/vittu.png");
     
     moti::UniformHandle u_time = moti::createUniform(UniformType::Float, 1, "u_time");
 
@@ -48,7 +48,6 @@ int main(int argc, char** argv) {
     bool running = true;
 
 
-
     while (running) {
 
         while (SDL_PollEvent(&e)) {
@@ -59,22 +58,22 @@ int main(int argc, char** argv) {
 
         float time = SDL_GetTicks() / 1000.f;
         float angle = time * 25.f;  // 45° per second
-
         moti::setUniform(u_time, &time);
         moti::setViewRect(0, 0, Width, Height);
         moti::setViewTransform(view, projection);
 
         moti::Mat4 model;
         model.setIdentity();
-        translate(model, Vec3{ 0.f, -0.f, -5.f });
-        //moti::rotate(model, moti::radians(angle), Vec3{ 0.f, 1.f, 0.f });
-        glFrontFace(GL_CCW);
+        translate(model, Vec3{ 0.f, -0.f, -6.f });
+        moti::rotate(model, moti::radians(angle), Vec3{ 0.f, 1.f, 0.f });
+        //glFrontFace(GL_CCW);
         glEnable(GL_CULL_FACE);
-        //glCullFace(GL_FRONT);
+        glCullFace(GL_BACK);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
+        glBindTexture(GL_TEXTURE_2D, 1);
         mesh.submit(p, model);
-        
+        glBindTexture(GL_TEXTURE_2D, 0);
         SDL_GL_SwapWindow(wnd);
     }
 

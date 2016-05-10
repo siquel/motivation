@@ -116,6 +116,7 @@ namespace moti {
                 program.bindAttributes(decl);
             }
 
+            //glActiveTexture(GL_TEXTURE0);
 
             const bool drawIndexed = _draw.m_indexBuffer.m_id != UINT16_MAX;
 
@@ -125,7 +126,6 @@ namespace moti {
             }
 
             GL_CHECK(glUseProgram(program.m_id));
-
 
             setPredefined(program, _draw);
             Array<UniformDecl>& uniforms = program.m_uniforms;
@@ -475,7 +475,7 @@ namespace moti {
         {
             m_width = width;
             m_height = height;
-
+            m_target = target;
             GL_CHECK(glGenTextures(1, &m_id));
             MOTI_ASSERT(m_id != 0, "Failed to generate texture id");
             GL_CHECK(glBindTexture(target, m_id));
@@ -512,6 +512,9 @@ namespace moti {
             else {
                 MOTI_ASSERT(false, "Not implemented");
             }
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
             GL_CHECK(glBindTexture(m_target, 0));
         }

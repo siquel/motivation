@@ -48,7 +48,7 @@ namespace moti {
 
         struct GLTexture {
             GLuint m_id;
-            GLuint m_type;
+            GLenum m_type;
             GLenum m_target;
             GLenum m_format;
             uint32_t m_width;

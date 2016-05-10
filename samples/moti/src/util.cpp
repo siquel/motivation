@@ -120,7 +120,7 @@ moti::TextureHandle load_texture(const char* filePath)
 {
     moti::TextureHandle handle{ UINT16_MAX };
     int width, height, n;
-    unsigned char* data = stbi_load(filePath, &width, &height, &n, 0);
+    unsigned char* data = stbi_load(filePath, &width, &height, &n, 4);
 
     if (data == NULL) {
         return handle;
@@ -139,7 +139,7 @@ moti::TextureHandle load_texture(const char* filePath)
 
 void Mesh::load(const char* _path) {
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(_path, aiProcess_FlipUVs | aiProcess_Triangulate);
+    const aiScene* scene = importer.ReadFile(_path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
     if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         printf("Assimp error %s\n", importer.GetErrorString());
