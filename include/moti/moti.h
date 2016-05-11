@@ -166,4 +166,6 @@ namespace moti
     void setUniform(UniformHandle _handle, const void* _value);
 
     TextureHandle createTexture(uint16_t width, uint16_t height, Block* memory);
+
+    void setTexture(uint8_t unit, UniformHandle sampler, TextureHandle texture);
 }

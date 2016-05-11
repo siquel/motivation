@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
     
     moti::TextureHandle texture = load_texture("assets/vittu.png");
     
-    moti::UniformHandle u_texture = moti::createUniform(UniformType::Int1, 1, "u_texture");
+    moti::UniformHandle u_textureSampler = moti::createUniform(UniformType::Int1, 1, "u_texture");
     moti::UniformHandle u_time = moti::createUniform(UniformType::Float, 1, "u_time");
     moti::UniformHandle u_lightPos = moti::createUniform(UniformType::Vec4, 1, "u_lightPos");
 
@@ -71,7 +71,7 @@ int main(int argc, char** argv) {
         //moti::setUniform(u_time, &time);
         moti::setViewRect(0, 0, Width, Height);
         moti::setViewTransform(view, projection);
-
+        moti::setTexture(0, u_textureSampler, texture);
         moti::Mat4 model;
         model.setIdentity();
         translate(model, Vec3{ 0.f, -0.f, -6.f });
@@ -81,9 +81,9 @@ int main(int argc, char** argv) {
         //glCullFace(GL_BACK);
         glEnable(GL_DEPTH_TEST);
         //glDepthFunc(GL_LESS);
-        glBindTexture(GL_TEXTURE_2D, 1);
+        //glBindTexture(GL_TEXTURE_2D, 1);
         mesh.submit(p, model);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        //glBindTexture(GL_TEXTURE_2D, 0);
 
         model.setIdentity();
         translate(model, lamp_pos);

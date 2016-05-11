@@ -144,6 +144,7 @@ namespace moti {
                 switch (uniform->m_type) {
                     UNIFORM_IMPL_CASE(Float, 1fv, float);
                     UNIFORM_IMPL_CASE(Vec4, 4fv, float);
+                    UNIFORM_IMPL_CASE(Int1, 1iv, int);
                 case UniformType::Mat3:
                 {
                     float* value = (float*)data;
@@ -159,6 +160,16 @@ namespace moti {
                 }
             }
 #undef UNIFORM_IMPL_CASE
+
+            for (uint32_t unit = 0; unit < MOTI_COUNTOF(_draw.m_bindings); ++unit) {
+                const TextureBinding& bind = _draw.m_bindings[unit];
+                if (bind.m_id != UINT16_MAX) {
+                    GLTexture& texture = m_textures[bind.m_id];
+
+                    GL_CHECK(glActiveTexture(GL_TEXTURE0 + unit));
+                    GL_CHECK(glBindTexture(texture.m_target, texture.m_id));
+                }
+            }
 
             if (drawIndexed) {
                 GL_CHECK(glDrawElements(GL_TRIANGLES, _draw.m_indexCount, GL_UNSIGNED_SHORT, nullptr));

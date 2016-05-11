@@ -167,7 +167,11 @@ namespace moti {
             uint16_t m_loc;
             uint16_t m_count;
         };
-          
+        
+        struct TextureBinding {
+            uint16_t m_id;
+        };
+
         struct Render {
             VertexBufferHandle m_vertexBuffer;
             IndexBufferHandle m_indexBuffer;
@@ -179,7 +183,8 @@ namespace moti {
             Mat4 m_proj;
             Rect m_viewRect;
             Mat4 m_model;
-            
+            TextureBinding m_bindings[8];
+
             void reset() {
                 m_vertexBuffer.m_id = UINT16_MAX;
                 m_indexBuffer.m_id = UINT16_MAX;
@@ -187,6 +192,7 @@ namespace moti {
                 m_endVertex = UINT32_MAX;
                 m_startIndex = 0;
                 m_indexCount = UINT32_MAX;
+                memset(m_bindings, UINT16_MAX, sizeof(m_bindings));
 //              m_view.setIdentity();
 //              m_proj.setIdentity();
 //              memset(&m_viewRect, 0, sizeof(Rect));

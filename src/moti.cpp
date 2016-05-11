@@ -185,4 +185,10 @@ namespace moti {
         return s_device->createTexture(&block);
     }
 
+    void setTexture(uint8_t unit, UniformHandle sampler, TextureHandle texture)
+    {
+        MOTI_ASSERT(s_device != nullptr, "Device hasnt been initialized");
+        s_device->setTexture(unit, sampler, texture);
+    }
+
 }

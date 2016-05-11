@@ -41,6 +41,7 @@ namespace moti {
             void setUniform(UniformHandle _handle, const void* _value);
 
             TextureHandle createTexture(Block* mem);
+            void setTexture(uint8_t unit, UniformHandle sampler, TextureHandle texture);
 		};
 	
 }

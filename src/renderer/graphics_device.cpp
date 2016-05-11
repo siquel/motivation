@@ -180,4 +180,15 @@ namespace moti {
             return handle;
         }
 
+        void GraphicsDevice::setTexture(uint8_t unit, UniformHandle sampler, TextureHandle texture)
+        {
+            MOTI_ASSERT(unit < MOTI_COUNTOF(m_draw.m_bindings), "Unit is too large");
+            TextureBinding& bind = m_draw.m_bindings[unit];
+            bind.m_id = texture.m_id;
+            if (sampler.m_id != UINT16_MAX) {
+                uint32_t v = unit;
+                setUniform(sampler, &v);
+            }
+        }
+
 }
