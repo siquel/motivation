@@ -32,6 +32,8 @@ namespace moti {
 
         UniformType::Enum glTypeToUniformType(GLenum _type) {
             switch (_type) {
+            case GL_SAMPLER_2D:
+                return UniformType::Int1;
             case GL_FLOAT:
                 return UniformType::Float;
                 /*                case GL_FLOAT_VEC2:

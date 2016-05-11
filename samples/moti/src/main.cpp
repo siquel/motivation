@@ -32,6 +32,7 @@ int main(int argc, char** argv) {
     
     moti::TextureHandle texture = load_texture("assets/vittu.png");
     
+    moti::UniformHandle u_texture = moti::createUniform(UniformType::Int1, 1, "u_texture");
     moti::UniformHandle u_time = moti::createUniform(UniformType::Float, 1, "u_time");
     moti::UniformHandle u_lightPos = moti::createUniform(UniformType::Vec4, 1, "u_lightPos");
 

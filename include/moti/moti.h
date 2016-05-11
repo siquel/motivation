@@ -50,6 +50,7 @@ namespace moti {
     
     struct UniformType {
         enum Enum {
+            Int1,
             Float,
             Vec4,
             Mat3,
@@ -80,6 +81,13 @@ namespace moti {
             Color,
             Normal,
             TexCoord0,
+            TexCoord1,
+            TexCoord2,
+            TexCoord3,
+            TexCoord4,
+            TexCoord5,
+            TexCoord6,
+            TexCoord7,
             Count
         };
     };
@@ -88,7 +96,14 @@ namespace moti {
         "a_position",
         "a_color",
         "a_normal",
-        "a_texCoord0"
+        "a_texCoord0",
+        "a_texCoord1",
+        "a_texCoord2",
+        "a_texCoord3",
+        "a_texCoord4",
+        "a_texCoord5",
+        "a_texCoord6",
+        "a_texCoord7"
     };
     static_assert(MOTI_COUNTOF(s_attribNames) == Attribute::Count, "Invalid amount of attribute names");
 
