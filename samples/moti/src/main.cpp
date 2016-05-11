@@ -36,6 +36,7 @@ struct MaterialUniforms {
 
 static MaterialUniforms s_material;
 
+
 int main(int argc, char** argv) {
     using namespace moti;
 
@@ -45,7 +46,7 @@ int main(int argc, char** argv) {
     moti::gl::GLContext context;
     SDL_Window* wnd = SDL_CreateWindow("moti", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Width, Height, SDL_WINDOW_OPENGL);
     context.create(wnd);
-    glClearColor(0.0f, 0.f, 0.f, 1.f);
+    glClearColor(0.0f, 1.f, 0.f, 1.f);
 
     moti::init();
     
@@ -53,12 +54,24 @@ int main(int argc, char** argv) {
     moti::TextureHandle texture2 = load_texture("assets/ella.png");
     moti::UniformHandle u_textureSampler = moti::createUniform(UniformType::Int1, 1, "u_texture");
     moti::UniformHandle u_textureSampler2 = moti::createUniform(UniformType::Int1, 1, "u_texture2");
+
+    moti::UniformHandle u_lightPos = moti::createUniform(UniformType::Vec3, 1, "u_lightPos");
     moti::UniformHandle u_time = moti::createUniform(UniformType::Float, 1, "u_time");
-    moti::UniformHandle u_lightPos = moti::createUniform(UniformType::Vec4, 1, "u_lightPos");
     s_material.m_ambient = moti::createUniform(moti::UniformType::Vec3, 1, "u_ambient");
     s_material.m_diffuse = moti::createUniform(moti::UniformType::Vec3, 1, "u_diffuse");
     s_material.m_specular = moti::createUniform(moti::UniformType::Vec3, 1, "u_specular");
     s_material.m_shininess = moti::createUniform(moti::UniformType::Float, 1, "u_shininess");
+
+    moti::UniformHandle u_lightAmbient = moti::createUniform(moti::UniformType::Vec3, 1, "u_lightAmbient");
+    moti::UniformHandle u_lightDiffuse = moti::createUniform(moti::UniformType::Vec3, 1, "u_lightDiffuse");
+    moti::UniformHandle u_lightSpecular = moti::createUniform(moti::UniformType::Vec3, 1, "u_lightSpecular");
+
+    {
+        float vec[3] = { 1.f, 1.f, 1.f };
+        moti::setUniform(u_lightAmbient, vec);
+        moti::setUniform(u_lightDiffuse, vec);
+        moti::setUniform(u_lightSpecular, vec);
+    }
 
     moti::ProgramHandle p = load_program("shaders/palikka.vs", "shaders/palikka.fs");
     moti::ProgramHandle basic = load_program("shaders/basic.vs", "shaders/basic.fs");
@@ -81,15 +94,33 @@ int main(int argc, char** argv) {
     //glEnable(GL_CULL_FACE);
     //glCullFace(GL_BACK);
 
+    Material emerald;
+    emerald.m_ambient = { 0.0f, 0.1f, 0.06f };
+    emerald.m_diffuse = { 0.0f, 0.50980392f, 0.50980392f };
+    emerald.m_specular = { 0.50196078f, 0.50196078f, 0.50196078f };
+    emerald.m_shininess = 32.f;
+
+    // material stuff
+    //////////////////////////////////////////////////////////////////////////
+    moti::setUniform(s_material.m_ambient, &emerald.m_ambient);
+    moti::setUniform(s_material.m_diffuse, &emerald.m_diffuse);
+    moti::setUniform(s_material.m_specular, &emerald.m_specular);
+    moti::setUniform(s_material.m_shininess, &emerald.m_shininess);
+    //////////////////////////////////////////////////////////////////////////
+
+
     while (!s_exit) {
         pump_events();
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         float time = SDL_GetTicks() / 1000.f;
+
         float angle = time * 25.f;  // 45° per second
-        
-        moti::setUniform(u_lightPos, &lamp_pos.x);
+       
+
+
+        moti::setUniform(u_lightPos, &lamp_pos);
         moti::setUniform(u_time, &time);
         moti::setViewRect(0, 0, Width, Height);
         moti::setViewTransform(view, projection);

@@ -144,6 +144,7 @@ namespace moti {
                 const char* data = (const char*)m_uniforms[uniform->m_handle.m_id].m_ptr;
                 switch (uniform->m_type) {
                     UNIFORM_IMPL_CASE(Float, 1fv, float);
+                    UNIFORM_IMPL_CASE(Vec3, 3fv, float);
                     UNIFORM_IMPL_CASE(Vec4, 4fv, float);
                     UNIFORM_IMPL_CASE(Int1, 1iv, int);
                 case UniformType::Mat3:
