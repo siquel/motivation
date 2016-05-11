@@ -52,6 +52,7 @@ namespace moti {
         enum Enum {
             Int1,
             Float,
+            Vec3,
             Vec4,
             Mat3,
             Mat4,

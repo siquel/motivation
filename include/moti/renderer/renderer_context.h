@@ -22,6 +22,7 @@ namespace moti {
         static const uint32_t s_uniformTypeSize[] = {
             sizeof(int), //int1
             sizeof(float), // float
+            sizeof(float) * 3, // vec3
             sizeof(float) * 4, // vec4
             sizeof(float) * 3 * 3, // mat3,
             sizeof(float) * 4 * 4 // mat4

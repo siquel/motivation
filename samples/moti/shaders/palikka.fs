@@ -2,22 +2,32 @@
 in vec3 v_pos;
 in vec2 v_texCoord0;
 in vec3 v_normal;
-
 out vec4 color;
+
 uniform sampler2D u_texture;
 uniform sampler2D u_texture2;
-uniform vec4 u_lightPos;
+
+uniform vec3 u_lightPos;
 uniform float u_time;
+uniform vec3 u_ambient;
+uniform vec3 u_diffuse;
+uniform vec3 u_specular;
+uniform float u_shininess;
+
+
+//////////// predef
 uniform vec4 u_viewRect;
 uniform mat4 u_view;
 uniform mat4 u_proj;
 uniform mat4 u_viewProj;
 uniform mat4 u_model;
 uniform mat4 u_modelViewProj;
+/////////////
+
 void main()
 {
     vec3 lightColor = vec3(1.f, 1.f, 1.f);
-    vec3 lightPos = vec3(u_view * u_lightPos);
+    vec3 lightPos = vec3(u_view * vec4(u_lightPos, 1.0));
     
     float ambientStrength = 0.1f;
     vec3 ambient = ambientStrength * lightColor;

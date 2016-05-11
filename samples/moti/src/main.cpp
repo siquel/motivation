@@ -11,16 +11,35 @@
 const int Width = 1280;
 const int Height = 720;
 
+static bool s_exit = false;
+
+struct Material {
+    moti::Vec3 m_ambient;
+    moti::Vec3 m_diffuse;
+    moti::Vec3 m_specular;
+    float m_shininess;
+};
+
+void pump_events() {
+    static SDL_Event e;
+    while (SDL_PollEvent(&e)) {
+        if (e.type == SDL_QUIT) s_exit = true;
+    }
+}
+
+struct MaterialUniforms {
+    moti::UniformHandle m_ambient;
+    moti::UniformHandle m_diffuse;
+    moti::UniformHandle m_specular;
+    moti::UniformHandle m_shininess;
+};
+
+static MaterialUniforms s_material;
+
 int main(int argc, char** argv) {
-    using moti::Attribute;
-    using moti::AttributeType;
-    using moti::Mat4;
-    using moti::Vec3;
-    using moti::UniformType;
+    using namespace moti;
 
     moti::memory_globals::init();
-   
-    moti::StackAllocator<4096> alloc;
 
     SDL_Init(SDL_INIT_VIDEO);
     moti::gl::GLContext context;
@@ -36,6 +55,10 @@ int main(int argc, char** argv) {
     moti::UniformHandle u_textureSampler2 = moti::createUniform(UniformType::Int1, 1, "u_texture2");
     moti::UniformHandle u_time = moti::createUniform(UniformType::Float, 1, "u_time");
     moti::UniformHandle u_lightPos = moti::createUniform(UniformType::Vec4, 1, "u_lightPos");
+    s_material.m_ambient = moti::createUniform(moti::UniformType::Vec3, 1, "u_ambient");
+    s_material.m_diffuse = moti::createUniform(moti::UniformType::Vec3, 1, "u_diffuse");
+    s_material.m_specular = moti::createUniform(moti::UniformType::Vec3, 1, "u_specular");
+    s_material.m_shininess = moti::createUniform(moti::UniformType::Float, 1, "u_shininess");
 
     moti::ProgramHandle p = load_program("shaders/palikka.vs", "shaders/palikka.fs");
     moti::ProgramHandle basic = load_program("shaders/basic.vs", "shaders/basic.fs");
@@ -52,24 +75,22 @@ int main(int argc, char** argv) {
     lampMesh.load("cube.dae");
     moti::Vec3 lamp_pos = { -2.f, 3.f, -4.f };
 
-    SDL_Event e;
-    bool running = true;
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    //glFrontFace(GL_CCW);
+    //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_BACK);
 
-
-    while (running) {
-
-        while (SDL_PollEvent(&e)) {
-            if (e.type == SDL_QUIT) running = false;
-        }
+    while (!s_exit) {
+        pump_events();
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         float time = SDL_GetTicks() / 1000.f;
         float angle = time * 25.f;  // 45° per second
-        // TODO vec3 uniforms ":D"
-        float lampdata[4] = { lamp_pos.x, lamp_pos.y, lamp_pos.z, 1.0f };
-        moti::setUniform(u_lightPos, lampdata);
-        //moti::setUniform(u_time, &time);
+        
+        moti::setUniform(u_lightPos, &lamp_pos.x);
+        moti::setUniform(u_time, &time);
         moti::setViewRect(0, 0, Width, Height);
         moti::setViewTransform(view, projection);
         moti::setTexture(0, u_textureSampler, texture);
@@ -78,11 +99,8 @@ int main(int argc, char** argv) {
         model.setIdentity();
         translate(model, Vec3{ 0.f, -0.f, -6.f });
         moti::rotate(model, moti::radians(angle), Vec3{ 0.f, 1.f, 0.f });
-        //glFrontFace(GL_CCW);
-        //glEnable(GL_CULL_FACE);
-        //glCullFace(GL_BACK);
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
+
+
         mesh.submit(p, model);
 
         model.setIdentity();

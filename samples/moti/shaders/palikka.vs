@@ -14,7 +14,6 @@ out vec3 v_pos;
 out vec3 v_normal;
 out vec2 v_texCoord0;
 
-uniform vec4 u_lightPos;
 uniform float u_time;
 
 uniform vec4 u_viewRect;

@@ -36,8 +36,9 @@ namespace moti {
                 return UniformType::Int1;
             case GL_FLOAT:
                 return UniformType::Float;
-                /*                case GL_FLOAT_VEC2:
-                                case GL_FLOAT_VEC3:*/
+                /*                case GL_FLOAT_VEC2:*/
+            case GL_FLOAT_VEC3:
+                return UniformType::Vec3;
             case GL_FLOAT_VEC4:
                 return UniformType::Vec4;
             case GL_FLOAT_MAT3:
