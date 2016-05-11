@@ -5,6 +5,7 @@ in vec3 v_normal;
 
 out vec4 color;
 uniform sampler2D u_texture;
+uniform sampler2D u_texture2;
 uniform vec4 u_lightPos;
 uniform float u_time;
 uniform vec4 u_viewRect;
@@ -35,7 +36,10 @@ void main()
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
     vec3 specular = specularStrength * spec * lightColor;
     
-    vec4 obj = texture(u_texture, v_texCoord0);
+    vec4 obj = mix(
+        texture(u_texture, v_texCoord0),
+        texture(u_texture2, v_texCoord0),
+        0.2);
     //vec4 obj = vec4(0.1, 0.2, 0.3, 1.0);
     vec4 result = vec4((ambient + diffuse + specular), 1.0) * obj;
     color =  result;
