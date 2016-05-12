@@ -46,12 +46,12 @@ int main(int argc, char** argv) {
     moti::gl::GLContext context;
     SDL_Window* wnd = SDL_CreateWindow("moti", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Width, Height, SDL_WINDOW_OPENGL);
     context.create(wnd);
-    glClearColor(0.0f, 1.f, 0.f, 1.f);
+    glClearColor(0.0f, 0.f, 0.f, 1.f);
 
     moti::init();
     
-    moti::TextureHandle texture = load_texture("assets/vittu.png");
-    moti::TextureHandle texture2 = load_texture("assets/ella.png");
+    moti::TextureHandle texture = load_texture("assets/container2_specular.png");
+    moti::TextureHandle texture2 = load_texture("assets/container2.png");
     moti::UniformHandle u_textureSampler = moti::createUniform(UniformType::Int1, 1, "u_texture");
     moti::UniformHandle u_textureSampler2 = moti::createUniform(UniformType::Int1, 1, "u_texture2");
 
@@ -67,9 +67,11 @@ int main(int argc, char** argv) {
     moti::UniformHandle u_lightSpecular = moti::createUniform(moti::UniformType::Vec3, 1, "u_lightSpecular");
 
     {
-        float vec[3] = { 1.f, 1.f, 1.f };
+        float vec[3] = { 0.1f, 0.1f, 0.1f };
         moti::setUniform(u_lightAmbient, vec);
+        vec[0] = vec[1] = vec[2] = 0.5f;
         moti::setUniform(u_lightDiffuse, vec);
+        vec[0] = vec[1] = vec[2] = 1.0f;
         moti::setUniform(u_lightSpecular, vec);
     }
 
@@ -86,7 +88,7 @@ int main(int argc, char** argv) {
 
     Mesh lampMesh;
     lampMesh.load("cube.dae");
-    moti::Vec3 lamp_pos = { -2.f, 3.f, -4.f };
+    moti::Vec3 lamp_pos = { -4.f, 1.f, -4.f };
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -117,8 +119,6 @@ int main(int argc, char** argv) {
         float time = SDL_GetTicks() / 1000.f;
 
         float angle = time * 25.f;  // 45° per second
-       
-
 
         moti::setUniform(u_lightPos, &lamp_pos);
         moti::setUniform(u_time, &time);
@@ -130,7 +130,6 @@ int main(int argc, char** argv) {
         model.setIdentity();
         translate(model, Vec3{ 0.f, -0.f, -6.f });
         moti::rotate(model, moti::radians(angle), Vec3{ 0.f, 1.f, 0.f });
-
 
         mesh.submit(p, model);
 

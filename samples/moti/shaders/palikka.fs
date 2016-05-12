@@ -33,24 +33,24 @@ void main()
 {
     vec3 lightPos = vec3(u_view * vec4(u_lightPos, 1.0));
     
-    vec3 ambient = u_lightAmbient * u_ambient;
+    vec3 ambient = u_lightAmbient * vec3(texture(u_texture2, v_texCoord0));
     
     // diff
     vec3 normal = normalize(v_normal);
     vec3 lightDir = normalize(lightPos - v_pos);
     float diff = max(dot(normal, lightDir), 0.0);
-    vec3 diffuse = u_lightDiffuse * (diff * u_diffuse);
+    vec3 diffuse = u_lightDiffuse * diff * vec3(texture(u_texture2, v_texCoord0));
     
     // viewer is @ 0,0,0
     vec3 viewDir = normalize(-v_pos);
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_shininess);
-    vec3 specular = u_lightSpecular * (spec * u_specular);
+    vec3 specular = u_lightSpecular * spec * vec3(texture(u_texture, v_texCoord0));
     
-    vec4 obj = mix(
-        texture(u_texture, v_texCoord0),
-        texture(u_texture2, v_texCoord0),
-        0.2);
+    //vec4 obj = mix(
+    //    texture(u_texture, v_texCoord0),
+    //    texture(u_texture2, v_texCoord0),
+    //    0.2);
     //vec4 obj = vec4(0.1, 0.2, 0.3, 1.0);
     //vec4 result = vec4((ambient + diffuse + specular), 1.0) * obj;
     vec4 result = vec4((ambient + diffuse + specular), 1.0);

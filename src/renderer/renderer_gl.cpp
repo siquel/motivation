@@ -181,6 +181,16 @@ namespace moti {
 
                 GL_CHECK(glDrawArrays(GL_TRIANGLES, _draw.m_startVertex, _draw.m_endVertex));
             }
+            // unbind
+            for (uint32_t unit = 0; unit < MOTI_COUNTOF(_draw.m_bindings); ++unit) {
+                const TextureBinding& bind = _draw.m_bindings[unit];
+                if (bind.m_id != UINT16_MAX) {
+                    GLTexture& texture = m_textures[bind.m_id];
+                    GL_CHECK(glActiveTexture(GL_TEXTURE0 + unit));
+                    GL_CHECK(glBindTexture(texture.m_target, 0));
+                }
+            }
+
             GL_CHECK(glBindVertexArray(0));
             GL_CHECK(glUseProgram(0));
         }
