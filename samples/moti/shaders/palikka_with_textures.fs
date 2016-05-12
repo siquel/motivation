@@ -13,10 +13,6 @@ uniform vec3 u_lightAmbient;
 uniform vec3 u_lightDiffuse;
 uniform vec3 u_lightSpecular;
 
-uniform float u_time;
-uniform vec3 u_ambient;
-uniform vec3 u_diffuse;
-uniform vec3 u_specular;
 uniform float u_shininess;
 
 
