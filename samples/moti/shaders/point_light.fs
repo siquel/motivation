@@ -14,13 +14,11 @@ uniform vec3 u_lightAmbient;
 uniform vec3 u_lightDiffuse;
 uniform vec3 u_lightSpecular;
 
-uniform float u_shininess;
-
 uniform vec3 u_constantLinearQuadratic;
 #define u_constant u_constantLinearQuadratic.x
 #define u_linear u_constantLinearQuadratic.y
 #define u_quadratic u_constantLinearQuadratic.z
-
+#define u_shininess 32
 //////////// predef
 uniform vec4 u_viewRect;
 uniform mat4 u_view;
