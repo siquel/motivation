@@ -68,6 +68,8 @@ int main(int argc, char** argv) {
     moti::UniformHandle u_lightDiffuse = moti::createUniform(moti::UniformType::Vec3, 1, "u_lightDiffuse");
     moti::UniformHandle u_lightSpecular = moti::createUniform(moti::UniformType::Vec3, 1, "u_lightSpecular");
 
+    moti::UniformHandle u_constantLinearQuadratic = moti::createUniform(moti::UniformType::Vec3, 1, "u_constantLinearQuadratic");
+
     {
         float vec[3] = { 0.1f, 0.1f, 0.1f };
         moti::setUniform(u_lightAmbient, vec);
@@ -77,7 +79,7 @@ int main(int argc, char** argv) {
         moti::setUniform(u_lightSpecular, vec);
     }
 
-    moti::ProgramHandle p = load_program("shaders/palikka.vs", "shaders/directional_light.fs");
+    moti::ProgramHandle p = load_program("shaders/palikka.vs", "shaders/point_light.fs");
     moti::ProgramHandle basic = load_program("shaders/basic.vs", "shaders/basic.fs");
     
     moti::Mat4 view;
@@ -90,7 +92,7 @@ int main(int argc, char** argv) {
 
     Mesh lampMesh;
     lampMesh.load("cube.dae");
-    moti::Vec3 lamp_pos = { -0.2f, -1.f, -0.3f };
+    moti::Vec3 lamp_pos = { 3.f, 1.f, -4.f };
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -112,6 +114,13 @@ int main(int argc, char** argv) {
     moti::setUniform(s_material.m_shininess, &emerald.m_shininess);
     //////////////////////////////////////////////////////////////////////////
 
+    {
+        const float constant = 1.0f;
+        const float linear = 0.09f;
+        const float quadratic = 0.032f;
+        float data[3] = { constant, linear, quadratic };
+        moti::setUniform(u_constantLinearQuadratic, data);
+    }
 
     while (!s_exit) {
         pump_events();
@@ -122,7 +131,7 @@ int main(int argc, char** argv) {
 
         float angle = time * 25.f;  // 45° per second
 
-        float lamp_data[4] = { lamp_pos.x, lamp_pos.y, lamp_pos.z, 0.f };
+        float lamp_data[4] = { lamp_pos.x, lamp_pos.y, lamp_pos.z, 1.f };
         moti::setUniform(u_lightPos, lamp_data);
         moti::setUniform(u_time, &time);
         moti::setViewRect(0, 0, Width, Height);
