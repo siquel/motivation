@@ -52,10 +52,12 @@ int main(int argc, char** argv) {
     
     moti::TextureHandle specular = load_texture("assets/container2_specular.png");
     moti::TextureHandle diffuse = load_texture("assets/container2.png");
+    moti::TextureHandle emission = load_texture("assets/emission.png");
     moti::UniformHandle u_specularTexture = moti::createUniform(UniformType::Int1, 1, "u_specularTexture");
     moti::UniformHandle u_diffuseTexture = moti::createUniform(UniformType::Int1, 1, "u_diffuseTexture");
+    moti::UniformHandle u_emissionTexture = moti::createUniform(UniformType::Int1, 1, "u_emissionTexture");
 
-    moti::UniformHandle u_lightPos = moti::createUniform(UniformType::Vec3, 1, "u_lightPos");
+    moti::UniformHandle u_lightPos = moti::createUniform(UniformType::Vec4, 1, "u_lightPos");
     moti::UniformHandle u_time = moti::createUniform(UniformType::Float, 1, "u_time");
     s_material.m_ambient = moti::createUniform(moti::UniformType::Vec3, 1, "u_ambient");
     s_material.m_diffuse = moti::createUniform(moti::UniformType::Vec3, 1, "u_diffuse");
@@ -75,7 +77,7 @@ int main(int argc, char** argv) {
         moti::setUniform(u_lightSpecular, vec);
     }
 
-    moti::ProgramHandle p = load_program("shaders/palikka.vs", "shaders/palikka_with_textures.fs");
+    moti::ProgramHandle p = load_program("shaders/palikka.vs", "shaders/directional_light.fs");
     moti::ProgramHandle basic = load_program("shaders/basic.vs", "shaders/basic.fs");
     
     moti::Mat4 view;
@@ -88,7 +90,7 @@ int main(int argc, char** argv) {
 
     Mesh lampMesh;
     lampMesh.load("cube.dae");
-    moti::Vec3 lamp_pos = { -4.f, 1.f, -4.f };
+    moti::Vec3 lamp_pos = { -0.2f, -1.f, -0.3f };
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -120,16 +122,18 @@ int main(int argc, char** argv) {
 
         float angle = time * 25.f;  // 45° per second
 
-        moti::setUniform(u_lightPos, &lamp_pos);
+        float lamp_data[4] = { lamp_pos.x, lamp_pos.y, lamp_pos.z, 0.f };
+        moti::setUniform(u_lightPos, lamp_data);
         moti::setUniform(u_time, &time);
         moti::setViewRect(0, 0, Width, Height);
         moti::setViewTransform(view, projection);
         moti::setTexture(0, u_specularTexture, specular);
         moti::setTexture(1, u_diffuseTexture, diffuse);
+        moti::setTexture(2, u_emissionTexture, emission);
         moti::Mat4 model;
         model.setIdentity();
         translate(model, Vec3{ 0.f, -0.f, -6.f });
-        moti::rotate(model, moti::radians(angle), Vec3{ 0.f, 1.f, 0.f });
+        moti::rotate(model, moti::radians(angle), Vec3{ 1.f, 0.f, 1.f });
 
         mesh.submit(p, model);
 

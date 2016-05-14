@@ -8,7 +8,7 @@ uniform sampler2D u_specularTexture;
 uniform sampler2D u_diffuseTexture;
 uniform sampler2D u_emissionTexture;
 
-uniform vec3 u_lightPos;
+uniform vec4 u_lightPos;
 
 uniform vec3 u_lightAmbient;
 uniform vec3 u_lightDiffuse;
@@ -28,13 +28,19 @@ uniform mat4 u_modelViewProj;
 
 void main()
 {
-    vec3 lightPos = vec3(u_view * vec4(u_lightPos, 1.0));
+    vec3 lightDir = vec3(0.0);
+    
+    if (u_lightPos.w == 0.0) {
+        lightDir = normalize(-u_lightPos.xyz);
+    } else {
+        vec3 lightPos = vec3(u_view * u_lightPos);
+        lightDir = normalize(lightPos - v_pos);
+    }
     
     vec3 ambient = u_lightAmbient * vec3(texture(u_diffuseTexture, v_texCoord0));
     
     // diff
     vec3 normal = normalize(v_normal);
-    vec3 lightDir = normalize(lightPos - v_pos);
     float diff = max(dot(normal, lightDir), 0.0);
     vec3 diffuse = u_lightDiffuse * diff * vec3(texture(u_diffuseTexture, v_texCoord0));
     
