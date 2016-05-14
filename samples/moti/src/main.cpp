@@ -149,7 +149,6 @@ int main(int argc, char** argv) {
     pointLight.m_specular = { 1.0f, 1.0f, 1.0f };
     s_uniforms.m_light = &pointLight;
 
-    moti::UniformHandle u_lightPos = moti::createUniform(UniformType::Vec4, 1, "u_lightPos");
     moti::UniformHandle u_time = moti::createUniform(UniformType::Float, 1, "u_time");
 
     moti::ProgramHandle p = load_program("shaders/palikka.vs", "shaders/point_light.fs");
