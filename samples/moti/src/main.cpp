@@ -8,9 +8,6 @@
 #include "moti/math/math.h"
 #include "util.h"
 
-const int Width = 1280;
-const int Height = 720;
-
 static bool s_exit = false;
 
 struct Material {
@@ -81,9 +78,9 @@ struct Uniforms {
 
     void submitPerFrame() {
         moti::setUniform(u_lightPos, &m_light->m_position);
-            moti::setUniform(u_lightAmbient, &m_light->m_ambient);
-            moti::setUniform(u_lightDiffuse, &m_light->m_diffuse);
-            moti::setUniform(u_lightSpecular, &m_light->m_specular);
+        moti::setUniform(u_lightAmbient, &m_light->m_ambient);
+        moti::setUniform(u_lightDiffuse, &m_light->m_diffuse);
+        moti::setUniform(u_lightSpecular, &m_light->m_specular);
         
         moti::setUniform(u_constantLinearQuadratic, &m_constantLinearQuadratic);
         moti::setTexture(0, u_specularTexture, s_textures.m_specular);
@@ -112,15 +109,32 @@ private:
 
 static Uniforms s_uniforms;
 
+struct ViewState {
+    ViewState(uint16_t width = 1280, uint16_t height = 720)
+        : m_width(width), m_height(height) {
+        m_view.setIdentity();
+        m_proj.setIdentity();
+    }
+    uint16_t m_width;
+    uint16_t m_height;
+    moti::Mat4 m_view;
+    moti::Mat4 m_proj;
+};
 
 int main(int argc, char** argv) {
     using namespace moti;
 
     moti::memory_globals::init();
 
+    ViewState viewState;
+
     SDL_Init(SDL_INIT_VIDEO);
     moti::gl::GLContext context;
-    SDL_Window* wnd = SDL_CreateWindow("moti", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Width, Height, SDL_WINDOW_OPENGL);
+    SDL_Window* wnd = SDL_CreateWindow("moti", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, viewState.m_width, viewState.m_height, SDL_WINDOW_OPENGL);
+
+    moti::look(viewState.m_view, Vec3{ 0.0f, 1.0f, 0.0f }, Vec3{ 0.0f, 1.0f, -4.f }, Vec3{ 0.f, 1.f, 0.f });
+    moti::perspective(viewState.m_proj, 45.f, float(viewState.m_width) / float(viewState.m_height), 0.1f, 100.f);
+
     context.create(wnd);
     glClearColor(0.0f, 0.f, 0.f, 1.f);
 
@@ -140,11 +154,6 @@ int main(int argc, char** argv) {
 
     moti::ProgramHandle p = load_program("shaders/palikka.vs", "shaders/point_light.fs");
     moti::ProgramHandle basic = load_program("shaders/basic.vs", "shaders/basic.fs");
-    
-    moti::Mat4 view;
-    moti::look(view, Vec3{ 0.0f, 1.0f, 0.0f }, Vec3{ 0.0f, 1.0f, -4.f }, Vec3{ 0.f, 1.f, 0.f });
-    moti::Mat4 projection;
-    moti::perspective(projection, 45.f, float(Width) / float(Height), 0.1f, 100.f);
 
     Mesh mesh;
     mesh.load("cube.dae");
@@ -169,8 +178,9 @@ int main(int argc, char** argv) {
 
         float angle = time * 25.f;  // 45° per second
         moti::setUniform(u_time, &time);
-        moti::setViewRect(0, 0, Width, Height);
-        moti::setViewTransform(view, projection);
+
+        moti::setViewRect(0, 0, viewState.m_width, viewState.m_height);
+        moti::setViewTransform(viewState.m_view, viewState.m_proj);
 
         moti::Mat4 model;
         model.setIdentity();
