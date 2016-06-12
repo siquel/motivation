@@ -217,6 +217,7 @@ namespace moti {
             virtual void destroyUniform(UniformHandle _handle) = 0;
             virtual void updateUniform(UniformHandle _handle, const void* _value, uint32_t _size) = 0;
             virtual void createTexture(TextureHandle handle, Block* memory) = 0;
+            virtual void updateTexture(TextureHandle handle, uint8_t side, const Rect& rect, Block& memory) = 0;
             virtual void destroyTexture(TextureHandle handle) = 0;
             virtual void submit(ProgramHandle _handle, const Render& _draw) = 0;
 		};

@@ -57,6 +57,7 @@ namespace moti {
                 : m_id(0), m_type(GL_ZERO), m_target(GL_TEXTURE_2D), m_format(GL_ZERO), m_width(0), m_height(0) {}
             void init(GLenum target, uint32_t width, uint32_t height);
             void create(Block& memory);
+            void update(uint8_t side, const Rect& rect, Block& memory);
             void destroy();
         };
 
@@ -110,6 +111,7 @@ namespace moti {
             virtual void updateUniform(UniformHandle _handle, const void* _value, uint32_t _size) override;
             virtual void createTexture(TextureHandle handle, Block* memory) override;
             virtual void destroyTexture(TextureHandle handle) override;
+            virtual void updateTexture(TextureHandle handle, uint8_t side, const Rect& rect, Block& memory) override;
             void setShaderUniform4f(uint32_t _index, const void* _val, uint32_t _num);
             void setShaderUniform4x4f(uint32_t _index, const void* _val, uint32_t _num);
 

@@ -221,6 +221,11 @@ namespace moti {
             m_textures[handle.m_id].destroy();
         }
 
+        void RendererContextGL::updateTexture(TextureHandle handle, uint8_t side, const Rect& rect, Block& memory)
+        {
+            m_textures[handle.m_id].update(side, rect, memory);
+        }
+
         void RendererContextGL::destroyUniform(UniformHandle _handle)
         {
         }
@@ -553,6 +558,41 @@ namespace moti {
                     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
                     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);                     
                 }
+            }
+
+            GL_CHECK(glBindTexture(m_target, 0));
+        }
+
+        void GLTexture::update(uint8_t side, const Rect& rect, Block& memory)
+        {
+            GL_CHECK(glBindTexture(m_target, m_id));
+            GLenum target = m_target == GL_TEXTURE_CUBE_MAP ? GL_TEXTURE_CUBE_MAP_POSITIVE_X : m_target;
+
+            if (m_target == GL_TEXTURE_CUBE_MAP)
+            {
+                GL_CHECK(glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side,
+                    0,
+                    rect.m_x,
+                    rect.m_y,
+                    rect.m_width,
+                    rect.m_height,
+                    m_format,
+                    m_type,
+                    memory.m_ptr
+                    ));
+            }
+            else if (m_target == GL_TEXTURE_2D)
+            {
+                GL_CHECK(glTexSubImage2D(GL_TEXTURE_2D,
+                    0,
+                    rect.m_x,
+                    rect.m_y,
+                    rect.m_width,
+                    rect.m_height,
+                    m_format,
+                    m_type,
+                    memory.m_ptr
+                    ));
             }
 
             GL_CHECK(glBindTexture(m_target, 0));

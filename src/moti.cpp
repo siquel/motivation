@@ -209,6 +209,11 @@ namespace moti {
         return s_device->createTexture(&block);
     }
 
+    void updateCubeMap(TextureHandle handle, uint8_t side, uint16_t x, uint16_t y, uint16_t w, uint16_t h, Block& memory)
+    {
+        s_device->updateTexture(handle, side, Rect{ x, y, w, h }, memory);
+    }
+
     void setTexture(uint8_t unit, UniformHandle sampler, TextureHandle texture)
     {
         MOTI_ASSERT(s_device != nullptr, "Device hasnt been initialized");

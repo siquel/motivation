@@ -191,4 +191,9 @@ namespace moti {
             }
         }
 
+        void GraphicsDevice::updateTexture(TextureHandle handle, uint8_t side, const Rect& rect, Block& memroy)
+        {
+            m_ctx->updateTexture(handle, side, rect, memroy);
+        }
+
 }

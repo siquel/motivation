@@ -176,6 +176,7 @@ namespace moti
 
     TextureHandle createTexture(uint16_t width, uint16_t height, Block* memory);
     TextureHandle createCubeMap(uint16_t width, uint16_t height, Block* memory);
+    void updateCubeMap(TextureHandle handle, uint8_t side, uint16_t x, uint16_t y, uint16_t widht, uint16_t height, Block& memory);
 
     void setTexture(uint8_t unit, UniformHandle sampler, TextureHandle texture);
 }
