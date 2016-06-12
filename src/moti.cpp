@@ -191,6 +191,24 @@ namespace moti {
         return s_device->createTexture(&block);
     }
 
+    moti::TextureHandle createCubeMap(uint16_t size, Block* memory)
+    {
+        StackAllocator<128> alloc;
+        Block block = alloc.allocate(sizeof(TextureHeader));
+        StaticMemoryWriter writer(block.m_ptr, block.m_length);
+
+        TextureHeader h;
+        h.m_width = size;
+        h.m_height = size;
+        h.m_sides = 6;
+        h.m_cubemap = true;
+        h.m_ptr = memory;
+
+        write(&writer, h);
+
+        return s_device->createTexture(&block);
+    }
+
     void setTexture(uint8_t unit, UniformHandle sampler, TextureHandle texture)
     {
         MOTI_ASSERT(s_device != nullptr, "Device hasnt been initialized");

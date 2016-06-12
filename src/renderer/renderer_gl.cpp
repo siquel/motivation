@@ -515,13 +515,7 @@ namespace moti {
             moti::TextureHeader header;
             read(&reader, header);
 
-            GLenum target = GL_TEXTURE_2D;
-            
-            if (header.m_cubemap)
-            {
-                target = GL_TEXTURE_CUBE_MAP;
-            }
-
+            GLenum target = header.m_cubemap ? GL_TEXTURE_CUBE_MAP : GL_TEXTURE_2D;
 
             init(target, header.m_width, header.m_height);
 
@@ -533,14 +527,32 @@ namespace moti {
                 data = header.m_ptr->m_ptr;
             }
 
-
             if (m_target == GL_TEXTURE_2D) {
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
                 GL_CHECK(glTexImage2D(m_target, 0, m_format, header.m_width, header.m_height, 0, m_format, m_type, data));
             }
             else if (m_target == GL_TEXTURE_CUBE_MAP) {
-                MOTI_ASSERT(false, "Not implemented");
+
+                for (uint8_t side = 0; side < 6; ++side)
+                {
+                    GL_CHECK(glTexImage2D(
+                        GL_TEXTURE_CUBE_MAP_POSITIVE_X + side,
+                        0, 
+                        m_format,
+                        header.m_width,
+                        header.m_height,
+                        0,
+                        m_format,
+                        m_type,
+                        nullptr // how the fuck?????
+                        ));
+                    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);                     
+                }
             }
 
             GL_CHECK(glBindTexture(m_target, 0));
