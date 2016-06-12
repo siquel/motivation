@@ -512,34 +512,36 @@ namespace moti {
         void GLTexture::create(Block& memory)
         {
             MemoryReader reader(memory.m_ptr, memory.m_length);
-            uint16_t width, height;
-            read(&reader, width);
-            read(&reader, height);
-            GLenum target = GL_TEXTURE_2D;
+            moti::TextureHeader header;
+            read(&reader, header);
 
-            init(target, width, height);
+            GLenum target = GL_TEXTURE_2D;
+            
+            if (header.m_cubemap)
+            {
+                target = GL_TEXTURE_CUBE_MAP;
+            }
+
+
+            init(target, header.m_width, header.m_height);
 
             m_type = GL_UNSIGNED_BYTE;
-
-            Block* mem = nullptr;
-            read(&reader, mem);
             
             void* data = nullptr;
 
-            if (mem) {
-                data = mem->m_ptr;
+            if (header.m_ptr) {
+                data = header.m_ptr->m_ptr;
             }
 
 
             if (m_target == GL_TEXTURE_2D) {
-                GL_CHECK(glTexImage2D(m_target, 0, m_format, width, height, 0, m_format, m_type, data));
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                GL_CHECK(glTexImage2D(m_target, 0, m_format, header.m_width, header.m_height, 0, m_format, m_type, data));
             }
-            else {
+            else if (m_target == GL_TEXTURE_CUBE_MAP) {
                 MOTI_ASSERT(false, "Not implemented");
             }
-
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
             GL_CHECK(glBindTexture(m_target, 0));
         }

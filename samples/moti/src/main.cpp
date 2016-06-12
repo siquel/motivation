@@ -23,22 +23,17 @@ struct Light {
     moti::Vec3 m_specular;
 };
 
+struct Spotlight {
+    moti::Vec4 m_position;
+    moti::Vec3 m_ambient;
+};
+
 void pump_events() {
     static SDL_Event e;
     while (SDL_PollEvent(&e)) {
         if (e.type == SDL_QUIT) s_exit = true;
     }
 }
-
-struct MaterialUniforms {
-    moti::UniformHandle m_ambient;
-    moti::UniformHandle m_diffuse;
-    moti::UniformHandle m_specular;
-    moti::UniformHandle m_shininess;
-};
-
-static MaterialUniforms s_material;
-
 
 struct Textures {
     void init() {
@@ -74,6 +69,8 @@ struct Uniforms {
         u_emissionTexture = moti::createUniform(UniformType::Int1, 1, "u_emissionTexture");
 
         u_constantLinearQuadratic = moti::createUniform(moti::UniformType::Vec3, 1, "u_constantLinearQuadratic");
+
+        u_time = moti::createUniform(UniformType::Float, 1, "u_time");
     }
 
     void submitPerFrame() {
@@ -86,6 +83,9 @@ struct Uniforms {
         moti::setTexture(0, u_specularTexture, s_textures.m_specular);
         moti::setTexture(1, u_diffuseTexture, s_textures.m_diffuse);
         moti::setTexture(2, u_emissionTexture, s_textures.m_emission);
+
+        float time = SDL_GetTicks() / 1000.f;
+        moti::setUniform(u_time, &time);
     }
 
     moti::Vec3 m_constantLinearQuadratic;
@@ -105,6 +105,8 @@ private:
     moti::UniformHandle u_emissionTexture;
 
     moti::UniformHandle u_constantLinearQuadratic;
+
+    moti::UniformHandle u_time;
 };
 
 static Uniforms s_uniforms;
@@ -132,7 +134,8 @@ int main(int argc, char** argv) {
     moti::gl::GLContext context;
     SDL_Window* wnd = SDL_CreateWindow("moti", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, viewState.m_width, viewState.m_height, SDL_WINDOW_OPENGL);
 
-    moti::look(viewState.m_view, Vec3{ 0.0f, 1.0f, 0.0f }, Vec3{ 0.0f, 1.0f, -4.f }, Vec3{ 0.f, 1.f, 0.f });
+    moti::Vec3 pos = Vec3{ 0.0f, 1.0f, 0.0f };
+    moti::look(viewState.m_view, pos, Vec3{ 0.0f, 1.0f, -4.f }, Vec3{ 0.f, 1.f, 0.f });
     moti::perspective(viewState.m_proj, 45.f, float(viewState.m_width) / float(viewState.m_height), 0.1f, 100.f);
 
     context.create(wnd);
@@ -148,8 +151,6 @@ int main(int argc, char** argv) {
     pointLight.m_diffuse = { 0.5f, 0.5f, 0.5f };
     pointLight.m_specular = { 1.0f, 1.0f, 1.0f };
     s_uniforms.m_light = &pointLight;
-
-    moti::UniformHandle u_time = moti::createUniform(UniformType::Float, 1, "u_time");
 
     moti::ProgramHandle p = load_program("shaders/palikka.vs", "shaders/point_light.fs");
     moti::ProgramHandle basic = load_program("shaders/basic.vs", "shaders/basic.fs");
@@ -171,15 +172,13 @@ int main(int argc, char** argv) {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        s_uniforms.submitPerFrame();
-
         float time = SDL_GetTicks() / 1000.f;
-
         float angle = time * 25.f;  // 45° per second
-        moti::setUniform(u_time, &time);
 
         moti::setViewRect(0, 0, viewState.m_width, viewState.m_height);
         moti::setViewTransform(viewState.m_view, viewState.m_proj);
+
+        s_uniforms.submitPerFrame();
 
         moti::Mat4 model;
         model.setIdentity();
@@ -199,7 +198,6 @@ int main(int argc, char** argv) {
         SDL_GL_SwapWindow(wnd);
     }
 
-    moti::destroyUniform(u_time);
     moti::destroyProgram(p);
     SDL_DestroyWindow(wnd);
     SDL_Quit();

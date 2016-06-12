@@ -175,12 +175,18 @@ namespace moti {
     moti::TextureHandle createTexture(uint16_t width, uint16_t height, Block* memory)
     {
         StackAllocator<128> alloc;
-        uint32_t size = sizeof(uint16_t) * 2 + sizeof(Block*);
+        uint32_t size = sizeof(TextureHeader);
         Block block = alloc.allocate(size);
         StaticMemoryWriter writer(block.m_ptr, block.m_length);
-        write(&writer, width);
-        write(&writer, height);
-        write(&writer, memory);
+
+        TextureHeader h;
+        h.m_width = width;
+        h.m_height = height;
+        h.m_sides = 0;
+        h.m_cubemap = false;
+        h.m_ptr = memory;
+
+        write(&writer, h);
 
         return s_device->createTexture(&block);
     }

@@ -47,7 +47,15 @@ namespace moti {
 #include "debug.h"
 
 namespace moti {
-    
+    struct Block;
+    struct TextureHeader {
+        uint16_t m_width;
+        uint16_t m_height;
+        uint16_t m_sides;
+        bool m_cubemap;
+        Block* m_ptr;
+    };
+
     struct UniformType {
         enum Enum {
             Int1,
